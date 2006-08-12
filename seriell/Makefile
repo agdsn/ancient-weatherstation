@@ -60,3 +60,8 @@ process.o: process.c process.h main.h config.h definitions.h write.h
 
 write.o: write.c write.h main.h definitions.h
 	$(CC) -DDEBUG -I/usr/include/postgresql -o write.o -c write.c
+
+cleanup:
+	echo "Räume auf...entferne:"
+	echo "  " *.o
+	$(RM) -f *.o
