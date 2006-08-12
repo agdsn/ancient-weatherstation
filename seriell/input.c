@@ -32,6 +32,8 @@
 #include <sys/types.h>
 #include <poll.h>           /* Polling */
 
+#include "input.h"
+#include "process.h"
 #include "config.h"
 #include "definitions.h"
 #include "main.h"

@@ -33,6 +33,7 @@
 #include "definitions.h"
 #include "config.h"
 #include "main.h"
+#include "input.h"
 
 /* Variablen ---------------------------------------------------------- */
 w_opts global_opts;

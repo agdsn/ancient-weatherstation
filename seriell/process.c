@@ -29,6 +29,7 @@
 #include <time.h>
 #include <sys/types.h>
 #include <string.h>
+#include "process.h"
 #include "main.h"
 #include "definitions.h"
 #include "config.h"

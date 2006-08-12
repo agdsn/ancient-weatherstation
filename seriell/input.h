@@ -24,5 +24,7 @@
 */
 
 
-/*Funktionen*/
-int read_port(int);
+/* Funktionen */
+
+/* Schnittstelle öffnen + lesen */
+int read_port();
