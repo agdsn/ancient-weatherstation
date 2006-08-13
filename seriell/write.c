@@ -126,8 +126,10 @@ static int pg_connect(){
     }
     if(PQstatus(connection) != CONNECTION_OK){
       DEBUGOUT2("\nFehler beim Aufbau der Datenbankverbindung\n%s\n", PQerrorMessage(connection));
+      #ifndef NO_LOGING
       snprintf(get_error_buffer(), ERR_BUFFERSIZE, "Fehler beim Aufbau der Datenbankverbindung: %s", PQerrorMessage(connection));
       log_error(get_error_buffer());
+      #endif
       return 0;
     }
     DEBUGOUT1("\nDatenbankverbindung erfolgreich hergestellt\n");
@@ -141,8 +143,10 @@ static void pg_insert(char *query){
     res = PQexec(connection, query);
     if(!res || PQresultStatus(res) != PGRES_COMMAND_OK){
       DEBUGOUT2("Fehler beim INSERT: %s\n", query);
+      #ifndef NO_LOGING
       snprintf(get_error_buffer(), ERR_BUFFERSIZE, "Fehler beim INSERT: %s", query);
       log_error(get_error_buffer());
+      #endif
     } else {
       DEBUGOUT2("Query: '%s' ausgeführt\n", query);
     }

@@ -60,10 +60,12 @@
 
 
 /* Parameter-Flags ----------------------------------------------------- */
-#define LOG_ERROR_FLAG 	0x01
-#define LOG_DATA_FLAG  	0x02
-#define FOREGROUND_FLAG	0x04
-#define VERBOSE_FLAG	0x08
+#define FOREGROUND_FLAG		0x01
+#define VERBOSE_FLAG		0x02
+#ifndef NO_LOGING
+  #define LOG_ERROR_FLAG 	0x04
+  #define LOG_DATA_FLAG  	0x08
+#endif
 
 
 /* Puffergrößen -------------------------------------------------------- */

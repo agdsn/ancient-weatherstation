@@ -47,10 +47,12 @@ static int flag_handler(int *, int , const char *);
 static const struct config_keyword keywords[] = {
   /* keyword		handler  	 	variable address		default */
   {"interface",		read_str,  		&(global_opts.device),		DEFAULT_SERIAL_PORT},
+  #ifndef NO_LOGING
   {"log_data",		read_log_data_flag, 	&(global_opts.flags), 		"no"},
   {"log_error",		read_log_error_flag, 	&(global_opts.flags), 		"no"},
   {"data_file",		read_str,  		&(global_opts.data_log), 	DEFAULT_DATA_FILE},
   {"error_file",	read_str, 		&(global_opts.error_log), 	DEFAULT_ERROR_FILE},
+  #endif
   {"foreground",	read_foreground_flag, 	&(global_opts.flags), 		"no"},
   {"verbose",		read_verbose_flag, 	&(global_opts.flags), 		"no"},
   {"pg_host",		read_str,	 	&(global_opts.pg_host), 	DEFAULT_PG_HOST},
@@ -74,6 +76,7 @@ static int read_str(const char *line, void *arg){
 /* Die 4 Funktionen reichen jeweils nur die Daten an den 
  * flag_handler durch und teilen diesem noch das Flag
  * mit, was er setzen soll (oder nicht) */
+#ifndef NO_LOGING
 static read_log_data_flag(const char *line, void *arg){
   return flag_handler(arg, LOG_DATA_FLAG, line);
 }
@@ -81,6 +84,7 @@ static read_log_data_flag(const char *line, void *arg){
 static read_log_error_flag(const char *line, void *arg){
   return flag_handler(arg, LOG_ERROR_FLAG, line);
 }
+#endif
 
 static read_foreground_flag(const char *line, void *arg){
   return flag_handler(arg, FOREGROUND_FLAG, line);

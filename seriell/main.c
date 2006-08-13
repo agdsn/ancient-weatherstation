@@ -163,10 +163,12 @@ static void background(){
 static void merge_options(w_opts *priv){
   if((*priv).device != NULL)
     global_opts.device = (*priv).device;
+  #ifndef NO_LOGING
   if((*priv).data_log != NULL)
     global_opts.data_log = (*priv).data_log;
   if((*priv).error_log != NULL)
     global_opts.error_log = (*priv).error_log;
+  #endif
   global_opts.flags |= (*priv).flags;
 }
 
