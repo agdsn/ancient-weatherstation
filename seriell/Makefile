@@ -1,7 +1,7 @@
 CC      = gcc
 LD      = gcc
 RM	= rm
-DEBUG   = -DDEBUG
+#DEBUG   = 
 CFLAGS  = -c
 LDFLAS  = -o
 
@@ -10,6 +10,10 @@ BIN_NAME = weatherdeamon
 # Die postgres-pfade bekommt man mit pg_config raus!
 
 # Neue Version nach Make-Buch:
+
+all: $(BIN_NAME)
+#	$(MAKE) cleanup
+
 
 $(BIN_NAME): main.o config.o input.o process.o write.o
 	$(LD) $(DEBUG) -L/usr/lib/pgsql -lpq $(LDFLAS) $(BIN_NAME) main.o input.o process.o write.o config.o
@@ -28,6 +32,9 @@ process.o: process.c process.h main.h config.h definitions.h write.h
 
 write.o: write.c write.h main.h definitions.h
 	$(CC) $(DEBUG) -I/usr/include/postgresql -o write.o -c write.c
+
+debug: 
+	$(MAKE) all DEBUG=-DDEBUG
 
 cleanup:
 	echo "Räume auf...entferne:"
