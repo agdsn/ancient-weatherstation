@@ -9,10 +9,12 @@ BIN_NAME = weatherdeamon
 OBJS	 = main.o config.o input.o process.o write.o
 
 
+# Alles bauen
 all: $(BIN_NAME)
 #	$(MAKE) cleanup
 
 
+# Binary Linken
 $(BIN_NAME): $(OBJS)
 	@ echo Linke: $(LD) $(DEBUG) $(NOLOG) -L$$(pg_config --libdir)/pgsql -lpq $(LDFLAS) $(BIN_NAME) $(OBJS)
 	@ $(LD) $(DEBUG) $(NOLOG) -L$$(pg_config --libdir)/pgsql -lpq $(LDFLAS) $(BIN_NAME) $(OBJS)
