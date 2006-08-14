@@ -1,37 +1,34 @@
 CC      = gcc
 LD      = gcc
 RM	= rm
-#DEBUG   = 
 CFLAGS  = -c
 LDFLAS  = -o
+INCL	= -I$$(pg_config --includedir)
 
 BIN_NAME = weatherdeamon
+OBJS	 = main.o config.o input.o process.o write.o
 
-# Die postgres-pfade bekommt man mit pg_config raus!
-
-# Neue Version nach Make-Buch:
 
 all: $(BIN_NAME)
 #	$(MAKE) cleanup
 
 
 $(BIN_NAME): main.o config.o input.o process.o write.o
-	$(LD) $(DEBUG) $(NOLOG) -L/usr/lib/pgsql -lpq $(LDFLAS) $(BIN_NAME) main.o input.o process.o write.o config.o
+	@ echo Linke: $(LD) $(DEBUG) $(NOLOG) -L$$(pg_config --libdir)/pgsql -lpq $(LDFLAS) $(BIN_NAME) $(OBJS)
+	@ $(LD) $(DEBUG) $(NOLOG) -L$$(pg_config --libdir)/pgsql -lpq $(LDFLAS) $(BIN_NAME) $(OBJS)
+	@ echo Binary $(BIN_NAME) ist fertig!
 
+# Abhängigkeiten
 main.o: main.c main.h definitions.h config.h input.h
-	$(CC) $(DEBUG) $(NOLOG) $(CFLAGS) main.c
-
 config.o: config.c config.h definitions.h
-	$(CC) $(DEBUG) $(NOLOG) $(CFLAGS) config.c
-
 input.o: input.c input.h main.h config.h definitions.h process.h
-	$(CC) $(DEBUG) $(NOLOG) $(CFLAGS) input.c
-
 process.o: process.c process.h main.h config.h definitions.h write.h
-	$(CC) $(DEBUG) $(NOLOG) $(CFLAGS) process.c
-
 write.o: write.c write.h main.h definitions.h
-	$(CC) $(DEBUG) $(NOLOG) -I/usr/include/postgresql $(CFLAGS) write.c
+
+# Compillieren
+$(OBJS):
+	@ echo "Kompilliere: "$(CC) $(DEBUG) $(NOLOG) $(INCL) $(CFLAGS) $*.c
+	@ $(CC) $(DEBUG) $(NOLOG) $(INCL) $(CFLAGS) $*.c
 
 # Programm mit debug-ausgabe bauen
 debug: 
@@ -43,6 +40,12 @@ nolog:
 
 # Aufräumnen (alle Object-Files löschen)
 cleanup:
-	echo "Räume auf...entferne:"
-	echo "  " *.o
-	$(RM) -f *.o
+	@ echo "Räume auf..."
+	@ echo "...entferne Object-Files:"
+	@ echo "  " $(OBJS)
+	@ $(RM) -f $(OBJS)
+
+clean: cleanup
+	@ echo "...lösche binary:"
+	@ echo "  " $(BIN_NAME)
+	@ rm -f $(BIN_NAME)
