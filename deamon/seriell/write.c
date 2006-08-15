@@ -119,10 +119,10 @@ static int pg_connect(){
 	conn_string = malloc(sizeof(char)*255);
 	snprintf(conn_string, 255, "host=%s dbname=%s user=%s password=%s", global_opts.pg_host, global_opts.pg_database, global_opts.pg_user, global_opts.pg_pass);
       }
-      connection = PQconnectdb(conn_string);
-      add_clean(clean_write, connection);
+      connection = PQconnectdb(conn_string);			/* Connection aufbauen */
+      add_clean(clean_write, connection);			/* Callbackfunktion zum Aufräumen registrieren */
     } else {
-      PQreset(connection);
+      PQreset(connection);					/* Connecion resetten */
     }
     if(PQstatus(connection) != CONNECTION_OK){
       DEBUGOUT2("\nFehler beim Aufbau der Datenbankverbindung\n%s\n", PQerrorMessage(connection));
@@ -137,6 +137,7 @@ static int pg_connect(){
   return 1;
 }
 
+/* Ein Datum in die Datenbank schreiben */
 static void pg_insert(char *query){
   PGresult *res;
   if(pg_connect()){
@@ -154,6 +155,8 @@ static void pg_insert(char *query){
   }
 }
 
+/* Callbackfunktion zum Aufräume.
+ * Schliesst die Verbindung zur Datenbank */
 static void clean_write(void *data){
   PGconn *conn =  data;
   PQfinish(conn);

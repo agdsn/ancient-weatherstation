@@ -100,7 +100,7 @@ int read_port(){
 
   temp = buffer;					/* Temporärer Zeiger bekommt die Anfangsaddresse vom Puffer */
 
-  add_clean(clean_port, &fd);
+  add_clean(clean_port, &fd);				/* Callbackfunktion zum Aufräumen registrieren */
 
 
   DEBUGOUT1("\nWarte auf Daten\n\n");
