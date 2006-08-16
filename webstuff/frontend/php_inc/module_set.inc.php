@@ -12,6 +12,9 @@ class ModuleSet{
   function ModuleSet($setName){
     $parser = $this->_getParserInstance();					/* Parserinstanz holen */
     $parser->parseContent($this->_getSetFilename($setName), $this, NULL);	/* Set Parsen */
+
+    echo "\n\n";
+    $parser->printContent();
   }
 
   /* Dateinamen eines Setz aus dessen Namen zusammenbauen */
@@ -21,15 +24,20 @@ class ModuleSet{
   
   /* Parser Instanzieren (wenn noch nicht ist) und zurückgeben */
   function _getParserInstance(){
-    if($this->parserInstance==NULL)
-      $parserInstance = new Parser();
-    return $parserInstance;
+    if($this->$parserInstance==NULL)
+      $this->$parserInstance = new Parser();
+    return $this->$parserInstance;
+  }
+
+  function _getConnInstance(){
+    // TODO: Muss noch Implementiert werden!!
+    return $connInstance;
   }
 
   /* Ein Modul hinzufügen */
-  function _addModule($modName){
+  function addModule($modName){
     $params =  explode("_",$modName);				/* Modulname und Sensorid trennen */
-    include("content/modules/mod_".$params[0].".html");
+    new Module($params[0], $params[1], $this->_getParserInstance(), $this->_getConnInstance());
   }
 }
 ?>
