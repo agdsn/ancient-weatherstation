@@ -10,24 +10,24 @@ class ModuleSet{
 
   /* Konstruktor */
   function ModuleSet($setName){
-    $parser = $this->getParserInstance();					/* Parserinstanz holen */
-    $parser->parseContent($this->getSetFilename($setName), $this, NULL);	/* Set Parsen */
+    $parser = $this->_getParserInstance();					/* Parserinstanz holen */
+    $parser->parseContent($this->_getSetFilename($setName), $this, NULL);	/* Set Parsen */
   }
 
   /* Dateinamen eines Setz aus dessen Namen zusammenbauen */
-  function getSetFilename($setName){
+  function _getSetFilename($setName){
     return "content/module_sets/set_".$setName.".html";
   }
   
   /* Parser Instanzieren (wenn noch nicht ist) und zurückgeben */
-  function getParserInstance(){
+  function _getParserInstance(){
     if($this->parserInstance==NULL)
       $parserInstance = new Parser();
     return $parserInstance;
   }
 
   /* Ein Modul hinzufügen */
-  function addModule($modName){
+  function _addModule($modName){
     $params =  explode("_",$modName);				/* Modulname und Sensorid trennen */
     include("content/modules/mod_".$params[0].".html");
   }
