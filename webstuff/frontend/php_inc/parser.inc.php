@@ -1,6 +1,7 @@
 <?
 class Parser{	
   var $contentArray;
+  var $ts = 0;
 
   function Parser(){
     $this->contentArray = array();
@@ -14,9 +15,7 @@ class Parser{
   function appendContent($newContent){
     if(is_array($newContent)){
       for($i = 0; $i < count($newContent); $i++){
-	echo "adding: ".$newContent[$i]."\n";
         array_push($this->contentArray, $newContent[$i]);
-	echo "added: ".$this->contentArray[count($this->contentArray)-1]."\n";
       }
     } else {
       array_push($this->contentArray, $newContent);
@@ -25,28 +24,24 @@ class Parser{
 
   /* Zeigt den Geparsten Inhalt an */
   function printContent(){
-    echo "\n ---- Printing ----\n";
-    echo "";
-    $array = &$this->getContentArray();
+    $array = $this->getContentArray();
     for ($i = 0; $i < count($array); $i++){
       echo $array[$i];
     }
   }
 
 
-  function parseContent($fileName, $callingObject, $filePart=null){
-    echo "\n\nparse: ".$fileName."\n\n";
+  function parseContent($fileName, & $callingObject, $filePart=null){
     $fileArray = file($fileName);													/* File als Array einlesen */
     if($filePart != null){
       $fileArray = $this->_fetchFilePart(&$fileArray, $filePart);									/* Wenn File aus mehreren Template-Teilen besteht, dann wird hir der relevante Zeil geholt */
     }
     for($i = 0; $i < count($fileArray); $i++){												/* Das Array durchlaufen ... */
-      echo "Zeile: ".$i." = ".$fileArray[$i]."\n";
       if(0 != preg_match_all("/\{content:([a-z]+):([a-z0-9_]+)\}/i", $fileArray[$i], $results)){
         //print_r($results);
         for($j = 0; $j < count($results[1]); $j++){
-          $callingObject->$results[1][$j]($results[2][$j]);
-	  //$fileArray[$i] = preg_replace("/\{content:fill:".$results[1][$j]."\}/i", $fileContents[$results[1][$j]], $fileArray[$i]);
+          $insert = $callingObject->$results[1][$j]($results[2][$j]);
+	  $fileArray[$i] = preg_replace("/\{content:".$results[1][$j].":".$results[2][$j]."\}/i", $insert, $fileArray[$i]);
         }
       }
     }

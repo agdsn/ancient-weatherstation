@@ -13,37 +13,40 @@ class Module{
   var $tempInstance	  = NULL;	/* Temp-Instanz */
 
 
-  function Module($modName, $sensId, $parser, $connection){
-    $this->$sensId     = $sensId;
-    $this->$connection = $connection;
+  function Module($modName, $sensId, &$parser, &$connection){
+    $this->sensId     = $sensId;
+    $this->connection = &$connection;
+    $this->parserInstance = &$parser;
 
-    $parser->parseContent($this->_getModuleFilename("frame"), $this, "top"); 
-    $parser->parseContent($this->_getModuleFilename($modName), $this, NULL); 
-    $parser->parseContent($this->_getModuleFilename("frame"), $this, "bottom"); 
+
+    $parser->parseContent($this->_getModuleFilename("frame"), & $this, "top"); 
+    $parser->parseContent($this->_getModuleFilename($modName), & $this, NULL); 
+    $parser->parseContent($this->_getModuleFilename("frame"), & $this, "bottom"); 
   }
 
   function _getModuleFilename($modName){
     return "content/modules/mod_".$modName.".html";
   }
 
-  function _get_sens(){
-    if($sensInstance == NULL)
-      $this->$sensInstance = new Sensor($this->$sensId, $this->$connection);
-    return $this->$sensInstance;
+  function &_get_sens(){
+    if($this->sensInstance == NULL)
+      $this->sensInstance = new Sensor($this->sensId, $this->connection);
+    return $this->sensInstance;
   }
 
-  function _get_temp(){
-    if($tempInstance == NULL)
-      $this->$tempInstance = new Temp($this->$sensId, $this->$connection);
-    return $this->$tempInstance;
+  function &_get_temp(){
+    if($this->tempInstance == NULL)
+      $this->tempInstance = new Temp($this->sensId, $this->connection);
+    return $this->tempInstance;
   }
 
   function fill($contentId){
     $content_split = explode("_", $contentId);
-    $callObject	   = call_user_method("_get_".$content_split[0], $this);
+    $callObject	   = & call_user_method("_get_".$content_split[0], $this);
     $funcName      = "get".substr($contentId, strlen($content_split[0]), strlen($contentId)-strlen($content_split[0]));
     
-    echo "\n\naufruf: ".$funcName."()\n\n";
+    
+
     return $callObject->$funcName($content_split[1]);
   }
 

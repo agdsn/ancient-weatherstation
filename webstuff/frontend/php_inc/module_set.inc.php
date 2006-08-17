@@ -1,6 +1,7 @@
 <?
 include_once("php_inc/module.inc.php");
 include_once("php_inc/parser.inc.php");
+include_once("php_inc/connection.inc.php");
 
 
 /* Klasse, die die ModuleSets Verwaltet */
@@ -10,10 +11,9 @@ class ModuleSet{
 
   /* Konstruktor */
   function ModuleSet($setName){
-    $parser = $this->_getParserInstance();					/* Parserinstanz holen */
-    $parser->parseContent($this->_getSetFilename($setName), $this, NULL);	/* Set Parsen */
+    $parser = & $this->_getParserInstance();					/* Parserinstanz holen */
+    $parser->parseContent($this->_getSetFilename($setName), &$this, NULL);	/* Set Parsen */
 
-    echo "\n\n";
     $parser->printContent();
   }
 
@@ -23,20 +23,22 @@ class ModuleSet{
   }
   
   /* Parser Instanzieren (wenn noch nicht ist) und zurückgeben */
-  function _getParserInstance(){
-    if($this->$parserInstance==NULL)
-      $this->$parserInstance = new Parser();
-    return $this->$parserInstance;
+  function &_getParserInstance(){
+    if($this->parserInstance==NULL)
+      $this->parserInstance = new Parser();
+    return $this->parserInstance;
   }
 
-  function _getConnInstance(){
-    // TODO: Muss noch Implementiert werden!!
-    return $connInstance;
+  function &_getConnInstance(){
+    if($connInstance == NULL){
+      $this->connInstance = new Connection();
+    }
+    return $this->connInstance;
   }
 
   /* Ein Modul hinzufügen */
   function addModule($modName){
-    $params =  explode("_",$modName);				/* Modulname und Sensorid trennen */
+    $params = explode("_",$modName);				/* Modulname und Sensorid trennen */
     new Module($params[0], $params[1], $this->_getParserInstance(), $this->_getConnInstance());
   }
 }
