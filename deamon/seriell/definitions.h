@@ -45,7 +45,7 @@
 #define WINDS 0x03	/* Windsensor */
 #define INNEN 0x04	/* Innensensor */
 #define HELLI 0x05	/* Helligkeitssensor */
-#define PYANO 0x06	/* Pyanometer */
+#define PYANO 0x06	/* Pyranometer */
 
 
 /* Fehlermeldungen ------------------------------------------------------*/

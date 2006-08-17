@@ -96,7 +96,7 @@ void write_helli(helli_data data){
   pg_insert(query_buffer);
 }
 
-/* Pyanometer */
+/* Pyarnometer */
 void write_pyano(pyano_data data){
   check_create_query_buffer();
   snprintf(query_buffer, QUERY_BUFFERSIZE,  "INSERT INTO pyano_data (sens_id, intens) VALUES (get_sensor_id(%d,%d),%d)",PYANO, data.address, data.absrad);

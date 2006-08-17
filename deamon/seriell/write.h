@@ -76,7 +76,7 @@ typedef struct {
   unsigned int  abslum;		/*Absolute Helligkeit*/
 } helli_data;
 
-/* Datenstruktur für das Pyanometer */
+/* Datenstruktur für das Pyranometer */
 typedef struct {
   time_t        timestamp;	/*Zeitstempel*/
   unsigned char address;	/*Addresse*/
@@ -106,5 +106,5 @@ void write_innen(innen_data);
 /* Helligkeitssensor */
 void write_helli(helli_data);
 
-/* Pyanometer */
+/* Pyranometer */
 void write_pyano(pyano_data);

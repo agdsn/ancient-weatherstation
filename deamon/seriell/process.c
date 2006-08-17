@@ -257,7 +257,7 @@ static helli_data process_helli(time_t timestamp, u_char address, u_char *buffer
   return data;
 }
 
-/* Wertkonvertierungen für das Pyanometer */
+/* Wertkonvertierungen für das Pyranometer */
 static pyano_data process_pyano(time_t timestamp, u_char address, u_char *buffer){
   pyano_data data;						/* Datenstruktur */
 
@@ -266,7 +266,7 @@ static pyano_data process_pyano(time_t timestamp, u_char address, u_char *buffer
   data.mult      = buffer[4] & 0x03;				/* Multiplikator */
   data.absrad    = (0x01 << data.mult) * data.rawrad;		/* Absolute Strahlung */
 
-  DEBUGOUT2("Pyanometer an Addresse %i\n", address);
+  DEBUGOUT2("Pyranometer an Addresse %i\n", address);
   DEBUGOUT4("Rel. Strahl.: %d  Mult.: %d  Abs. Strahl.: %d\n",data.rawrad,data.mult,data.absrad);             
 
   #ifndef NO_LOGING 
