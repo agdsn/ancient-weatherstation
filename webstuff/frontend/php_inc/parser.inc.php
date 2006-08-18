@@ -1,7 +1,6 @@
 <?
 class Parser{	
   var $contentArray;
-  var $ts = 0;
 
   function Parser(){
     $this->contentArray = array();
