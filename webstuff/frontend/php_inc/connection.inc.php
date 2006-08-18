@@ -1,12 +1,15 @@
 <?
+/* Connection-Klasse..ist für die Datenbankverbindung zuständig */
 class Connection{
 
-  var $conn = NULL;
+  var $conn = NULL;	/* Verbindung */
 
+  /* Konstruktor */
   function Connection(){
     $this->conn = NULL;
   }
-
+  
+  /* Verbindung herstellen (wenn noch net besteht)*/
   function _createConn(){
     if($this->conn == NULL){
       $this->conn = pg_connect("host=141.30.228.39 dbname=wetter user=losinshi")
@@ -14,6 +17,7 @@ class Connection{
     }
   }
 
+  /* Verbindung schließen */
   function closeConn(){
     if($this->conn != NULL){
       pg_close($this->conn);  
@@ -21,6 +25,7 @@ class Connection{
     }
   }
 
+  /* Eine Zeile holen */
   function fetchQueryResultLine($query){
      $this->_createConn();
      $result =  pg_query($this->conn, $query) 
@@ -30,6 +35,7 @@ class Connection{
      return $array;
   }
 
+  /* mehrere Zeilen holen */
   function fetchQueryResultSet($query){
     $returnArray = array();
     $this->_createConn();

@@ -15,6 +15,10 @@ class ModuleSet{
     $parser->parseContent($this->_getSetFilename($setName), &$this, NULL);	/* Set Parsen */
 
     $parser->printContent();
+    
+    if ($this->connInstance != NULL){
+      $this->connInstance->closeConn();
+    }
   }
 
   /* Dateinamen eines Setz aus dessen Namen zusammenbauen */
