@@ -1,7 +1,7 @@
 /*
 
    weatherdeamon -- Weather Data Capture Program for the 
-                    'ELV-PC-Wettersensor-Empfänger'
+                    'ELV-PC-Wettersensor-Empfaenger'
    main.c        -- Part of the weatherdeamon
 
    Copyright (C) 2006 Jan Losinski
@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <fcntl.h>		/* O_WRONLY O_APPEND O_CREAT ... */
 #include <string.h>
+#include <signal.h>
 #include "definitions.h"
 #include "config.h"
 #include "main.h"
@@ -39,7 +40,7 @@
 w_opts global_opts;
 clean_struct_ptr clean_ptr  = NULL;
 #ifndef NO_LOGING
-  static char *error_buffer = NULL;	/* Puffer für Fehler-ausgaben */
+  static char *error_buffer = NULL;	/* Puffer fuer Fehler-ausgaben */
 #endif
 
 /* Funktionen ----------------------------------------------------------*/
@@ -53,7 +54,7 @@ static void merge_options(w_opts *);
 #endif
 static clean_struct_ptr get_last_clean(clean_struct_ptr);
 static void clean();
-  
+static void exit_sig_handler(int); 
 
 /* Jetzt gehts los.... --------------------------------------------------*/
 
@@ -75,6 +76,19 @@ int main(int argc, char *argv[]){
   #endif
 
   DEBUGOUT1("Programm gestartet\n");
+
+  if(signal(SIGABRT, exit_sig_handler) == SIG_ERR)
+    exit_error(ERROR_SEIINST);
+  DEBUGOUT1("Signalhandler zum beenden per SIGABRT installiert\n");
+  if(signal(SIGINT, exit_sig_handler) == SIG_ERR)
+    exit_error(ERROR_SEIINST);
+  DEBUGOUT1("Signalhandler zum beenden per SIGINT installiert\n");
+  if(signal(SIGQUIT, exit_sig_handler) == SIG_ERR)
+    exit_error(ERROR_SEIINST);
+  DEBUGOUT1("Signalhandler zum beenden per SIGQUIT installiert\n");
+  if(signal(SIGTERM, exit_sig_handler) == SIG_ERR)
+    exit_error(ERROR_SEIINST);
+  DEBUGOUT1("Signalhandler zum beenden per SIGTERM installiert\n");
 
   read_config(DEFAULT_CONFIG_FILE,1);
 
@@ -116,7 +130,7 @@ int main(int argc, char *argv[]){
     read_config(extra_conf_file,0);
   }
 
-  /* Komandozeilen-Optionen zu denen aus der Config-File hinzufügen */
+  /* Komandozeilen-Optionen zu denen aus der Config-File hinzufuegen */
   merge_options(&opts);
 
   /* Debug-Ausgaben, um zu sehen, ob die Optionen richtig gesetzt werden */
@@ -138,8 +152,8 @@ int main(int argc, char *argv[]){
 
   /* Programm in den Hintergrund schicken ? */
   background();
-
-  DEBUGOUT1("\nBeginne Interface zu öffnen\n\n");
+while (1);
+  DEBUGOUT1("\nBeginne Interface zu oeffnen\n\n");
 
   /* Port Pollen */
   read_port();
@@ -159,7 +173,7 @@ static void background(){
   }
 }
 
-/* Führt die Optionen aus der Komandozeile und die aus dem Conf-File zusammen */
+/* Fuehrt die Optionen aus der Komandozeile und die aus dem Conf-File zusammen */
 static void merge_options(w_opts *priv){
   if((*priv).device != NULL)
     global_opts.device = (*priv).device;
@@ -196,8 +210,8 @@ int get_flag(int mask){
 }
 
 /* Diese Funktion beendet das Programm mit einer Fehlermeldung. */
-void exit_error(char* err)
-{
+void exit_error(char* err){
+  DEBUGOUT1("\nEtwas unschoenes ist passiert\n");
   clean();
   if(errno != 0){
     perror("Fehler");  
@@ -206,9 +220,27 @@ void exit_error(char* err)
   exit(1);
 }
 
+/* Wird bei Beendigungssignalen ausgefuehrt */
+static void exit_sig_handler(int signr){
+  #ifdef DEBUG
+  DEBUGOUT1("\n");
+  switch (signr){
+    case SIGABRT:
+      DEBUGOUT1("SIGABRT Interupt erhalten!\n");
+    case SIGTERM:
+      DEBUGOUT1("SIGTERM Interupt erhalten!\n");
+    case SIGQUIT:
+      DEBUGOUT1("SIGQUIT Interupt erhalten!\n");
+    case SIGINT:
+      DEBUGOUT1("SIGINT Interupt erhalten!\n");
+  }
+  #endif
+  clean();
+  DEBUGOUT1("Beende Programm...\n");
+  exit(0);
+}
 
-
-/* Funktionen für die Logfiles */
+/* Funktionen fuer die Logfiles */
 
 #ifndef NO_LOGING
 /* Schreiben einer Fehlermeldung in das fehler-Logfile */
@@ -225,7 +257,7 @@ void log_data(time_t timestamp, char *msg){
   DEBUGOUT1(" -->Data Logged \n");
 }
 
-/* Logfile öffnen */
+/* Logfile oeffnen */
 static int open_logfile(char *file){
   int log_fd;
 
@@ -278,11 +310,11 @@ static clean_struct_ptr get_last_clean(clean_struct_ptr ptr){
   return NULL;
 }
 
-/* Ein neues Clean-Element anfügen. Ein Clean-Element ist eine Datenstruktur, die
+/* Ein neues Clean-Element anfuegen. Ein Clean-Element ist eine Datenstruktur, die
  * einen Pointer auf eine Funktion vom Typ
  * void func(void *data),
- * einen Zeiger auf beliebige Daten und einen Zeiger auf das nächste Element hält.
- * Die Funktionen werden beim regulären beenden des Programmes aufgerufen um zum bsp. 
+ * einen Zeiger auf beliebige Daten und einen Zeiger auf das naechste Element haelt.
+ * Die Funktionen werden beim regulaeren beenden des Programmes aufgerufen um zum bsp. 
  * datenbankverbindungen zu schließen, etc. */
 void add_clean(void (*func)(void *data), void *data){
   clean_struct_ptr p, temp = (clean_struct_ptr) malloc(sizeof(clean_data));
@@ -297,8 +329,9 @@ void add_clean(void (*func)(void *data), void *data){
   }
 }
 
-/* 'Säuberung' ausführen */
+/* 'Saeuberung' ausfuehren */
 static void clean(){
+  DEBUGOUT1("\nRaeume auf...\n");
   clean_struct_ptr p = clean_ptr;
   while(p != NULL){
     p->func(p->data);

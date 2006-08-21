@@ -1,8 +1,10 @@
 <?
-include_once("php_inc/parser.inc.php");		/* Parser */
-include_once("php_inc/sensor.inc.php");		/* Sensor-Klasse */
-include_once("php_inc/temp.inc.php");		/* Temp-Klasse */
-include_once("php_inc/rain.inc.php");		/* Rain-Klasse */
+include_once("php_inc/parser.inc.php");			/* Parser */
+include_once("php_inc/modules/sensor.inc.php");		/* Sensor-Klasse */
+include_once("php_inc/modules/temp.inc.php");		/* Temp-Klasse */
+include_once("php_inc/modules/rain.inc.php");		/* Rain-Klasse */
+include_once("php_inc/modules/hum.inc.php");		/* Hum-Klasse */
+include_once("php_inc/modules/press.inc.php");		/* Press-Klasse */
 
 /* Representiert ein Modul */
 class Module{
@@ -14,6 +16,7 @@ class Module{
   var $sensInstance	  = NULL;	/* Sensor-Instanz */
   var $tempInstance	  = NULL;	/* Temp-Instanz */
   var $rainInstance	  = NULL;	/* Rain-Instanz */
+  var $humInstance	  = NULL;	/* Hum-Instanz */
 
   /* Konstruktor */
   function Module($modName, $sensId, &$parser, &$connection){
@@ -52,6 +55,20 @@ class Module{
     if($this->rainInstance == NULL)
       $this->rainInstance = new Rain($this->sensId, $this->connection);
     return $this->rainInstance;
+  }
+
+  /* Instanz der Hum-Klasse holen */
+  function &_get_hum(){
+    if($this->humInstance == NULL)
+      $this->humInstance = new Hum($this->sensId, $this->connection);
+    return $this->humInstance;
+  }
+
+  /* Instanz der Press-Klasse holen */
+  function &_get_press(){
+    if($this->pressInstance == NULL)
+      $this->pressInstance = new Press($this->sensId, $this->connection);
+    return $this->pressInstance;
   }
 
   /* Callback-Funktion, wird ausgeführt wenn {content:fill:xyz} gefunden wird */

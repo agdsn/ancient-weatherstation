@@ -57,6 +57,7 @@
 #define  ERROR_READ    "sensor-rs232interface: Fehler beim Lesen\n"
 #define  ERROR_LOGFILE "Log-Error: Kann Logfile nicht öffnen\n"
 #define  ERROR_FORK    "Fork-Fehler: Kann den Prozess nicht in den Hintergrund schieben\n"
+#define  ERROR_SEIINST "Signal-Fehler: Kann Signalhandler zum beenden nicht installieren\n"
 
 
 /* Parameter-Flags ----------------------------------------------------- */
