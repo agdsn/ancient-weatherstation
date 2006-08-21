@@ -55,7 +55,7 @@ static char* prepend_type_address(u_char, u_char);
 
 /* globale Variablen */
 char *log_buffer = NULL;   	/* Puffer für die Log-Ausgabe */
-unsigned int last_rain_count = -1;	/* Letzter gemessener Wasserstand */
+int last_rain_count = -1;	/* Letzter gemessener Wasserstand */
 
 
 /* Bestimmung der Sensoren und Weiterreichung an die Funktionen zum auswerten der Werte
@@ -149,8 +149,8 @@ static auss2_data process_auss2(time_t timestamp, u_char address, u_char *buffer
 /* Wertkonvertierungen für den Regensensor (ein Zählschritt = 370ml/m^2)*/
 static regen_data process_regen(time_t timestamp, u_char address, u_char *buffer){
   regen_data data;							/* Datenstruktur */
-  unsigned int new_rain_count = 0;					/* Neuer Zählerstand */
-  unsigned int now_rain_count = 0;					/* Delta-Zählerstand */
+  int new_rain_count = 0;						/* Neuer Zählerstand */
+  int now_rain_count = 0;						/* Delta-Zählerstand */
 
   data.timestamp = timestamp;						/* Zeitstempel */
   data.address   = address;						/* Addresse */

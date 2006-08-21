@@ -152,7 +152,7 @@ int main(int argc, char *argv[]){
 
   /* Programm in den Hintergrund schicken ? */
   background();
-while (1);
+
   DEBUGOUT1("\nBeginne Interface zu oeffnen\n\n");
 
   /* Port Pollen */
