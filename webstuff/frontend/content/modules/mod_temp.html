@@ -1,23 +1,27 @@
 <h3 class="mod_headline">Temperatur - {content:fill:sens_location}</h3>
 <p class="mod_description">{content:fill:sens_description}</p>
-<h4 class="mod_subhead">Momentane Werte</h4>
-<table class="mod_temp_now_data">
-  <tr class="mod_temp_current_row">
-    <td class="mod_line_desc">Momentan:</td><td class="mod_line_val">{content:fill:temp_now_val}&deg;C</td><td class="mod_line_date">{content:fill:temp_now_date}</td>
-  </tr>
-  <tr class="mod_temp_average_row">
-    <td class="mod_line_desc">Durchschnitt ({content:fill:temp_av_interval} min.):</td><td class="mod_line_val">{content:fill:temp_av_value}&deg;C</td><td>&nbsp;</td>
-  </tr>
-  <tr class="mod_temp_moving_row">
-    <td class="mod_line_desc">Tendenz (2 std.):</td><td class="mod_line_mov_val" colspan=2>{content:fill:temp_changing}</td><td>&nbsp;</td>
-  </tr>
-</table>
-<h4 class="mod_subhead">Extrema</h4>
-<table>
-  <tr class="mod_temp_max_row">
-    <td class="mod_line_desc">Max:</td><td class="mod_line_val">{content:fill:temp_max_val}&deg;C</td><td class="mod_line_date">{content:fill:temp_max_date}</td>
-  </tr>
-  <tr class="mod_temp_min_row">
-    <td class="mod_line_desc">Min:</td><td class="mod_line_val">{content:fill:temp_min_val}&deg;C</td><td class="mod_line_date">{content:fill:temp_min_date}</td>
-  </tr>
-</table>
+<div class="mod_subsec">
+  <h4 class="mod_subhead">Momentane Werte</h4>
+  <table class="mod_temp_now_data">
+    <tr class="mod_temp_current_row">
+      <td class="mod_line_desc">Momentan:</td><td class="mod_line_val">{content:fill:temp_now_val}&deg;C</td><td class="mod_line_date">{content:fill:temp_now_date}</td>
+    </tr>
+    <tr class="mod_temp_average_row">
+      <td class="mod_line_desc">Durchschnitt ({content:fill:temp_av_interval} min.):</td><td class="mod_line_val">{content:fill:temp_av_value}&deg;C</td><td>&nbsp;</td>
+    </tr>
+    <tr class="mod_temp_moving_row">
+      <td class="mod_line_desc">Tendenz (2 std.):</td><td class="mod_line_mov_val" colspan=2>{content:fill:temp_changing}</td><td>&nbsp;</td>
+    </tr>
+  </table>
+</div>
+<div class="mod_subsec">
+  <h4 class="mod_subhead">Extrema</h4>
+  <table>
+    <tr class="mod_temp_max_row">
+      <td class="mod_line_desc">Max:</td><td class="mod_line_val">{content:fill:temp_max_val}&deg;C</td><td class="mod_line_date">{content:fill:temp_max_date}</td>
+    </tr>
+    <tr class="mod_temp_min_row">
+      <td class="mod_line_desc">Min:</td><td class="mod_line_val">{content:fill:temp_min_val}&deg;C</td><td class="mod_line_date">{content:fill:temp_min_date}</td>
+    </tr>
+  </table>
+</div>
