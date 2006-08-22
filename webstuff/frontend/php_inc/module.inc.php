@@ -10,6 +10,7 @@ include_once("php_inc/modules/wind.inc.php");		/* Wind-Klasse */
 /* Representiert ein Modul */
 class Module{
 
+  var $modName;				/* Modul-Id */
   var $sensId;				/* Sensor-Id */
   var $connection;			/* Connection - Instanz */
   var $parserInstance     = NULL;	/* Parser - Instanz */
@@ -25,8 +26,9 @@ class Module{
   function Module($modName, $sensId, &$parser, &$connection){
     
     /* Klassenvariablen zuordnen */
-    $this->sensId     = $sensId;
-    $this->connection = &$connection;
+    $this->sensId     	  = $sensId;
+    $this->modName 	  = $modName;
+    $this->connection 	  = &$connection;
     $this->parserInstance = &$parser;
 
     $parser->parseContent($this->_getModuleFilename("frame"), & $this, "top");		/* Oberen Modulrahmen parsen */
@@ -88,6 +90,11 @@ class Module{
     $funcName      = "get".substr($contentId, strlen($content_split[0]), strlen($contentId)-strlen($content_split[0])); /* Namen der In der Instanz aufzurufenden Methode zusammenbauen */
     
     return $callObject->$funcName($content_split[1]);									/* Methode ausführen (Wert holen) und zurückgeben */
+  }
+
+  function getModId($type){
+    if($type == "css")
+      return $this->modName."_".$this->sensId;
   }
 
 }
