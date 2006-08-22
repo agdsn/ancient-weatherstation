@@ -30,6 +30,7 @@ class Parser{
   }
 
 
+  /* File Parsen */
   function parseContent($fileName, & $callingObject, $filePart=null){
     $fileArray = file($fileName);													/* File als Array einlesen */
     if($filePart != null){

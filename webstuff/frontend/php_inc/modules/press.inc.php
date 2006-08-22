@@ -58,15 +58,15 @@ class Press{
   /* momentanen Durchschnittswert bestimmen */
   function _fetchAverage($sensId, $table, &$connection){
     $avData = array('average'=>0, 'count'=>0);						/* Array initialisieren */
-    $i = 3;										/* Laufvariable */
+    $i = 1;										/* Laufvariable */
     while($avData['count']<5){								/* Schleife prüft, in welchem Interval 5 Werte zusammenkommen */ 
-      $avData = $this->_getAverage($sensId, $table, &$connection, ($i*15)." minutes");	/* Holt Werte mit gegebenem Interval */
       $i++;										/* Laufvariable erhöhen */
+      $avData = $this->_getAverage($sensId, $table, &$connection, ($i*15)." minutes");	/* Holt Werte mit gegebenem Interval */
     }
 
     /* Werte den Klassenvariablen zuordnen */
     $this->avVal   = $avData['average'];
-    $this->avInter = $i*10;
+    $this->avInter = $i*15;
   }
  
   /* Bestimmt die Tendenz */
