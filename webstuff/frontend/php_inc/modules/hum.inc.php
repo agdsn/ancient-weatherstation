@@ -61,7 +61,7 @@ class Hum{
     $avData = array('average'=>0, 'count'=>0);						/* Array initialisieren */
     $i = 3;										/* Laufvariable */
     while($avData['count']<5){								/* Schleife prüft, in welchem Interval 5 Werte zusammenkommen */ 
-      $avData = $this->_getAverage($sensId, $table, &$connection, ($i*10)." minutes");	/* Holt Werte mit gegebenem Interval */
+      $avData = $this->_getAverage($sensId, $table, &$connection, ($i*15)." minutes");	/* Holt Werte mit gegebenem Interval */
       $i++;										/* Laufvariable erhöhen */
     }
 
