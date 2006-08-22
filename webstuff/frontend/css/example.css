@@ -11,6 +11,26 @@ div.module {
 	margin: 2px;
 }
 
+div.module table tr td {
+  padding-right: 5px;
+  padding-left:  5px;
+  padding-top:   1px;
+  padding-bottom:1px;
+}
+
+div.module table tr td.mod_line_date {
+  padding-left: 15px;
+  color:   #667766;
+}
+
+div.module table tr td.mod_line_desc {
+  color: #666677;
+}
+
+div.module table tr td.mod_line_val {
+  color: #776666;
+}
+
 div.module h3.mod_headline {
   margin-top:2px;
   margin-left:2px;
