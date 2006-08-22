@@ -5,6 +5,7 @@ include_once("php_inc/modules/temp.inc.php");		/* Temp-Klasse */
 include_once("php_inc/modules/rain.inc.php");		/* Rain-Klasse */
 include_once("php_inc/modules/hum.inc.php");		/* Hum-Klasse */
 include_once("php_inc/modules/press.inc.php");		/* Press-Klasse */
+include_once("php_inc/modules/wind.inc.php");		/* Wind-Klasse */
 
 /* Representiert ein Modul */
 class Module{
@@ -17,6 +18,8 @@ class Module{
   var $tempInstance	  = NULL;	/* Temp-Instanz */
   var $rainInstance	  = NULL;	/* Rain-Instanz */
   var $humInstance	  = NULL;	/* Hum-Instanz */
+  var $windInstance	  = NULL;	/* Wind-Instanz */
+  var $pressInstance	  = NULL;	/* Press-Instanz */
 
   /* Konstruktor */
   function Module($modName, $sensId, &$parser, &$connection){
@@ -69,6 +72,13 @@ class Module{
     if($this->pressInstance == NULL)
       $this->pressInstance = new Press($this->sensId, $this->connection);
     return $this->pressInstance;
+  }
+
+  /* Instanz der Wind-Klasse holen */
+  function &_get_wind(){
+    if($this->windInstance == NULL)
+      $this->windInstance = new Wind($this->sensId, $this->connection);
+    return $this->windInstance;
   }
 
   /* Callback-Funktion, wird ausgeführt wenn {content:fill:xyz} gefunden wird */
