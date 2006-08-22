@@ -2,6 +2,7 @@
 include_once("php_inc/module.inc.php");
 include_once("php_inc/parser.inc.php");
 include_once("php_inc/connection.inc.php");
+include_once("php_inc/config.inc.php");
 
 
 /* Klasse, die die ModuleSets Verwaltet */
@@ -23,6 +24,8 @@ class ModuleSet{
 
   /* Dateinamen eines Setz aus dessen Namen zusammenbauen */
   function _getSetFilename($setName){
+    if($setName == "")
+      $setName = Config::getDefaultSet();
     return "content/module_sets/set_".$setName.".html";
   }
   

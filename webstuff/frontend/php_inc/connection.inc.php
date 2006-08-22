@@ -1,4 +1,6 @@
 <?
+include_once("php_inc/config.inc.php");
+
 /* Connection-Klasse..ist für die Datenbankverbindung zuständig */
 class Connection{
 
@@ -12,7 +14,7 @@ class Connection{
   /* Verbindung herstellen (wenn noch net besteht)*/
   function _createConn(){
     if($this->conn == NULL){
-      $this->conn = pg_connect("host=141.30.228.39 dbname=wetter user=losinshi")
+      $this->conn = pg_connect(Config::getPgConnString())
         or die('Verbindungsaufbau fehlgeschlagen: ' . pg_last_error());
     }
   }
