@@ -1,0 +1,20 @@
+<h3 class="mod_headline">Wind - {content:fill:sens_location}</h3>
+<p class="mod_description">{content:fill:sens_description}</p>
+<h4 class="mod_subhead">Momentane Werte</h4>
+<table class="mod_wind_now_data">
+  <tr class="mod_wind_current_row">
+    <td class="mod_line_desc">Momentan:</td><td class="mod_line_val">{content:fill:wind_now_val} <sup>km</sup>/<sub>h</sub></td><td class="mod_line_dir">Aus: {content:fill:wind_now_dir_full}</td><td class="mod_line_date">{content:fill:wind_now_date}</td>
+  </tr>
+  <tr class="mod_wind_average_row">
+    <td class="mod_line_desc">Durchschnitt ({content:fill:wind_av_interval} min.):</td><td class="mod_line_val">{content:fill:wind_av_value} <sup>km</sup>/<sub>h</sub></td><td>&nbsp;</td>
+  </tr>
+  <tr class="mod_wind_moving_row">
+    <td class="mod_line_desc">Tendenz (2 std.):</td><td class="mod_line_mov_val" colspan=3>{content:fill:wind_changing}</td><td>&nbsp;</td>
+  </tr>
+</table>
+<h4 class="mod_subhead">Extrema</h4>
+<table>
+  <tr class="mod_wind_max_row">
+  <td class="mod_line_desc">Max:</td><td class="mod_line_val">{content:fill:wind_max_val} <sup>km</sup>/<sub>h</sub></td><td class="mod_line_dir">Aus: {content:fill:wind_max_dir_full}</td><td class="mod_line_date">{content:fill:wind_max_date}</td>
+  </tr>
+</table>

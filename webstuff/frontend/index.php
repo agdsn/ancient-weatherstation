@@ -5,7 +5,7 @@
 <html>
   <head>
     <title>Wetter-Testfile</title>
-    <link rel="styleshee-" type="text/css" href="css/main1.css">
+    <link rel="stylesheet" type="text/css" href="css/example.css">
   </head>
   <body>
     <h1>Wetter-Testfile</h1>
