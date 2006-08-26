@@ -399,6 +399,7 @@ server_vars *get_default_servopts(){
 }
 
 
+/* Statusmeldungen zurueckgeben */
 const char *get_mail_status_text(int error_no){
   switch (error_no){
     case MAILER_STATUS_OK:
