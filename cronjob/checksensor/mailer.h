@@ -113,3 +113,4 @@ server_vars *get_default_servopts();
 
 /* Liefert einen Text zur Statusmeldung */
 const char *get_mail_status_text(int error_no);
+

@@ -33,7 +33,6 @@
 #include <libesmtp.h>
 #include <auth-client.h>
 #include <openssl/ssl.h>
-#include "definitions.h"
 #include "mailer.h"
 
 #define BUFFSIZE 2048
@@ -41,6 +40,23 @@
 #define TO_LINE "To: "
 #define CC_LINE "Cc: "
 #define BCC_LINE "Bcc: "
+
+/* Debug --------------------------------------------------------------- */
+#ifdef DEBUG
+  #define DEBUGOUT1(x)         fprintf(stderr,x)
+  #define DEBUGOUT2(x,y)       fprintf(stderr,x,y)
+  #define DEBUGOUT3(x,y,z)     fprintf(stderr,x,y,z)
+  #define DEBUGOUT4(x,y,z,a)   fprintf(stderr,x,y,z,a)
+  #define DEBUGOUT5(x,y,z,a,b) fprintf(stderr,x,y,z,a,b)
+  #define FOR(x)               for(x)
+#else
+  #define DEBUGOUT1(x)
+  #define DEBUGOUT2(x,y)
+  #define DEBUGOUT3(x,y,z)
+  #define DEBUGOUT4(x,y,z,a)
+  #define DEBUGOUT5(x,y,z,a,b)    
+  #define FOR(x) 
+#endif  
 
 
 /* Funktionen */
