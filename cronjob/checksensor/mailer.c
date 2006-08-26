@@ -52,9 +52,6 @@ static int add_recipients(smtp_message_t , address_struct *);
 static void event_cb (smtp_session_t , int , void *,...);   
 static int default_auth_cb (auth_client_request_t , char **, int , void *);
 
-/* Variablen */
-
-
 
 /* Funktion zum versenden von Mails */
 int mail_message(address_all_struct *addresses,  char *subject, int eightbit, mail_linereader_cb line_read_cb, server_vars *servopts){
@@ -70,7 +67,7 @@ int mail_message(address_all_struct *addresses,  char *subject, int eightbit, ma
   const smtp_status_t *status	= NULL;					/* Uebertragungsstatus */
 
   if(servopts == NULL)
-    return 0;
+    return MAILER_STATUS_FAILTURE_SERVOPTS_MISSING;
 
   if(addresses->from == NULL){						/* Wenn absenderstruktur nicht gesetzt ist */
     addresses->from = malloc(sizeof(address_struct));			/* Dann speicher allokieren */
@@ -83,10 +80,11 @@ int mail_message(address_all_struct *addresses,  char *subject, int eightbit, ma
   }
 
   if((fd = tmpfile()) == NULL)						/* Temporäre Datei anlegen */
-    return 0;
+    return MAILER_STATUS_FAILTURE_TEMPFILE_CREATE;
 
-  build_header(addresses->from, addresses->to, addresses->cc, addresses->bcc, subject, fd);	/* Header in die Temporäre Datei schreiben */
-  
+  if(!build_header(addresses->from, addresses->to, addresses->cc, addresses->bcc, subject, fd))	/* Header in die Temporäre Datei schreiben */
+    return MAILER_STATUS_FAILTURE_CREATE_HEADER;  
+
   i = 0;
   while((buf = line_read_cb(i)) != NULL){		 		/* Solange die Callbackfunktion einen Zeiger auf einen Puffer liefert */
     fputs(buf, fd);							/* Schreibe dessen Inhalt in eine Datei */
@@ -94,7 +92,7 @@ int mail_message(address_all_struct *addresses,  char *subject, int eightbit, ma
   }
 
   if((session = smtp_create_session()) == NULL)				/* SMTP - Session erstellen */
-    return 0;
+    return MAILER_STATUS_FAILTURE_SESSION_CREATE;
 
   switch (servopts->ssl_use) {						/* gucken ob SSL benutzt werden soll */
     case SSL_ENABLED:
@@ -114,11 +112,11 @@ int mail_message(address_all_struct *addresses,  char *subject, int eightbit, ma
   DEBUGOUT2("SMTP: Send Mail over: \"%s\"\n",hostportstr);
 
   if(!smtp_set_server(session, hostportstr))				/* Den Server fuer die Übertragung setzen */
-    return 0;
+    return MAILER_STATUS_FAILTURE_SETSERVER;
 
   if (servopts->auth_use) {						/* Wenn Authentifizierung eingeschaltet */
     if ((authctx = auth_create_context ()) == NULL)			/* Authentifizierungskontext erstellen */
-      return 0;
+      return MAILER_STATUS_FAILTURE_CREATEAUTHCTX;
     auth_set_mechanism_flags (authctx, AUTH_PLUGIN_PLAIN, 0);		/* Plain-Text-Plugin auswählen */
     if(servopts->auth_cb == NULL){					/* wenn keine Callback-fkt. gesetzt */
       auth_set_interact_cb (authctx, default_auth_cb, servopts);	/* dann die standart-fkt nehmen */
@@ -126,31 +124,35 @@ int mail_message(address_all_struct *addresses,  char *subject, int eightbit, ma
       auth_set_interact_cb (authctx, servopts->auth_cb, servopts);	/* die gegebene verwenden */
     }
     if (!smtp_auth_set_context (session, authctx))			/* Kontext der session übergeben */
-      return 0; 
+      return MAILER_STATUS_FAILTURE_SETAUTHCTX; 
   } 
 
   smtp_set_eventcb(session, event_cb, servopts);			/* Callbackfunktion angeben, welche die Events der Verbindung (falsches Zertifikat, ..) hanhelt */
 
   if((message = smtp_add_message(session)) == NULL)			/* Eine Nachicht zur Session hinzufügen */
-    return 0; 
+    return MAILER_STATUS_FAILTURE_ADDMESSAGE; 
 
   if(! smtp_set_reverse_path(message,addresses->from->mailbox))		/* Absenderaddresse setzen */
-    return 0;
+    return MAILER_STATUS_FAILTURE_SETREVPATH;
 
   if(eightbit)								/* Weinn eightbit-Flag gesetzt, */
     smtp_8bitmime_set_body(message, E8bitmime_8BITMIME);		/* dann das auch in der libesmtp setzen */
 
   if(!smtp_set_messagecb(message, read_mail_tmp_file, fd))		/* Callback - Funktion zum lesen der temp. Datei */
-    return 0;
+    return MAILER_STATUS_FAILTURE_SETMESSAGECB;
 
   if(!(add_recipients(message, addresses->to) &&  add_recipients(message, addresses->cc) && add_recipients(message, addresses->bcc) ) )		/* Empfänger setzen */
-    return 0;
+    return MAILER_STATUS_FAILTURE_ADDRECIPIENTS;
 
   if(!smtp_start_session(session))					/* Session Starten (Mail versenden) */
-    return 0;
+    return MAILER_STATUS_FAILTURE_STARTSESSION;
 
   status = smtp_message_transfer_status (message);			/* uebertragungsstatus holen */
   DEBUGOUT3( "SMTP: sending result: %d %s", status->code, status->text);	/* und anzeigen */
+
+  if (status->code < 200 || status->code > 299) {
+    return MAILER_STATUS_FAILTURE_SENDING;
+  }
   
   /* aufräumen */
   if(fd != NULL)
@@ -162,7 +164,7 @@ int mail_message(address_all_struct *addresses,  char *subject, int eightbit, ma
   if(authctx != NULL)
     auth_destroy_context(authctx);
 
-  return 1;
+  return MAILER_STATUS_OK;
 }
 
 
@@ -397,3 +399,35 @@ server_vars *get_default_servopts(){
 }
 
 
+const char *get_mail_status_text(int error_no){
+  switch (error_no){
+    case MAILER_STATUS_OK:
+      return "SMTP: Sending Ok";
+    case MAILER_STATUS_FAILTURE_SERVOPTS_MISSING:
+      return "SMTP: Server-options missing";
+    case MAILER_STATUS_FAILTURE_TEMPFILE_CREATE:	
+      return "SMTP: Cannot create tempfile";
+    case MAILER_STATUS_FAILTURE_SESSION_CREATE:	
+      return "SMTP: Cannot create Session";
+    case MAILER_STATUS_FAILTURE_SETSERVER:
+      return "SMTP: Cannot set server";
+    case MAILER_STATUS_FAILTURE_CREATEAUTHCTX:
+      return "SMTP: Cannot create authentification context";
+    case MAILER_STATUS_FAILTURE_SETAUTHCTX:
+      return "SMTP: Cannot set authentification context";
+    case MAILER_STATUS_FAILTURE_ADDMESSAGE:	
+      return "SMTP: Cannot add message";
+    case MAILER_STATUS_FAILTURE_SETREVPATH:	
+      return "SMTP: Cannot set from-address";
+    case MAILER_STATUS_FAILTURE_SETMESSAGECB:	
+      return "SMTP: Cannot add message-callback";
+    case MAILER_STATUS_FAILTURE_ADDRECIPIENTS:	
+      return "SMTP: Cannot add recipients";
+    case MAILER_STATUS_FAILTURE_STARTSESSION:	
+      return "SMTP: Cannot start session";
+    case MAILER_STATUS_FAILTURE_SENDING:
+      return "SMTP: Failture while sending";
+    case MAILER_STATUS_FAILTURE_CREATE_HEADER:
+      return "SMTP: Cannot create header";
+  }	
+}

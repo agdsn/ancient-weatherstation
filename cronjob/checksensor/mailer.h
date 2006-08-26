@@ -28,18 +28,38 @@
 
 #include <auth-client.h>
 
-#define SSL_ENABLED   0
-#define SSL_DISABLED  1
-#define SSL_REQUIRED  2
+/* SSL-Benutzung */
+#define SSL_ENABLED   0 			/* auf jeden Fall eingschaltet */ 
+#define SSL_DISABLED  1				/* Ausgeschaltet */
+#define SSL_REQUIRED  2				/* Wenn benötigt */
 
-#define SSL_ACCEPT    1
-#define SSL_DECLINE   0
+/* Zertifikat akzeptieren */
+#define SSL_ACCEPT    1				/* Ja */
+#define SSL_DECLINE   0				/* Nein */
 
-#define AUTH_YES      1
-#define AUTH_NO	      0
+/* Authentifizieren */
+#define AUTH_YES      1				/* Ja */
+#define AUTH_NO	      0				/* Nein */
 
-#define EINGHTBIT_Y   1
-#define EINGHTBIT_N   0
+/* eightbit setzen */
+#define EINGHTBIT_Y   1				/* ja */
+#define EINGHTBIT_N   0				/*nein */
+
+/* Rueckgabestatus */
+#define MAILER_STATUS_OK			0	/* Erfolgreich versandt */
+#define MAILER_STATUS_FAILTURE_SERVOPTS_MISSING	1	/* Server-einstellungen fehlen */
+#define MAILER_STATUS_FAILTURE_TEMPFILE_CREATE	2	/* Tempfile kann nicht angelegt werden */
+#define MAILER_STATUS_FAILTURE_SESSION_CREATE	3	/* Session kann nicht erzeugt werden */
+#define MAILER_STATUS_FAILTURE_SETSERVER	4	/* Server kann nicht gesetzt werden */
+#define MAILER_STATUS_FAILTURE_CREATEAUTHCTX	5	/* Authentifizierungskontext kann nicht angelegt werden */
+#define MAILER_STATUS_FAILTURE_SETAUTHCTX	6	/* Authentifizierungskontext kann nicht gesetzt werden */
+#define MAILER_STATUS_FAILTURE_ADDMESSAGE	7	/* Message kann nicht hinzugefügt werden */
+#define MAILER_STATUS_FAILTURE_SETREVPATH	8	/* Serveraddresse kann nicht gesetzt werden */
+#define MAILER_STATUS_FAILTURE_SETMESSAGECB	9	/* Message-Callback-fkt kann nicht gesetzt werden */
+#define MAILER_STATUS_FAILTURE_ADDRECIPIENTS	10	/* Empfaenger kkoennen nicht hinzugefügt werden */
+#define MAILER_STATUS_FAILTURE_STARTSESSION	11	/* Session kann nicht gestartet werden */
+#define MAILER_STATUS_FAILTURE_SENDING		12 	/* Fehler beim senden */
+#define MAILER_STATUS_FAILTURE_CREATE_HEADER	13	/* Header kann nicht gebaut werden */
 
 
 /* Die Callback-fkt. zum lesen einer Zeile. das Argument ist die momentane Zeilennummer (beginnend bei 0) */
@@ -81,10 +101,15 @@ typedef struct server_vars_t {
  * 2. Argument: Betreff der Nachicht
  * 3. Argument: eightbit-flag setzen oder nicht 
  * 4. Argument: Callback-Fkt. zum lesen einer Zeile
- * 5. Argument: Server-Einstellungen */
+ * 5. Argument: Server-Einstellungen 
+ * gibt einen Statusnummer zurueck */
 int mail_message(address_all_struct *,  char *, int, mail_linereader_cb, server_vars *);
 
 
 /* Gibt ein grundgerüst mit default-servereinstellungen
  * zurueck, damit man nicht immer alles selbst angeben muss */
 server_vars *get_default_servopts();
+
+
+/* Liefert einen Text zur Statusmeldung */
+const char *get_mail_status_text(int error_no);
