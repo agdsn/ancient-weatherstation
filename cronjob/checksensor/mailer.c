@@ -14,10 +14,6 @@
 #define CC_LINE "Cc: "
 #define BCC_LINE "Bcc: "
 
-/* Test */
-FILE * ft = NULL;
-char *bufft = NULL;
-
 
 /* Funktionen */
 static int build_header( address_struct *,   address_struct *,  address_struct *,  address_struct *, char *, FILE *);
@@ -26,6 +22,7 @@ static char * gen_address_line(char *, const char *, address_struct *);
 static const char *read_mail_tmp_file (void **, int *, void *);
 static int add_recipients(smtp_message_t , address_struct *);
 static void event_cb (smtp_session_t , int , void *,...);   
+static int default_auth_cb (auth_client_request_t , char **, int , void *);
 
 /* Variablen */
 
@@ -34,12 +31,15 @@ static void event_cb (smtp_session_t , int , void *,...);
 /* Funktion zum versenden von Mails */
 int mail_message(address_all_struct *addresses,  char *subject, int eightbit, mail_linereader_cb line_read_cb, server_vars *servopts){
   
-  FILE *fd = NULL;							/* Zeiger auf Temporaere Datei */
-  int i;								/* Laufvariable */
-  char *buf;								/* Puffer zum anlegen der temp. Datei */
-  smtp_session_t session;						/* SMTP - Session */
-  smtp_message_t message;						/* SMTP - Message */
-  const smtp_status_t *status;						/* Uebertragungsstatus */
+  FILE *fd 			= NULL;					/* Zeiger auf Temporaere Datei */
+  int i				= 0;					/* Laufvariable */
+  char *buf			= NULL;					/* Puffer zum anlegen der temp. Datei */
+  char *hostportstr		= NULL;					/* host:port */
+  int hostportlen		= 0;					/* strlen(host:port) */
+  smtp_session_t session 	= NULL;					/* SMTP - Session */
+  smtp_message_t message 	= NULL;					/* SMTP - Message */
+  auth_context_t authctx	= NULL;					/* Kontext zum authentifizieren */
+  const smtp_status_t *status	= NULL;					/* Uebertragungsstatus */
 
   if(servopts == NULL)
     return 0;
@@ -80,9 +80,26 @@ int mail_message(address_all_struct *addresses,  char *subject, int eightbit, ma
       break;
   }
 
+  hostportlen = strlen(servopts->host)+7;				/* (hostnamlen + doppelpkt + max-portlen (65536 => 5 zeichen) + Nullterm.szeichen */
+  hostportstr = malloc(sizeof(char)*hostportlen);			/* Speicher fuer host:port belegen */
+  snprintf(hostportstr, hostportlen, "%s:%d", servopts->host, servopts->port); 	/* host:port zusammenbauen */
+  DEBUGOUT2("SMTP: Send Mail over: \"%s\"\n",hostportstr);
 
-  if(!smtp_set_server(session, "atlantis.wh2.tu-dresden.de:25"))	/* Den Server für die Übertragung setzen */
+  if(!smtp_set_server(session, hostportstr))				/* Den Server fuer die Übertragung setzen */
     return 0;
+
+  if (servopts->auth_use) {						/* Wenn Authentifizierung eingeschaltet */
+    if ((authctx = auth_create_context ()) == NULL)			/* Authentifizierungskontext erstellen */
+      return 0;
+    auth_set_mechanism_flags (authctx, AUTH_PLUGIN_PLAIN, 0);		/* Plain-Text-Plugin auswählen */
+    if(servopts->auth_cb == NULL){					/* wenn keine Callback-fkt. gesetzt */
+      auth_set_interact_cb (authctx, default_auth_cb, servopts);	/* dann die standart-fkt nehmen */
+    } else {								/* sonst */
+      auth_set_interact_cb (authctx, servopts->auth_cb, servopts);	/* die gegebene verwenden */
+    }
+    if (!smtp_auth_set_context (session, authctx))			/* Kontext der session übergeben */
+      return 0; 
+  } 
 
   smtp_set_eventcb(session, event_cb, servopts);			/* Callbackfunktion angeben, welche die Events der Verbindung (falsches Zertifikat, ..) hanhelt */
 
@@ -91,6 +108,9 @@ int mail_message(address_all_struct *addresses,  char *subject, int eightbit, ma
 
   if(! smtp_set_reverse_path(message,addresses->from->mailbox))		/* Absenderaddresse setzen */
     return 0;
+
+  if(eightbit)								/* Weinn eightbit-Flag gesetzt, */
+    smtp_8bitmime_set_body(message, E8bitmime_8BITMIME);		/* dann das auch in der libesmtp setzen */
 
   if(!smtp_set_messagecb(message, read_mail_tmp_file, fd))		/* Callback - Funktion zum lesen der temp. Datei */
     return 0;
@@ -104,6 +124,16 @@ int mail_message(address_all_struct *addresses,  char *subject, int eightbit, ma
   status = smtp_message_transfer_status (message);			/* uebertragungsstatus holen */
   DEBUGOUT3( "SMTP: sending result: %d %s", status->code, status->text);	/* und anzeigen */
   
+  /* aufräumen */
+  if(fd != NULL)
+    fclose(fd);
+  if(hostportstr != NULL)
+    free(hostportstr);
+  if(session != NULL)
+    smtp_destroy_session(session);
+  if(authctx != NULL)
+    auth_destroy_context(authctx);
+
   return 1;
 }
 
@@ -221,137 +251,121 @@ static int add_recipients(smtp_message_t message, address_struct *address){
   return 1;
 }
 
-static void event_cb (smtp_session_t session, int event_no, void *arg,...){   
-  va_list alist;
-  int *ok;
-  server_vars *servopt = NULL;
 
-  va_start(alist, arg);
-  servopt = (server_vars*)arg;
-  switch(event_no) {
-    case SMTP_EV_CONNECT:
-    case SMTP_EV_MAILSTATUS:
-    case SMTP_EV_RCPTSTATUS:
-    case SMTP_EV_MESSAGEDATA:
-    case SMTP_EV_MESSAGESENT:
-    case SMTP_EV_DISCONNECT: 
+/* Event-Callback-Funktion.
+ * Die wird von der Libsmtp aufgerufen wenn während der Session irgend etwas
+ * (unabhöngig ob gut oder nicht gut) passiert. 
+ * dadurch hat man die Möglichkeit auf solche Ereignisse zu reagieren */
+static void event_cb (smtp_session_t session, int event_no, void *arg,...){   
+  va_list alist;							/* Argumentliste */
+  int *ok;								/* Rueckgabewert an die lib */
+  server_vars *servopt = NULL;						/* Server-Optionen, um zu entscheiden was bei einem Event getan werden soll */
+
+  va_start(alist, arg);							/* Argumentliste initialisieren */
+  servopt = (server_vars*)arg;						/* Server-Optionen zuweisen */
+  switch(event_no) {							/* Eventnummer feststellen */
+    case SMTP_EV_CONNECT:						/* ignorieren */
+    case SMTP_EV_MAILSTATUS:						/* ignorieren */
+    case SMTP_EV_RCPTSTATUS:						/* ignorieren */
+    case SMTP_EV_MESSAGEDATA:						/* ignorieren */
+    case SMTP_EV_MESSAGESENT:						/* ignorieren */
+    case SMTP_EV_DISCONNECT: 						/* ignorieren */
       break;
-    case SMTP_EV_WEAK_CIPHER: {
-      int bits;
-      bits = va_arg(alist, long); 
-      ok = va_arg(alist, int*);
+    case SMTP_EV_WEAK_CIPHER: {						/* Schwache Verschluesslung */
+      int bits;								/* Anzahl der Verschluesslungsbits */
+      bits = va_arg(alist, long); 					/* aus atgliste holen und zuweisen */
+      ok = va_arg(alist, int*);						/* rueckgabezeiger bekommen */
       DEBUGOUT3("SMTP: Weak cipher! bits:%d continue: %d\n", bits, servopt->ssl_ctx_peer_wrong);
-      *ok = servopt->ssl_weak_cipher; 
+      *ok = servopt->ssl_weak_cipher; 					/* rueckgabewert setzen */
       break;
     }
-    case SMTP_EV_STARTTLS_OK: {
+    case SMTP_EV_STARTTLS_OK: {						/* TLS wird benutzt */
       DEBUGOUT1("SMTP: Starting using TLS ... OK\n");
       break;
     }
-    case SMTP_EV_INVALID_PEER_CERTIFICATE: {
-      long vfy_result;            
+    case SMTP_EV_INVALID_PEER_CERTIFICATE: {				/* Ungueltiges Server-Zertifikat */
+      long vfy_result;            					/* prüfungs-resultat */
       vfy_result = va_arg(alist, long); 
       ok = va_arg(alist, int*);
       DEBUGOUT3("SMTP: Invalid peer certificate! verify-Result: %d continue: %d\n", vfy_result,  servopt->ssl_ctx_peer_invalid);
-      *ok = servopt->ssl_ctx_peer_invalid;
+      *ok = servopt->ssl_ctx_peer_invalid;				/* rueckgabewert setzen */
       break;
     }
-    case SMTP_EV_NO_PEER_CERTIFICATE: {
+    case SMTP_EV_NO_PEER_CERTIFICATE: {					/* kein Server-Zertifikat */
       ok = va_arg(alist, int*); 
       DEBUGOUT2("SMTP: No peer certificate! continue: %d\n", servopt->ssl_ctx_peer_no);
-      *ok = servopt->ssl_ctx_peer_no; 
+      *ok = servopt->ssl_ctx_peer_no; 					/* rueckgabewert setzen */
       break;
     }
-    case SMTP_EV_WRONG_PEER_CERTIFICATE: {
+    case SMTP_EV_WRONG_PEER_CERTIFICATE: {				/* falsches Server-Zertifikat */
       ok = va_arg(alist, int*);
       DEBUGOUT2("SMTP: Wrong peer certificate! continue: %d\n", servopt->ssl_ctx_peer_wrong);
-      *ok = servopt->ssl_ctx_peer_wrong; 
+      *ok = servopt->ssl_ctx_peer_wrong; 				/* rueckgabewert setzen */
       break;
     }
-    case SMTP_EV_NO_CLIENT_CERTIFICATE: {
+    case SMTP_EV_NO_CLIENT_CERTIFICATE: {				/* kein Client-Zertifikat */
       ok = va_arg(alist, int*);
       DEBUGOUT2("SMTP: No client certificate! continue: %d\n", servopt->ssl_ctx_peer_wrong);
-      *ok = servopt->ssl_ctx_client_no; 
+      *ok = servopt->ssl_ctx_client_no; 				/* rueckgabewert setzen */
       break;       
     }
-    case SMTP_EV_EXTNA_DSN: {
+    case SMTP_EV_EXTNA_DSN: {						/* DSN ist nicht verfuegbar */
       DEBUGOUT1("SMTP: Extension DSN not supportet by MTA\n");
       break;
     }
-    case SMTP_EV_EXTNA_STARTTLS: {
+    case SMTP_EV_EXTNA_STARTTLS: {					/* StartTLS ist nicht verfuegbar */
       DEBUGOUT1("SMTP: Extension StartTLS not supportet by MTA\n");
       break;
     }
-    case SMTP_EV_EXTNA_8BITMIME: {
+    case SMTP_EV_EXTNA_8BITMIME: {					/* 8BITMIME ist nicht verfuegbar */
       DEBUGOUT1("SMTP: Extension 8BITMIME not supportet by MTA\n");
       break;
     }
-    default:
+    default:								/* was unbekanntes ist angekommen */
       DEBUGOUT2("SMTP: Unhandled event ID: %d - ignored\n", event_no);
   }
   va_end(alist);
 }
 
 
+/* Wird genutzt, wenn keine andere Callback-fkt definiert ist.
+ * Setzt die in den serveropts liegenden daten (user + passwd) */
+static int default_auth_cb (auth_client_request_t request, char **result, int fields, void *arg){
+  int i;								/* Laufvariable */
+
+  DEBUGOUT1("SMTP: Authenticating...");
+
+  for (i = 0; i < fields; i++) {					/* Felder durchlaufen */
+    if (request[i].flags & AUTH_USER) {					/* Wenn username erfragt wird */
+      result[i] = ((server_vars *)arg)->auth_user;			/* dann den übergeben */
+    } 
+    else if (request[i].flags & AUTH_PASS) {				/* wenn nach Passwort gefragt wird */
+      result[i] = ((server_vars *)arg)->auth_pass;			/* dann das übergeben */
+    }
+  }
+
+  DEBUGOUT1("OK\n");
+
+  return 1;
+}
+
+
+/* Liefert ein Standart-options-Objekt,
+ * damit nicht immer jede Option einzeln gesetzt werden muss */
 server_vars *get_default_servopts(){
-  server_vars *servopts = malloc(sizeof(server_vars));
-  servopts->host 			= "localhost";
-  servopts->port 			= 25;
-  servopts->ssl_use 			= SSL_REQUIRED;
-  servopts->ssl_weak_cipher 		= SSL_ACCEPT;
-  servopts->ssl_ctx_client_no 		= SSL_ACCEPT;
-  servopts->ssl_ctx_peer_no 		= SSL_ACCEPT;
-  servopts->ssl_ctx_peer_wrong 		= SSL_ACCEPT;
-  servopts->ssl_ctx_peer_invalid 	= SSL_ACCEPT;
-  servopts->auth_use			= AUTH_NO;
-  servopts->auth_user			= NULL;
-  servopts->auth_pass			= NULL;
+  server_vars *servopts = malloc(sizeof(server_vars));			/* Speicher belegen */
+  servopts->host 			= "localhost";			/* default-host */
+  servopts->port 			= 25;				/* default-Port */
+  servopts->ssl_use 			= SSL_REQUIRED;			/* soll ssl benutzt werden ? */
+  servopts->ssl_weak_cipher 		= SSL_ACCEPT;			/* was bei schwacher Verschluesselung */
+  servopts->ssl_ctx_client_no 		= SSL_ACCEPT;			/* was bei fehlendem client-zertifikat */
+  servopts->ssl_ctx_peer_no 		= SSL_ACCEPT;			/* was bei fehlendem server-zertifikat */
+  servopts->ssl_ctx_peer_wrong 		= SSL_ACCEPT;			/* was bei falschem server-zertifikat */
+  servopts->ssl_ctx_peer_invalid 	= SSL_ACCEPT;			/* was bei ungueltigem server-zertifikat */
+  servopts->auth_use			= AUTH_NO;			/* soll authentifiziert werden */
+  servopts->auth_cb			= NULL;				/* Auth-Callback-fkt */
+  servopts->auth_user			= NULL;				/* default-user */
+  servopts->auth_pass			= NULL;				/* default-password */
 }
 
-
-static char * test_read(int line){
-  if(bufft == NULL)
-    bufft = malloc(sizeof(char)*1024);
-  return fgets(bufft, 1024, ft);
-}
-
-main(char argc[], int arglen){
-  printf("%s\n", gen_from_mailbox());
-
-  printf("lege Strukturen an...\n");
-  address_struct *to, *cc, *bcc;
-  to = malloc(sizeof(address_struct));
-  to->mailbox = "losinski@wh2.tu-dresden.de";
-  to->next = NULL;
-/*  to->next = malloc(sizeof(address_struct));
-  to->next->mailbox = "jooschi@wh2.tu-dresden.de";
-  to->next->next = NULL;*/
-  cc = malloc(sizeof(address_struct));
-  cc->mailbox = "losinski@wh2.tu-dresden.de";
-  cc->next = NULL;
-  bcc = malloc(sizeof(address_struct));
-  bcc->mailbox = "losinski@wh2.tu-dresden.de";
-  bcc->next = NULL;
-
-  address_all_struct adr;
-  adr.from = NULL;
-  adr.to = to;
-  adr.cc = NULL;//cc;
-  adr.bcc = NULL;//bcc;
-
-  server_vars *servo = get_default_servopts(); 
-  //servo->ssl_use = SSL_ENABLED;
-  //servo->ssl_use = SSL_DISABLED;
-  servo->host = "atlantis.wh2.tu-dresden.de";
-  servo->port = 465;
-
-  ft = fopen("test_data", "r");
-  rewind(ft);
-printf("rufe mail_message auf...\n");
- mail_message( &adr,  "Powered by libesmtp", 0, test_read, servo);
-  
-
-  printf("fertig...\n");
-  exit(0);
-}
 

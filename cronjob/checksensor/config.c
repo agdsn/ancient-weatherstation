@@ -32,6 +32,7 @@
 #include "config.h"
 #include "definitions.h"
 #include "main.h"
+#include "mailer.h"
 
 
 
