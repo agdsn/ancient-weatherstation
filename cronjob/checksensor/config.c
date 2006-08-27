@@ -32,12 +32,12 @@
 #include "config.h"
 #include "definitions.h"
 #include "main.h"
-#include "mailer.h"
+//#include "mailer.h"
 
 
 
-static int set_interval(const char *, void *);
-static int set_from_db_flag(const char *, void *);
+static int read_int(const char *, void *);
+static int read_yn(const char *, void *);
 static int add_sens_id(const char *, void *);
 static int add_address(const char *, void *);
 static int read_str(const char *, void *);
@@ -47,10 +47,18 @@ static int read_str(const char *, void *);
  * und dem eld in der Options-Struktur */
 static const struct config_keyword keywords[] = {
   /* keyword		handler  	 	variable address			default */
-  {"checkinterval",	set_interval,  		&(global_opts.interval),		DEFAULT_CHECK_INTERVAL},
-  {"sensorid_from_db",	set_from_db_flag, 	&(global_opts.id_from_db), 		"yes"},
+  {"checkinterval",	read_int,  		&(global_opts.interval),		DEFAULT_CHECK_INTERVAL},
+  {"sensorid_from_db",	read_yn,	 	&(global_opts.id_from_db), 		"yes"},
   {"sensorid",		add_sens_id,	 	&(global_opts.sens_id_list), 		NULL},
   {"adminaddress",	add_address,	 	&(global_opts.address_list), 		NULL},
+
+  {"mail_host",         read_str,               &(global_opts.mail_host),         	NULL},
+  {"mail_port",         read_int,               &(global_opts.mail_port),         	NULL},
+  {"mail_use_ssl",      read_yn,                &(global_opts.mail_ssl),         	NULL},
+  {"mail_use_auth",     read_yn,                &(global_opts.mail_auth),         	NULL},
+  {"mail_auth_user",    read_str,               &(global_opts.mail_auth_user),         	NULL},
+  {"mail_auth_pass",    read_str,               &(global_opts.mail_auth_pass),         	NULL},
+  
   {"pg_host",           read_str,               &(global_opts.pg_host),         	DEFAULT_PG_HOST},
   {"pg_user",           read_str,               &(global_opts.pg_user),         	DEFAULT_PG_USER},
   {"pg_pass",           read_str,               &(global_opts.pg_pass),         	DEFAULT_PG_PASS},
@@ -69,13 +77,13 @@ static int read_str(const char *line, void *arg){
 
 
 /* Interval lesen, indem die Sensoren das letzte mal etwas gesendet haben sollen */
-static int set_interval(const char *line, void *arg){
+static int read_int(const char *line, void *arg){
   int *dest = arg;
   *dest = atoi(line);
 }
 
 /* lesen, ob id's aus der Datenbank gelesen werden sollen oder nicht */
-static int set_from_db_flag(const char *line, void *arg){
+static int read_yn(const char *line, void *arg){
   char *dest = arg;
   int retval = 1;
   if (!strcasecmp("yes", line))
@@ -118,9 +126,9 @@ static int add_address(const char *line, void *arg){
   } else {
     mail_list_ptr adr_new, adr_temp;
 
-    adr_new = malloc(sizeof(mail_address));
+    adr_new = malloc(sizeof(address_struct));
     adr_new->next = NULL;
-    adr_new->address = strdup(line);
+    adr_new->mailbox = strdup(line);
 
     adr_temp = *((mail_list_ptr*)arg);
     if (adr_temp == NULL){

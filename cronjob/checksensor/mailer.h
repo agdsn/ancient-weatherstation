@@ -67,7 +67,7 @@ typedef char *(mail_linereader_cb)(int line);
 
 /* Datenstruktur für die Addressliste */
 typedef struct address_t {
-  char *mailbox;                		/* mail-Addresse */
+  char 		   *mailbox;          		/* mail-Addresse */
   struct address_t *next;			/* Zeiger auf das nächste Element */
 } address_struct;
 
