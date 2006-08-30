@@ -31,7 +31,7 @@
 
 #include "config.h"
 #include "definitions.h"
-#include "main.h"
+#include "checksensor.h"
 //#include "mailer.h"
 
 
@@ -49,15 +49,15 @@ static const struct config_keyword keywords[] = {
   /* keyword		handler  	 	variable address			default */
   {"checkinterval",	read_int,  		&(global_opts.interval),		DEFAULT_CHECK_INTERVAL},
   {"sensorid_from_db",	read_yn,	 	&(global_opts.id_from_db), 		"yes"},
-  {"sensorid",		add_sens_id,	 	&(global_opts.sens_id_list), 		NULL},
-  {"adminaddress",	add_address,	 	&(global_opts.address_list), 		NULL},
+  {"sensorid",		add_sens_id,	 	&(global_opts.sens_id_list), 		""},
+  {"adminaddress",	add_address,	 	&(global_opts.address_list), 		""},
 
-  {"mail_host",         read_str,               &(global_opts.mail_host),         	NULL},
-  {"mail_port",         read_int,               &(global_opts.mail_port),         	NULL},
-  {"mail_use_ssl",      read_yn,                &(global_opts.mail_ssl),         	NULL},
-  {"mail_use_auth",     read_yn,                &(global_opts.mail_auth),         	NULL},
-  {"mail_auth_user",    read_str,               &(global_opts.mail_auth_user),         	NULL},
-  {"mail_auth_pass",    read_str,               &(global_opts.mail_auth_pass),         	NULL},
+  {"mail_host",         read_str,               &(global_opts.mail_host),         	""},
+  {"mail_port",         read_int,               &(global_opts.mail_port),         	""},
+  {"mail_use_ssl",      read_yn,                &(global_opts.mail_ssl),         	""},
+  {"mail_use_auth",     read_yn,                &(global_opts.mail_auth),         	""},
+  {"mail_auth_user",    read_str,               &(global_opts.mail_auth_user),         	""},
+  {"mail_auth_pass",    read_str,               &(global_opts.mail_auth_pass),         	""},
   
   {"pg_host",           read_str,               &(global_opts.pg_host),         	DEFAULT_PG_HOST},
   {"pg_user",           read_str,               &(global_opts.pg_user),         	DEFAULT_PG_USER},
@@ -159,6 +159,7 @@ int read_config(const char *file, int reset){
   /* Optionen mit default-werten füllen */
   if(reset){
     for (i = 0; keywords[i].keyword[0]; i++)
+    //printf("keyword: %s \n",keywords[i].keyword);
       if (keywords[i].def[0])
         keywords[i].handler(keywords[i].def, keywords[i].var);
   }
