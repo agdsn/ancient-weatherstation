@@ -18,7 +18,6 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-   $Id: process.c v 1.00 11 Aug 2006 losinski $
 */
 
 
@@ -108,27 +107,39 @@ static void get_sensors_from_db(){
   connection = NULL;
 }
 
-static int count_data_by_sensor_id(PGconn *connection, int sens_id){
-  int table_field;
-  int count_field;
-  char *query_buff 	= malloc(sizeof(char)*BUFFSIZE);
+static char *get_type_table_by_id(PGconn *connection, int sens_id){
   char *table;
-  int count;
+  int table_field;
   PGresult *table_res;
-  PGresult *count_res;
-
-  DEBUGOUT2("\nPrüfe Sensor mit ID: %d ... \n",sens_id);
+  char *query_buff 	= malloc(sizeof(char)*BUFFSIZE);
 
   snprintf(query_buff, BUFFSIZE, "select typen.tabelle as tbl FROM typen, sensoren WHERE sensoren.id=%d AND typen.typ=sensoren.typ", sens_id);
   table_res = pg_check_exec(connection, query_buff);
   
   if(PQntuples(table_res) < 1)
-    return -1;
+    return NULL;
   
   table_field = PQfnumber(table_res, "tbl");
-  table       = PQgetvalue(table_res, 0, table_field);
+  table       = strdup(PQgetvalue(table_res, 0, table_field));
   
   DEBUGOUT2("\tTabelle: %s \n", table);
+
+  PQclear(table_res);
+  free(query_buff);
+
+  return table;
+}
+
+static int count_data_by_sensor_id(PGconn *connection, int sens_id){
+  int count_field;
+  char *table;
+  char *query_buff 	= malloc(sizeof(char)*BUFFSIZE);
+  int count;
+  PGresult *count_res;
+
+  DEBUGOUT2("\nPrüfe Sensor mit ID: %d ... \n",sens_id);
+
+  table = get_type_table_by_id(connection, sens_id);
 
   snprintf(query_buff, BUFFSIZE, "SELECT count(sens_id) as num FROM %s WHERE sens_id=%d AND timestamp>(current_timestamp - INTERVAL '%d hours')",table, sens_id, global_opts.interval);
   count_res = pg_check_exec(connection, query_buff);
@@ -142,13 +153,49 @@ static int count_data_by_sensor_id(PGconn *connection, int sens_id){
   DEBUGOUT3("\tWerte in den letzten %d Stunden: %d\n", global_opts.interval, count);
 
   PQclear(count_res);
-  PQclear(table_res);
+  free(table);
   free(query_buff);
 
   return count;
 }
 
+static sens_info_list_ptr get_sensor_info(PGconn *conn, int id, int count){
+  sens_info_list_ptr new_info;
+  PGresult *res;
+  int typ_desc_field;
+  int sens_desc_field;
+  int sens_loc_field;
+  char *sens_desc;
+  char *type_desc;
+  char *sens_location;
+  char *query_buff 	= malloc(sizeof(char)*BUFFSIZE);
+  
+  snprintf(query_buff, BUFFSIZE, "SELECT typen.bezeichnung as type_desc, sensoren.standort as sens_location, sensoren.beschreibung as sens_desc FROM sensoren, typen WHERE sensoren.id=%d AND typen.typ=sensoren.typ",id);
+  res = pg_check_exec(conn, query_buff);
 
+  if(PQntuples(res) < 1)
+    return NULL;
+  
+  typ_desc_field  = PQfnumber(res, "type_desc");
+  sens_desc_field = PQfnumber(res, "sens_desc");
+  sens_loc_field  = PQfnumber(res, "sens_location");
+
+
+  new_info = malloc(sizeof(sensor_info));
+  
+
+  new_info->id            = id;
+  new_info->count         = count;
+  new_info->type_desc     = strdup(PQgetvalue(res, 0, typ_desc_field));
+  new_info->sens_desc     = strdup(PQgetvalue(res, 0, sens_desc_field));
+  new_info->sens_location = strdup(PQgetvalue(res, 0, sens_loc_field));
+  new_info->next          = NULL;
+
+  PQclear(res);
+  free(query_buff);
+
+  return new_info;
+}
 
 static int check_sensors(){
   sens_id_list_ptr temp_ptr = global_opts.sens_id_list;
@@ -158,7 +205,7 @@ static int check_sensors(){
 
   for(;temp_ptr ; temp_ptr = temp_ptr->next){
     if((count = count_data_by_sensor_id(connection, temp_ptr->id)) < global_opts.sendings){
-      
+       
     } else {
       DEBUGOUT2("\tSensor mit ID %d scheint ok zu sein\n", temp_ptr->id);
     }

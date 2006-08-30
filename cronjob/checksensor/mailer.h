@@ -62,8 +62,10 @@
 #define MAILER_STATUS_FAILTURE_CREATE_HEADER	13	/* Header kann nicht gebaut werden */
 
 
-/* Die Callback-fkt. zum lesen einer Zeile. das Argument ist die momentane Zeilennummer (beginnend bei 0) */
-typedef char *(mail_linereader_cb)(int line);
+/* Die Callback-fkt. zum lesen einer Zeile. 
+ * das 1. Argument ist die momentane Zeilennummer (beginnend bei 0) 
+ * das 2. Argument ist das Argument, welches der mail_message-fkt. uebergeben wurde */
+typedef char *(mail_linereader_cb)(int line, void *arg);
 
 /* Datenstruktur für die Addressliste */
 typedef struct address_t {
@@ -101,9 +103,10 @@ typedef struct server_vars_t {
  * 2. Argument: Betreff der Nachicht
  * 3. Argument: eightbit-flag setzen oder nicht 
  * 4. Argument: Callback-Fkt. zum lesen einer Zeile
- * 5. Argument: Server-Einstellungen 
+ * 5. Argument: Argument für die Callback-Fkt.
+ * 6. Argument: Server-Einstellungen 
  * gibt einen Statusnummer zurueck */
-int mail_message(address_all_struct *,  char *, int, mail_linereader_cb, server_vars *);
+int mail_message(address_all_struct *,  char *, int, mail_linereader_cb, void *, server_vars *);
 
 
 /* Gibt ein grundgerüst mit default-servereinstellungen

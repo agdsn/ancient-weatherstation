@@ -70,7 +70,7 @@ static int default_auth_cb (auth_client_request_t , char **, int , void *);
 
 
 /* Funktion zum versenden von Mails */
-int mail_message(address_all_struct *addresses,  char *subject, int eightbit, mail_linereader_cb line_read_cb, server_vars *servopts){
+int mail_message(address_all_struct *addresses,  char *subject, int eightbit, mail_linereader_cb line_read_cb, void *line_read_cb_arg, server_vars *servopts){
   
   FILE *fd 			= NULL;					/* Zeiger auf Temporaere Datei */
   int i				= 0;					/* Laufvariable */
@@ -102,7 +102,7 @@ int mail_message(address_all_struct *addresses,  char *subject, int eightbit, ma
     return MAILER_STATUS_FAILTURE_CREATE_HEADER;  
 
   i = 0;
-  while((buf = line_read_cb(i)) != NULL){		 		/* Solange die Callbackfunktion einen Zeiger auf einen Puffer liefert */
+  while((buf = line_read_cb(i, line_read_cb_arg)) != NULL){ 		/* Solange die Callbackfunktion einen Zeiger auf einen Puffer liefert */
     fputs(buf, fd);							/* Schreibe dessen Inhalt in eine Datei */
     i++;
   }

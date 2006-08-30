@@ -52,7 +52,15 @@ typedef struct {
   char 			*mail_auth_pass;
 } w_opts;
 
-
+typedef struct sens_info_list *sens_info_list_ptr;
+typedef struct sens_info_list {
+  int 			id;
+  int 			count;
+  char 			*type_desc;
+  char 			*sens_location;
+  char 			*sens_desc;
+  sens_info_list_ptr 	next;
+} sensor_info;
 
 /* Funktionen -------------------------------------------------------------*/
 
