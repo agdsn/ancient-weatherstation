@@ -35,7 +35,8 @@ typedef struct address_t *mail_list_ptr;
 
 /* Optionen */
 typedef struct {
-  int 			*interval;	/* Das Interval, in dem ein Sensor zuletzt gesendet haben sollte */
+  int 			interval;	/* Das Interval, in dem ein Sensor zuletzt gesendet haben sollte */
+  int 			sendings;
   mail_list_ptr 	address_list;	/* Liste der Ids der Sensoren, die ueberprueft werden sollen */
   sens_id_list_ptr 	sens_id_list;	/* Liste der Mail-Addressen, die benachichtigt werden sollen wenn was ist */
   char			id_from_db;	/* Flag, ob die Id's aus der Datenbank gelesen werden sollen */

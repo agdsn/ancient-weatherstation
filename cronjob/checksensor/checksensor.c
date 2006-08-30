@@ -34,7 +34,7 @@
 #include "checksensor.h"
 
 
-#define BUFFSIZE 1024
+#define BUFFSIZE 512
 
 
 /* Variablen ---------------------------------------------------------- */
@@ -81,13 +81,18 @@ static PGresult *pg_check_exec(PGconn *conn, char *query){
 static void get_sensors_from_db(){
   int id_field;
   int i;
+  PGresult *res;
   sens_id_list_ptr new_id, temp_id = NULL;
+  
   connection = pg_check_connect(conn_string);
-  PGresult *res = pg_check_exec(connection, "select id from sensoren");
+  
+  res = pg_check_exec(connection, "SELECT id FROM sensoren");
   id_field = PQfnumber(res, "id");
+  
   for (i = 0; i < PQntuples(res); i++){
     new_id = malloc(sizeof(sensor_id));
     new_id->id = atoi(PQgetvalue(res, i, id_field));
+    new_id->next = NULL;
     if (temp_id == NULL){
       temp_id = new_id;
       global_opts.sens_id_list = temp_id;
@@ -97,8 +102,71 @@ static void get_sensors_from_db(){
     }
     DEBUGOUT2("add id: (%d)\n", new_id->id);
   }
+
+  PQclear(res);
+  PQfinish(connection);
+  connection = NULL;
 }
 
+static int count_data_by_sensor_id(PGconn *connection, int sens_id){
+  int table_field;
+  int count_field;
+  char *query_buff 	= malloc(sizeof(char)*BUFFSIZE);
+  char *table;
+  int count;
+  PGresult *table_res;
+  PGresult *count_res;
+
+  DEBUGOUT2("\nPrüfe Sensor mit ID: %d ... \n",sens_id);
+
+  snprintf(query_buff, BUFFSIZE, "select typen.tabelle as tbl FROM typen, sensoren WHERE sensoren.id=%d AND typen.typ=sensoren.typ", sens_id);
+  table_res = pg_check_exec(connection, query_buff);
+  
+  if(PQntuples(table_res) < 1)
+    return -1;
+  
+  table_field = PQfnumber(table_res, "tbl");
+  table       = PQgetvalue(table_res, 0, table_field);
+  
+  DEBUGOUT2("\tTabelle: %s \n", table);
+
+  snprintf(query_buff, BUFFSIZE, "SELECT count(sens_id) as num FROM %s WHERE sens_id=%d AND timestamp>(current_timestamp - INTERVAL '%d hours')",table, sens_id, global_opts.interval);
+  count_res = pg_check_exec(connection, query_buff);
+  
+  if(PQntuples(count_res) < 1)
+    return -2;
+
+  count_field = PQfnumber(count_res, "num");
+  count       = atoi(PQgetvalue(count_res, 0, count_field));
+
+  DEBUGOUT3("\tWerte in den letzten %d Stunden: %d\n", global_opts.interval, count);
+
+  PQclear(count_res);
+  PQclear(table_res);
+  free(query_buff);
+
+  return count;
+}
+
+
+
+static int check_sensors(){
+  sens_id_list_ptr temp_ptr = global_opts.sens_id_list;
+  int count;
+  
+  connection = pg_check_connect(conn_string);
+
+  for(;temp_ptr ; temp_ptr = temp_ptr->next){
+    if((count = count_data_by_sensor_id(connection, temp_ptr->id)) < global_opts.sendings){
+      
+    } else {
+      DEBUGOUT2("\tSensor mit ID %d scheint ok zu sein\n", temp_ptr->id);
+    }
+  }
+
+  PQfinish(connection);
+  connection = NULL;
+}
 
 /* Mainfkt. und diverse andere Funktionen zum beenden des Programmes ---*/
 
@@ -134,6 +202,7 @@ int main(int argc, char *argv[]){
 
   generate_conn_string();
   get_sensors_from_db();
+  check_sensors();
 
   clean();
   return EXIT_SUCCESS;

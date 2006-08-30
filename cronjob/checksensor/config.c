@@ -48,6 +48,8 @@ static int read_str(const char *, void *);
 static const struct config_keyword keywords[] = {
   /* keyword		handler  	 	variable address			default */
   {"checkinterval",	read_int,  		&(global_opts.interval),		DEFAULT_CHECK_INTERVAL},
+  {"min_sendings",	read_int,  		&(global_opts.sendings),		DEFAULT_MIN_SENDINGS},
+
   {"sensorid_from_db",	read_yn,	 	&(global_opts.id_from_db), 		"yes"},
   {"sensorid",		add_sens_id,	 	&(global_opts.sens_id_list), 		""},
   {"adminaddress",	add_address,	 	&(global_opts.address_list), 		""},
