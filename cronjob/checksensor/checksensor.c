@@ -38,8 +38,9 @@
 
 /* Variablen ---------------------------------------------------------- */
 w_opts global_opts;
-static PGconn *connection = NULL;
-static char *conn_string = NULL;
+static PGconn *connection 		 = NULL;
+static char *conn_string 		 = NULL;
+static sens_info_list_ptr failed_sensors = NULL;
 
 /* Funktionen ----------------------------------------------------------*/
 
@@ -198,21 +199,32 @@ static sens_info_list_ptr get_sensor_info(PGconn *conn, int id, int count){
 }
 
 static int check_sensors(){
-  sens_id_list_ptr temp_ptr = global_opts.sens_id_list;
+  sens_id_list_ptr temp_id_ptr = global_opts.sens_id_list;
+  sens_info_list_ptr temp_inf_ptr = NULL;
   int count;
-  
+  int fail_count = 0;
+
   connection = pg_check_connect(conn_string);
 
-  for(;temp_ptr ; temp_ptr = temp_ptr->next){
-    if((count = count_data_by_sensor_id(connection, temp_ptr->id)) < global_opts.sendings){
-       
+  for(;temp_id_ptr ; temp_id_ptr = temp_id_ptr->next){
+    if((count = count_data_by_sensor_id(connection, temp_id_ptr->id)) < global_opts.sendings){
+      if (temp_inf_ptr == NULL){
+	temp_inf_ptr = get_sensor_info(connection, temp_id_ptr->id, count);
+	failed_sensors = temp_inf_ptr;
+      } else {
+	temp_inf_ptr->next = get_sensor_info(connection, temp_id_ptr->id, count);
+	temp_inf_ptr = temp_inf_ptr->next;
+      }
+      fail_count++;
     } else {
-      DEBUGOUT2("\tSensor mit ID %d scheint ok zu sein\n", temp_ptr->id);
+      DEBUGOUT2("\tSensor mit ID %d scheint ok zu sein\n", temp_id_ptr->id);
     }
   }
 
   PQfinish(connection);
   connection = NULL;
+
+  return fail_count;
 }
 
 /* Mainfkt. und diverse andere Funktionen zum beenden des Programmes ---*/
@@ -241,15 +253,28 @@ int main(int argc, char *argv[]){
   read_config(DEFAULT_CONFIG_FILE,1);
 
   /* Debug-Ausgaben, um zu sehen, ob die Optionen richtig gesetzt werden */
+  DEBUGOUT1("\nOptionen:\n");
+  DEBUGOUT2("  Interval  =  %d\n", global_opts.interval);
+  DEBUGOUT2("  Sendings  =  %d\n", global_opts.sendings);
+  DEBUGOUT2("  db - id's =  %d\n", global_opts.id_from_db);
+
+  DEBUGOUT1("\nMail-Einstellungen\n");
+  DEBUGOUT2("  Host      =  %s\n", global_opts.mail_host);
+  DEBUGOUT2("  Port      =  %d\n", global_opts.mail_port);
+  DEBUGOUT2("  SSL (TLS) =  %d\n", global_opts.mail_ssl);
+  DEBUGOUT2("  Authent.  =  %d\n", global_opts.mail_auth);
+  DEBUGOUT2("  User      =  %s\n", global_opts.mail_auth_user);
+  DEBUGOUT2("  Passwd    =  %s\n", global_opts.mail_auth_pass);
+
   DEBUGOUT1("\nPostgres:\n");
-  DEBUGOUT2("  Host:     =  %s\n",global_opts.pg_host);
-  DEBUGOUT2("  User:     =  %s\n",global_opts.pg_user);
-  DEBUGOUT2("  Pass:     =  %s\n",global_opts.pg_pass);
+  DEBUGOUT2("  Host      =  %s\n",global_opts.pg_host);
+  DEBUGOUT2("  User      =  %s\n",global_opts.pg_user);
+  DEBUGOUT2("  Passwd    =  %s\n",global_opts.pg_pass);
   DEBUGOUT2("  Datenbank =  %s\n",global_opts.pg_database);
 
   generate_conn_string();
   get_sensors_from_db();
-  check_sensors();
+  //check_sensors();
 
   clean();
   return EXIT_SUCCESS;
