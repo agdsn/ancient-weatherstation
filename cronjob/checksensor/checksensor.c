@@ -34,12 +34,14 @@
 
 
 #define BUFFSIZE 512
+#define BUFFSIZE_EXTRA 2048
 
 
 /* Variablen ---------------------------------------------------------- */
 w_opts global_opts;
 static PGconn *connection 		 = NULL;
 static char *conn_string 		 = NULL;
+static char *mail_buff			 = NULL;
 static sens_info_list_ptr failed_sensors = NULL;
 
 /* Funktionen ----------------------------------------------------------*/
@@ -227,6 +229,46 @@ static int check_sensors(){
   return fail_count;
 }
 
+static char *get_message(int line, void *arg){
+  sens_info_list_ptr info = *((sens_info_list_ptr*) arg);
+  if (info != NULL){
+    if(line == 0){
+      return MAIL_HEAD;
+    } else {
+      if(mail_buff == NULL)
+        mail_buff = malloc(sizeof(char)*BUFFSIZE_EXTRA);
+      snprintf(mail_buff, BUFFSIZE_EXTRA, "\r\nDer Sensor mit der ID %d hat in den letzten %d Stunden nur %d Werte geliefert!\r\nDaten zum Sensor:\r\nTyp:\t\t%s\r\nStandort:\t%s\r\nBeschreibung:\t%s\r\n", info->id, global_opts.interval, info->count, info->type_desc, info->sens_location, info->sens_desc);
+      *((sens_info_list_ptr*)arg) = info->next;
+      return mail_buff;
+    }
+  } else {
+    if(mail_buff != NULL)
+      free(mail_buff);
+    return NULL;
+  }
+}
+
+static void mail_failtures(){
+  server_vars *servo = get_default_servopts();
+  address_all_struct addresses;
+  int mail_err_nr = 0;
+  
+  servo->host      = global_opts.mail_host;
+  servo->port      = global_opts.mail_port;
+  servo->ssl_use   = global_opts.mail_ssl;
+  servo->auth_use  = global_opts.mail_auth;
+  servo->auth_user = global_opts.mail_auth_user;
+  servo->auth_pass = global_opts.mail_auth_pass;
+
+  addresses.from  = NULL;
+  addresses.to    = global_opts.address_list;
+  addresses.cc    = NULL;
+  addresses.bcc   = NULL;
+  
+  mail_err_nr = mail_message(& addresses, "Wetterstation", 0, get_message, & failed_sensors, servo);
+  printf("%s\n",get_mail_status_text(mail_err_nr));
+}
+
 /* Mainfkt. und diverse andere Funktionen zum beenden des Programmes ---*/
 
 /* Main-Funktion */
@@ -273,8 +315,10 @@ int main(int argc, char *argv[]){
   DEBUGOUT2("  Datenbank =  %s\n",global_opts.pg_database);
 
   generate_conn_string();
-  get_sensors_from_db();
-  //check_sensors();
+  if(global_opts.id_from_db)
+    get_sensors_from_db();
+  if(check_sensors())
+    mail_failtures();
 
   clean();
   return EXIT_SUCCESS;

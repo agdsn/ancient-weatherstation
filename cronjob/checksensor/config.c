@@ -97,52 +97,48 @@ static int read_yn(const char *line, void *arg){
 }
 
 static int add_sens_id(const char *line, void *arg){
-  if (line == NULL){
-    *((sens_id_list_ptr*)arg) = NULL;
-    return 1;
+  sens_id_list_ptr id_new, id_temp;
+
+  id_new = malloc(sizeof(sensor_id));
+  id_new->next = NULL;
+  id_new->id = atoi(line);
+
+  DEBUGOUT2("add ID: %d\n", atoi(line));
+
+  id_temp = *((sens_id_list_ptr*)arg);
+  if (id_temp == NULL){
+    id_temp                   = id_new;
+    *((sens_id_list_ptr*)arg) = id_temp;
   } else {
-    sens_id_list_ptr id_new, id_temp;
-
-    id_new = malloc(sizeof(sensor_id));
-    id_new->next = NULL;
-    id_new->id = atoi(line);
-
-    id_temp = *((sens_id_list_ptr*)arg);
-    if (id_temp == NULL){
-      id_temp = id_new;
-    } else {
-      while (id_temp->next != NULL){
-	id_temp = id_temp->next;
-      }
-      id_temp->next = id_new;
+    while (id_temp->next != NULL){
+      id_temp = id_temp->next;
     }
-    return 1;
+    id_temp->next = id_new;
   }
+  return 1;
 }
 
 
 static int add_address(const char *line, void *arg){
-  if (line == NULL){
-    *((mail_list_ptr*)arg) = NULL;
-    return 1;
+  mail_list_ptr adr_new, adr_temp;
+
+  adr_new = malloc(sizeof(address_struct));
+  adr_new->next = NULL;
+  adr_new->mailbox = strdup(line);
+
+  DEBUGOUT2("add addr: %s\n", line);
+
+  adr_temp = *((mail_list_ptr*)arg);
+  if (adr_temp == NULL){
+    adr_temp               = adr_new;
+    *((mail_list_ptr*)arg) = adr_temp;
   } else {
-    mail_list_ptr adr_new, adr_temp;
-
-    adr_new = malloc(sizeof(address_struct));
-    adr_new->next = NULL;
-    adr_new->mailbox = strdup(line);
-
-    adr_temp = *((mail_list_ptr*)arg);
-    if (adr_temp == NULL){
-      adr_temp = adr_new;
-    } else {
-      while (adr_temp->next != NULL){
-	adr_temp = adr_temp->next;
-      }
-      adr_temp->next = adr_new;
+    while (adr_temp->next != NULL){
+      adr_temp = adr_temp->next;
     }
-    return 1;
+    adr_temp->next = adr_new;
   }
+  return 1;
 }
 
 
