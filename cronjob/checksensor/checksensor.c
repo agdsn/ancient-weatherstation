@@ -1,6 +1,6 @@
 /*
 
-   checksensor.c        -- Part of the weatherdeamon
+   checksensor.c        -- Part of checksensor
 
    Copyright (C) 2006 Jan Losinski
 
@@ -20,6 +20,10 @@
 
 */
 
+/*
+ * Wenn mehr kommentare benoetigt werden:
+ * losinski@wh2.tu-dresden.de 
+ * */
 
 #include <stdlib.h>         	/* EXIT_SUCCESS */
 #include <errno.h>
@@ -46,11 +50,22 @@ static sens_info_list_ptr failed_sensors = NULL;
 
 /* Funktionen ----------------------------------------------------------*/
 
+static void generate_conn_string();
+static PGconn *pg_check_connect(char *);
+static PGresult *pg_check_exec(PGconn *, char *);
+static void get_sensors_from_db();
+static char *get_type_table_by_id(PGconn *, int );
+static int count_data_by_sensor_id(PGconn *, int );
+static sens_info_list_ptr get_sensor_info(PGconn *, int , int );
+static int check_sensors();
+static char *get_message(int , void *);
+static void mail_failtures();
 static void clean();
 static void exit_sig_handler(int); 
 
 /* Implementierungen ---------------------------------------------------*/
 
+/* baut den String fuer die Postgres-Verbindung zusammen */
 static void generate_conn_string(){
   if(conn_string == NULL){
     conn_string = malloc(sizeof(char)*BUFFSIZE);
@@ -58,6 +73,7 @@ static void generate_conn_string(){
   }
 }
 
+/* Baut eine Vebindung zur postgres auf, bricht mit fehler ab wenn nicht moeglich */
 static PGconn *pg_check_connect(char *conn_string){
   PGconn *conn = PQconnectdb(conn_string);			/* Connection aufbauen */
   if(PQstatus(conn) != CONNECTION_OK){
@@ -68,6 +84,7 @@ static PGconn *pg_check_connect(char *conn_string){
   return conn;
 }
 
+/* Fuehrt ein SQL-Statement aus. Bricht mit fehler ab wenn nicht moeglich */
 static PGresult *pg_check_exec(PGconn *conn, char *query){
   PGresult *res;
   res = PQexec(conn, query);
@@ -80,6 +97,7 @@ static PGresult *pg_check_exec(PGconn *conn, char *query){
   return res;
 }
 
+/* Holt sich die ID's der Sensoren aus der Datenbank */
 static void get_sensors_from_db(){
   int id_field;
   int i;
@@ -110,6 +128,7 @@ static void get_sensors_from_db(){
   connection = NULL;
 }
 
+/* Tabellenname des typs aus der Datenbank holen */
 static char *get_type_table_by_id(PGconn *connection, int sens_id){
   char *table;
   int table_field;
@@ -133,6 +152,7 @@ static char *get_type_table_by_id(PGconn *connection, int sens_id){
   return table;
 }
 
+/* Datensätze im gegebenem Interval zaehlen */
 static int count_data_by_sensor_id(PGconn *connection, int sens_id){
   int count_field;
   char *table;
@@ -162,6 +182,7 @@ static int count_data_by_sensor_id(PGconn *connection, int sens_id){
   return count;
 }
 
+/* Informationen ueber einen Sensor holen */
 static sens_info_list_ptr get_sensor_info(PGconn *conn, int id, int count){
   sens_info_list_ptr new_info;
   PGresult *res;
@@ -183,9 +204,7 @@ static sens_info_list_ptr get_sensor_info(PGconn *conn, int id, int count){
   sens_desc_field = PQfnumber(res, "sens_desc");
   sens_loc_field  = PQfnumber(res, "sens_location");
 
-
   new_info = malloc(sizeof(sensor_info));
-  
 
   new_info->id            = id;
   new_info->count         = count;
@@ -200,6 +219,7 @@ static sens_info_list_ptr get_sensor_info(PGconn *conn, int id, int count){
   return new_info;
 }
 
+/* Sensoren der Reihe nach pruefen */
 static int check_sensors(){
   sens_id_list_ptr temp_id_ptr = global_opts.sens_id_list;
   sens_info_list_ptr temp_inf_ptr = NULL;
@@ -229,6 +249,8 @@ static int check_sensors(){
   return fail_count;
 }
 
+/* Callback-Funktion für das Versenden der Mail,
+ * baut die nachicht zusammen */
 static char *get_message(int line, void *arg){
   sens_info_list_ptr info = *((sens_info_list_ptr*) arg);
   if (info != NULL){
@@ -248,6 +270,7 @@ static char *get_message(int line, void *arg){
   }
 }
 
+/* Schickt die Mail los */
 static void mail_failtures(){
   server_vars *servo = get_default_servopts();
   address_all_struct addresses;

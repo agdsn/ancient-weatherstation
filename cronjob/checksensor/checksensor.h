@@ -1,6 +1,6 @@
 /*
 
-   main.h        -- Part of the weatherdeamon
+   main.h        -- Part of checksensor
 
    Copyright (C) 2006 Jan Losinski
 
@@ -19,24 +19,30 @@
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 */
+/*
+ * Wenn mehr kommentare benoetigt werden:
+ * losinski@wh2.tu-dresden.de 
+ * */
 
 #include "mailer.h"
 
 
 /* Datenstrukturen --------------------------------------------------------*/
 
+/* Liste der IDs der zu ueberpruefenden sensoren */
 typedef struct sens_id_list *sens_id_list_ptr;
 typedef struct sens_id_list {
   sens_id_list_ptr 	next;
   int 			id;
 } sensor_id;
 
+/* Pointer auf die Liste der Addresen an die die mail versendet wird */
 typedef struct address_t *mail_list_ptr;
 
 /* Optionen */
 typedef struct {
   int 			interval;	/* Das Interval, in dem ein Sensor zuletzt gesendet haben sollte */
-  int 			sendings;
+  int 			sendings;	/* Wie oft im gegebenen interval daten angekommen sein sollten */
   mail_list_ptr 	address_list;	/* Liste der Ids der Sensoren, die ueberprueft werden sollen */
   sens_id_list_ptr 	sens_id_list;	/* Liste der Mail-Addressen, die benachichtigt werden sollen wenn was ist */
   char			id_from_db;	/* Flag, ob die Id's aus der Datenbank gelesen werden sollen */
@@ -44,22 +50,23 @@ typedef struct {
   char 			*pg_user;	/* Postgres-Username */
   char 			*pg_pass;	/* Postgres-Password */
   char 			*pg_database;	/* Postgres-Datenbank */
-  char 			*mail_host;
-  int 			mail_port;
-  char			mail_ssl;
-  char 			mail_auth;
-  char 			*mail_auth_user;
-  char 			*mail_auth_pass;
+  char 			*mail_host;	/* Hostname (oder ip) des Mailservers */
+  int 			mail_port;	/* Port des Mailservers */
+  char			mail_ssl;	/* Flag ob SSL (TLS) genutzt werden soll */
+  char 			mail_auth;	/* Flag ob authentifiziert werden soll */
+  char 			*mail_auth_user;  /* User für die authentifizierung */
+  char 			*mail_auth_pass;  /* Passwort für die Authentifizierung */
 } w_opts;
 
+/* Struktur, die Infos ueber den Sensor enthaelt */
 typedef struct sens_info_list *sens_info_list_ptr;
 typedef struct sens_info_list {
-  int 			id;
-  int 			count;
-  char 			*type_desc;
-  char 			*sens_location;
-  char 			*sens_desc;
-  sens_info_list_ptr 	next;
+  int 			id;			/* ID des Sensors */
+  int 			count;			/* Anzahl der datensaetze im Interval */
+  char 			*type_desc;		/* Typenbeschreibung */
+  char 			*sens_location;		/* Standort */
+  char 			*sens_desc;		/* Beschreibung des Sensors */
+  sens_info_list_ptr 	next;			/* naecstes Element */
 } sensor_info;
 
 /* Funktionen -------------------------------------------------------------*/

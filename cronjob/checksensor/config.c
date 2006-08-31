@@ -20,6 +20,10 @@
 
 */
 
+/*
+ * Wenn mehr kommentare benoetigt werden:
+ * losinski@wh2.tu-dresden.de 
+ * */
 
 
 #include <string.h>
@@ -30,6 +34,7 @@
 #include "definitions.h"
 #include "checksensor.h"
 
+#define CONFIG_BUFFERSIZE 2048
 
 /* Funktionsdefinitionen */
 static int read_int(const char *, void *);
