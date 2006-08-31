@@ -1,8 +1,6 @@
 /*
 
-   weatherdeamon -- Weather Data Capture Program for the 
-                    'ELV-PC-Wettersensor-Empfänger'
-   config.c      -- Part of the weatherdeamon
+   config.c      -- Part of checksensor
 
    Copyright (C) 2006 Jan Losinski
 
@@ -20,7 +18,6 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-   $Id: process.c v 1.00 11 Aug 2006 losinski $
 */
 
 
@@ -32,10 +29,9 @@
 #include "config.h"
 #include "definitions.h"
 #include "checksensor.h"
-//#include "mailer.h"
 
 
-
+/* Funktionsdefinitionen */
 static int read_int(const char *, void *);
 static int read_yn(const char *, void *);
 static int add_sens_id(const char *, void *);
@@ -68,6 +64,10 @@ static const struct config_keyword keywords[] = {
   {"",			NULL, 	  		NULL,					""}
 };
 
+
+/* Implementierungen */
+
+
 /* Liest eine Option (line) als String und speichert diese in 
  * dem entsprechendem Feld der Optionen-Struktur (arg) */
 static int read_str(const char *line, void *arg){
@@ -96,6 +96,7 @@ static int read_yn(const char *line, void *arg){
   return retval;
 }
 
+/* fuegt eine id zur liste hinzu */
 static int add_sens_id(const char *line, void *arg){
   sens_id_list_ptr id_new, id_temp;
 
@@ -118,7 +119,7 @@ static int add_sens_id(const char *line, void *arg){
   return 1;
 }
 
-
+/* furgt eine addresse zur liste hinzu */
 static int add_address(const char *line, void *arg){
   mail_list_ptr adr_new, adr_temp;
 
