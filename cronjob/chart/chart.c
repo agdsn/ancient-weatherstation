@@ -32,10 +32,47 @@
 #include "definitions.h"
 #include "config.h"
 #include "chart.h"
+#include "drawing/process_image.h"
 
+static int walk_image_cfg_list();
+static void wait_for_childs();
 static void exit_sig_handler(int); 
 
 config global_opts;
+
+
+
+static int walk_image_cfg_list(){
+  int has_forked             = 0;
+  pid_t pid                  = 0;
+  image_cfg_list_ptr tmp_ptr = global_opts.image_cfg;
+
+  for(; tmp_ptr; tmp_ptr = tmp_ptr->next){
+    if(global_opts.fork){
+      if((pid = fork()) == 0){
+	process_image(tmp_ptr->image_cfg_file);
+	exit(EXIT_SUCCESS);
+      } 
+      else if (pid == -1){
+	exit_error(ERROR_FORK);
+      } 
+      has_forked++;
+      DEBUGOUT2("Prozess %d angelegt\n",pid);
+    } else {
+      process_image(tmp_ptr->image_cfg_file);
+    }
+  }
+  return has_forked;
+}
+
+static void wait_for_childs(){
+  int ret_val;
+  pid_t pid;
+  while((pid = wait(&ret_val)) != -1){
+    DEBUGOUT2("Prozess %d beendet\n", pid);
+  }
+}
+
 
 int main(int argc, char *argv[]){
   DEBUGOUT1("Programm gestartet\n");
@@ -65,6 +102,9 @@ int main(int argc, char *argv[]){
   DEBUGOUT2("  User:     =  %s\n",global_opts.pg_user);
   DEBUGOUT2("  Pass:     =  %s\n",global_opts.pg_pass);
   DEBUGOUT2("  Datenbank =  %s\n",global_opts.pg_database);
+
+  if(walk_image_cfg_list())
+    wait_for_childs();
 
   return EXIT_SUCCESS;
 }

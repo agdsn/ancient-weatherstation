@@ -6,7 +6,7 @@ LDFLAS  = -o
 INCL	= -I$$(pg_config --includedir)
 
 BIN_NAME = chart
-OBJS	 = chart.o config.o 
+OBJS	 = chart.o config.o drawing/process_image.o
 
 CONF_NAME = chart.conf
 
@@ -29,13 +29,14 @@ $(BIN_NAME): $(OBJS)
 	@ echo Binary $(BIN_NAME) ist fertig!
 
 # Abhängigkeiten
-chart.o: chart.c definitions.h config.h chart.h
+chart.o: chart.c definitions.h config.h chart.h drawing/process_image.h
 config.o: config.c config.h definitions.h chart.h
+drawing/process_image.o: drawing/process_image.c
 
 # Compillieren
 $(OBJS):
-	@ echo "Kompilliere: "$(CC) $(DEBUG) $(NOLOG) $(INCL) $(CFLAGS) $*.c
-	@ $(CC) $(DEBUG) $(NOLOG) $(INCL) $(CFLAGS) $*.c
+	@ echo "Kompilliere: "$(CC) -o $@ $(DEBUG) $(NOLOG) $(INCL) $(CFLAGS) $*.c
+	@ $(CC) -o $@ $(DEBUG) $(NOLOG) $(INCL) $(CFLAGS) $*.c
 
 # Programm mit debug-ausgabe bauen
 debug: 

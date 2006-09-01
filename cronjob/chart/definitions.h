@@ -1,8 +1,6 @@
 /*
 
-   weatherdeamon -- Weather Data Capture Program for the 
-                    'ELV-PC-Wettersensor-Empfänger'
-   definitions.h -- Part of the weatherdeamon
+   definitions.h -- Part of Chart-generator for the weatherstation
 
    Copyright (C) 2006 Jan Losinski
 
@@ -20,7 +18,6 @@
    along with this program; if not, write to the Free Software
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-   $Id: process.c v 1.00 11 Aug 2006 losinski $
 */
 
 /* Default-Werte ----------------------------------------------------- */
@@ -37,6 +34,7 @@
 
 /* Fehlermeldungen ------------------------------------------------------*/
 #define  ERROR_SEIINST "Signal-Fehler: Kann Signalhandler zum beenden nicht installieren\n"
+#define  ERROR_FORK    "Fork-Fehler: Kann keinen neuen Prozess anlegen\n"
 
 
 /* Puffergrößen -------------------------------------------------------- */
