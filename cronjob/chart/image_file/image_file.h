@@ -20,4 +20,4 @@
 
 */
 
-void process_image(char *);
+void process_image_cfg(char *);

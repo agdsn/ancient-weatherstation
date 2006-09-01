@@ -21,9 +21,9 @@
 */
 #include <stdio.h>
 #include <stdlib.h>
-#include "process_image.h"
+#include "image_file.h"
 
-void process_image(char *image_cfg_file){
+void process_image_cfg(char *image_cfg_file){
   printf("%s\n",image_cfg_file);
   sleep(3);
 }

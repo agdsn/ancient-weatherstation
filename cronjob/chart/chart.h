@@ -20,27 +20,5 @@
 
 */
 
-typedef struct image_cfg_list_t *image_cfg_list_ptr;
-typedef struct image_cfg_list_t {
-  char 		 	*image_cfg_file;
-  image_cfg_list_ptr  	next;
-} image_cfg_list;
-
-typedef struct config_t {
-  char 			*pg_host;
-  char 			*pg_database;
-  char 			*pg_user;
-  char 			*pg_pass;
-  char 			*image_cfg_location;
-  image_cfg_list_ptr 	image_cfg;
-  int 			fork;
-} config;
-
-extern config global_opts;
 
 
-/* Funktionen -------------------------------------------------------------*/
-
-/* Programm mit einem Fatalem Fehler beenden.
- * Argument: Fehlermeldung */
-void exit_error(char*);

@@ -25,21 +25,18 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <errno.h>
 #include <signal.h>
-#include <string.h>
 
 #include "definitions.h"
 #include "config.h"
 #include "chart.h"
-#include "drawing/process_image.h"
+#include "common.h"
+#include "image_file/image_file.h"
 
 static int walk_image_cfg_list();
 static void wait_for_childs();
-static void exit_sig_handler(int); 
 
 config global_opts;
-
 
 
 static int walk_image_cfg_list(){
@@ -50,29 +47,32 @@ static int walk_image_cfg_list(){
   for(; tmp_ptr; tmp_ptr = tmp_ptr->next){
     if(global_opts.fork){
       if((pid = fork()) == 0){
-	process_image(tmp_ptr->image_cfg_file);
+        clear_clean();
+	process_image_cfg(tmp_ptr->image_cfg_file);
 	exit(EXIT_SUCCESS);
       } 
       else if (pid == -1){
 	exit_error(ERROR_FORK);
       } 
+      if(!has_forked){
+        add_clean(wait_for_childs, NULL);
+      }
       has_forked++;
       DEBUGOUT2("Prozess %d angelegt\n",pid);
     } else {
-      process_image(tmp_ptr->image_cfg_file);
+      process_image_cfg(tmp_ptr->image_cfg_file);
     }
   }
   return has_forked;
 }
 
-static void wait_for_childs(){
+static void wait_for_childs(void *dummy){
   int ret_val;
   pid_t pid;
   while((pid = wait(&ret_val)) != -1){
     DEBUGOUT2("Prozess %d beendet\n", pid);
   }
 }
-
 
 int main(int argc, char *argv[]){
   DEBUGOUT1("Programm gestartet\n");
@@ -104,37 +104,9 @@ int main(int argc, char *argv[]){
   DEBUGOUT2("  Datenbank =  %s\n",global_opts.pg_database);
 
   if(walk_image_cfg_list())
-    wait_for_childs();
+    wait_for_childs(NULL);
 
   return EXIT_SUCCESS;
 }
 
 
-/* Diese Funktion beendet das Programm mit einer Fehlermeldung. */
-void exit_error(char* err){
-  DEBUGOUT1("\nEtwas unschoenes ist passiert\n");
-  if(errno != 0){
-    perror("Fehler");  
-  }
-  write(STDOUT_FILENO, err, strlen(err));
-  exit(1);
-}
-
-/* Wird bei Beendigungssignalen ausgefuehrt */
-static void exit_sig_handler(int signr){
-  #ifdef DEBUG
-  DEBUGOUT1("\n");
-  switch (signr){
-    case SIGABRT:
-      DEBUGOUT1("SIGABRT Interupt erhalten!\n");
-    case SIGTERM:
-      DEBUGOUT1("SIGTERM Interupt erhalten!\n");
-    case SIGQUIT:
-      DEBUGOUT1("SIGQUIT Interupt erhalten!\n");
-    case SIGINT:
-      DEBUGOUT1("SIGINT Interupt erhalten!\n");
-  }
-  #endif
-  DEBUGOUT1("Beende Programm...\n");
-  exit(0);
-}

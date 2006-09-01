@@ -32,7 +32,7 @@
 
 #include "config.h"
 #include "definitions.h"
-#include "chart.h"
+#include "common.h"
 
 /* Funktionsdefinitionen */
 static int read_int(const char *, void *);
