@@ -65,7 +65,7 @@
 /* Die Callback-fkt. zum lesen einer Zeile. 
  * das 1. Argument ist die momentane Zeilennummer (beginnend bei 0) 
  * das 2. Argument ist das Argument, welches der mail_message-fkt. uebergeben wurde */
-typedef char *(mail_linereader_cb)(int line, void *arg);
+typedef char *(*mail_linereader_cb)(int line, void *arg);
 
 /* Datenstruktur für die Addressliste */
 typedef struct address_t {
