@@ -8,6 +8,19 @@ SET check_function_bodies = false;
 SET SESSION AUTHORIZATION 'postgres';
 
 --
+-- TOC entry 2 (OID 0)
+-- Name: wetter; Type: DATABASE; Schema: -; Owner: postgres
+--
+
+CREATE DATABASE wetter WITH TEMPLATE = template0 ENCODING = 'SQL_ASCII';
+
+
+\connect wetter postgres
+
+SET client_encoding = 'SQL_ASCII';
+SET check_function_bodies = false;
+
+--
 -- TOC entry 4 (OID 2200)
 -- Name: public; Type: ACL; Schema: -; Owner: postgres
 --
