@@ -24,8 +24,8 @@
 #include <stdio.h>
 #include <string.h>
 #include "../common.h"
-#include "image_common.h"
 #include "../config.h"
+#include "image_common.h"
 
 /* Zuordnung zwischen Schlüsselwörtern in der Config, Der Funktion, die diese auswertet 
  * und dem eld in der Options-Struktur */
@@ -39,13 +39,16 @@ static const config_keyword keywords[] = {
 };
 
 
-get_image_cfg(char *file){
-char *buff = malloc(sizeof(char)*(strlen(file)+strlen(global_opts.image_cfg_location)+1));
+int get_image_cfg(char *file){
+int ret_var; 
+char *buff; 
 
+buff = malloc(sizeof(char)*(strlen(file)+strlen(global_opts.image_cfg_location)+1));
 buff = strcpy(buff, global_opts.image_cfg_location);
 buff = strcat(buff, file);
 
-printf("dada\n");
+DEBUGOUT2("Lese Config-File: '%s' \n", buff);
 
-return read_config(file, 1, keywords);
+ret_var = read_config(buff, 1, keywords);
+return ret_var;
 }
