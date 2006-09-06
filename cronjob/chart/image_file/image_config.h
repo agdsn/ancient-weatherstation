@@ -1,6 +1,6 @@
 /*
 
-   config.h      -- Part of Chart-generator for the weatherstation
+   chart.c        -- Part of Chart-generator for the weatherstation
 
    Copyright (C) 2006 Jan Losinski
 
@@ -20,21 +20,4 @@
 
 */
 
-
-
-
-/* Datenstruktur zum Auswerten des Config-Files */
-typedef struct config_keyword_t {
-	const char *keyword;
-	int (* const handler)(const char *line, void *var);
-	void *var;
-	const char *def;
-} config_keyword; 
-
-/* Config lesen */
-int read_config(char *, int , const config_keyword *);
-
-/* Config-Zeilen auswerten */
-int read_str(const char *, void *);
-int read_int(const char *, void *);
-int read_yn(const char *, void *);
+int get_image_cfg(char *);

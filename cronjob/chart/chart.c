@@ -90,7 +90,7 @@ int main(int argc, char *argv[]){
     exit_error(ERROR_SEIINST);
   DEBUGOUT1("Signalhandler zum beenden per SIGTERM installiert\n");
 
-  read_config(DEFAULT_CONFIG_FILE, 1);
+  read_config(DEFAULT_CONFIG_FILE, 1, NULL);
 
   /* Debug-Ausgaben, um zu sehen, ob die Optionen richtig gesetzt werden */
   DEBUGOUT1("\nOptionen:\n");

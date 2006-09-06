@@ -6,7 +6,7 @@ LDFLAS  = -o
 INCL	= -I$$(pg_config --includedir)
 
 BIN_NAME = chart
-OBJS	 = chart.o config.o common.o image_file/image_file.o
+OBJS	 = chart.o config.o common.o image_file/image_file.o image_file/image_config.o
 
 CONF_NAME = chart.conf
 
@@ -24,8 +24,8 @@ all: $(BIN_NAME)
 
 # Binary Linken
 $(BIN_NAME): $(OBJS)
-	@ echo Linke: $(LD) $(DEBUG) $(NOLOG) -L$$(pg_config --libdir)/pgsql -lesmtp -lssl -lpq $(LDFLAS) $(BIN_NAME) $(OBJS)
-	@ $(LD) $(DEBUG) $(NOLOG) -L$$(pg_config --libdir)/pgsql -lesmtp -lssl -lpq $(LDFLAS) $(BIN_NAME) $(OBJS)
+	@ echo Linke: $(LD) $(DEBUG) $(NOLOG) -L$$(pg_config --libdir)/pgsql -lpq $(LDFLAS) $(BIN_NAME) $(OBJS)
+	@ $(LD) $(DEBUG) $(NOLOG) -L$$(pg_config --libdir)/pgsql -lpq $(LDFLAS) $(BIN_NAME) $(OBJS)
 	@ echo Binary $(BIN_NAME) ist fertig!
 
 # Abhängigkeiten
@@ -41,8 +41,15 @@ config.o: config.c \
 	config.h \
 	definitions.h \
 	common.h
+image_file/image_config.o: image_file/image_config.c \
+	common.h \
+	image_file/image_common.h \
+	config.h
 image_file/image_file.o: image_file/image_file.c \
-	image_file/image_file.h
+	common.h \
+	image_file/image_common.h \
+	image_file/image_file.h \
+	image_file/image_config.h
 
 # Compillieren
 $(OBJS):

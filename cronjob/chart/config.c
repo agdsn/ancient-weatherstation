@@ -35,15 +35,12 @@
 #include "common.h"
 
 /* Funktionsdefinitionen */
-static int read_int(const char *, void *);
-static int read_yn(const char *, void *);
 static int add_image_cfg(const char *, void *);
-static int read_str(const char *, void *);
  
 
 /* Zuordnung zwischen Schlüsselwörtern in der Config, Der Funktion, die diese auswertet 
  * und dem eld in der Options-Struktur */
-static const struct config_keyword keywords[] = {
+static const config_keyword dflt_keywords[] = {
   /* keyword		handler  	 	variable address			default */
   {"fork", 		read_yn,                &(global_opts.fork),         		""},
   {"image_cfg",    	add_image_cfg,          &(global_opts.image_cfg),         	""},
@@ -62,7 +59,7 @@ static const struct config_keyword keywords[] = {
 
 /* Liest eine Option (line) als String und speichert diese in 
  * dem entsprechendem Feld der Optionen-Struktur (arg) */
-static int read_str(const char *line, void *arg){
+int read_str(const char *line, void *arg){
 	char **dest = arg;
 	if (*dest) free(*dest);
 	*dest = strdup(line);
@@ -71,13 +68,13 @@ static int read_str(const char *line, void *arg){
 
 
 /* Interval lesen, indem die Sensoren das letzte mal etwas gesendet haben sollen */
-static int read_int(const char *line, void *arg){
+int read_int(const char *line, void *arg){
   int *dest = arg;
   *dest = atoi(line);
 }
 
 /* lesen, ob id's aus der Datenbank gelesen werden sollen oder nicht */
-static int read_yn(const char *line, void *arg){
+int read_yn(const char *line, void *arg){
   char *dest = arg;
   int retval = 1;
   if (!strcasecmp("yes", line))
@@ -116,13 +113,15 @@ static int add_image_cfg(const char *line, void *arg){
 /* Liest und verarbeitet die Config-File 
  * der Integer reset gibt an, ob zu begin defaultwerte
  * gesetzt werden sollen oder nicht */
-int read_config(const char *file, int reset){
+int read_config(char *file, int reset, const config_keyword *keywords){
   FILE *in;						/* File-Handler */
   char buffer[CONFIG_BUFFERSIZE], *token, *line;	/* Puffer zum lesen der config-file (imer 1 Zeile)*/
   char orig[CONFIG_BUFFERSIZE];				/* Originalpuffer zum lesen der config-file, um die Log und debug-ausgabe zu realisieren */
   int i; 						/* Laufvariable */
   int lm = 0; 						/* Zeilen-Nummer */
 
+  if(keywords == NULL)
+    keywords = (config_keyword *)dflt_keywords;
 
   /* Optionen mit default-werten füllen */
   if(reset){
@@ -134,7 +133,7 @@ int read_config(const char *file, int reset){
 
   /* config-file öffnen */
   if (!(in = fopen(file, "r"))) {
-    DEBUGOUT2("Kann Config-File: %s nicht öffnen!\n", file);
+    DEBUGOUT2("Kann Config-File: '%s' nicht öffnen!\n", file);
     return 0;
   }
 

@@ -20,6 +20,8 @@
 
 */
 
+#include "definitions.h"
+
 typedef struct image_cfg_list_t *image_cfg_list_ptr;
 typedef struct image_cfg_list_t {
   char 		 	*image_cfg_file;
