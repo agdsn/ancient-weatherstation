@@ -35,6 +35,7 @@
 /* Fehlermeldungen ------------------------------------------------------*/
 #define  ERROR_SEIINST "Signal-Fehler: Kann Signalhandler zum beenden nicht installieren\n"
 #define  ERROR_FORK    "Fork-Fehler: Kann keinen neuen Prozess anlegen\n"
+#define  ERROR_STAT    "Kann Stat nicht ausführen\n"
 
 
 /* Puffergrößen -------------------------------------------------------- */

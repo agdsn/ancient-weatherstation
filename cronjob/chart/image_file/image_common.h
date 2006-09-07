@@ -1,5 +1,13 @@
 typedef struct image_cfg_t {
-  char	*img_name;
+  char	*file_name;
+  char	*headline;
+  long 	gen_interval;
+  long 	show_interval;
+  long 	label_interval;
+  int 	label_sum;
+  int 	width;
+  int	height;
+  int 	sens_id;
 } image_cfg;
 
 
