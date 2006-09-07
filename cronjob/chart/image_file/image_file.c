@@ -31,8 +31,10 @@
 #include "image_config.h"
 
 
+/* Optionen des Bildes */
 image_cfg img_cfg;
 
+/* Handelt ein Bild */
 void process_image_cfg(char *image_cfg_file){
 
   get_image_cfg(image_cfg_file);
@@ -56,6 +58,8 @@ void process_image_cfg(char *image_cfg_file){
 }
 
 
+/* Checkt ob es wieder an der Zeit ist ein File 
+ * neu zu erstellen */
 int check_file_interval(){
 
   struct stat stat_buff;

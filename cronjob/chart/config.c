@@ -71,6 +71,7 @@ int read_str(const char *line, void *arg){
 int read_int(const char *line, void *arg){
   int *dest = arg;
   *dest = atoi(line);
+  return 1;
 }
 
 /* lesen, ob id's aus der Datenbank gelesen werden sollen oder nicht */

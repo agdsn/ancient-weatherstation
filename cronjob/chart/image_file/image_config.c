@@ -88,7 +88,9 @@ static int read_time(const char *line, void *arg){
       mult = 1;
     }
   }
+
   *dest = atol(line) * mult;
+  
   return 1;
 }
 
