@@ -32,7 +32,7 @@
 #define DEFAULT_PG_PASS 	""			/* Postgres-Passwort */
 #define DEFAULT_PG_DATABASE 	"localbase"		/* Postgres-Datenbank */
 #define DEFAULT_PG_TIMEOUT 	"20"			/* Postgres-Timeout */
-#define DEFAULT_CONFIG_FILE	"./weather.conf"	/* Standart-Configdatei */
+#define DEFAULT_CONFIG_FILE	"./weatherd.conf"	/* Standart-Configdatei */
 
 
 

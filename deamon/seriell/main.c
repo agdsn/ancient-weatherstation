@@ -148,6 +148,7 @@ int main(int argc, char *argv[]){
   DEBUGOUT2("  User:     =  %s\n",global_opts.pg_user);
   DEBUGOUT2("  Pass:     =  %s\n",global_opts.pg_pass);
   DEBUGOUT2("  Datenbank =  %s\n",global_opts.pg_database);
+  DEBUGOUT2("  Timeout   =  %s\n",global_opts.pg_timeout);
 
 
   /* Programm in den Hintergrund schicken ? */
