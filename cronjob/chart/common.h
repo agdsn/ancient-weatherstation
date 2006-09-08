@@ -31,6 +31,7 @@ typedef struct image_cfg_list_t {
 typedef struct config_t {
   char 			*pg_host;
   char 			*pg_database;
+  char 			*pg_timeout;
   char 			*pg_user;
   char 			*pg_pass;
   char 			*image_cfg_location;

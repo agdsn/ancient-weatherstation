@@ -25,6 +25,7 @@
 #define DEFAULT_PG_USER		"localuser"		/* Postgres-Username */
 #define DEFAULT_PG_PASS 	""			/* Postgres-Passwort */
 #define DEFAULT_PG_DATABASE 	"localbase"		/* Postgres-Datenbank */
+#define DEFAULT_PG_TIMEOUT 	"20"			/* Postgres-Timeout */
 #define DEFAULT_CONFIG_FILE	"./chart.conf"		/* Standart-Configdatei */
 
 
