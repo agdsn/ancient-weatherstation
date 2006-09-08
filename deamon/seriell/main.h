@@ -34,6 +34,7 @@ typedef struct {
   char 		*pg_user;	/* Postgres-Username */
   char 		*pg_pass;	/* Postgres-Password */
   char 		*pg_database;	/* Postgres-Datenbank */
+  char 		*pg_timeout;	/* Postgres-Timeout */
   #ifndef NO_LOGING
   char 		*data_log;	/* Das Daten-Logfile */
   char 		*error_log;	/* Das Fehler-Logfile */

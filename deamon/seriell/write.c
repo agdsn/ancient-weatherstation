@@ -116,8 +116,8 @@ static int pg_connect(){
   if(PQstatus(connection) != CONNECTION_OK){
     if (connection == NULL){
       if(conn_string == NULL){
-	conn_string = malloc(sizeof(char)*255);
-	snprintf(conn_string, 255, "host=%s dbname=%s user=%s password=%s", global_opts.pg_host, global_opts.pg_database, global_opts.pg_user, global_opts.pg_pass);
+	conn_string = malloc(sizeof(char)*512);
+	snprintf(conn_string, 512, "host=%s dbname=%s user=%s password=%s connect_timeout=%s", global_opts.pg_host, global_opts.pg_database, global_opts.pg_user, global_opts.pg_pass, global_opts.pg_timeout);
       }
       connection = PQconnectdb(conn_string);			/* Connection aufbauen */
       add_clean(clean_write, connection);			/* Callbackfunktion zum Aufräumen registrieren */
