@@ -69,7 +69,7 @@ static void exit_sig_handler(int);
 static void generate_conn_string(){
   if(conn_string == NULL){
     conn_string = malloc(sizeof(char)*BUFFSIZE);
-    snprintf(conn_string, BUFFSIZE, "host=%s dbname=%s user=%s password=%s", global_opts.pg_host, global_opts.pg_database, global_opts.pg_user, global_opts.pg_pass);
+    snprintf(conn_string, BUFFSIZE, "host=%s dbname=%s user=%s password=%s connect_timeout=%s", global_opts.pg_host, global_opts.pg_database, global_opts.pg_user, global_opts.pg_pass, global_opts.pg_timeout);
   }
 }
 
@@ -336,6 +336,7 @@ int main(int argc, char *argv[]){
   DEBUGOUT2("  User      =  %s\n",global_opts.pg_user);
   DEBUGOUT2("  Passwd    =  %s\n",global_opts.pg_pass);
   DEBUGOUT2("  Datenbank =  %s\n",global_opts.pg_database);
+  DEBUGOUT2("  Timeout   =  %s\n",global_opts.pg_timeout);
 
   generate_conn_string();
   if(global_opts.id_from_db)

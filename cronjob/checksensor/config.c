@@ -66,6 +66,7 @@ static const struct config_keyword keywords[] = {
   {"pg_user",           read_str,               &(global_opts.pg_user),         	DEFAULT_PG_USER},
   {"pg_pass",           read_str,               &(global_opts.pg_pass),         	DEFAULT_PG_PASS},
   {"pg_database",       read_str,               &(global_opts.pg_database),     	DEFAULT_PG_DATABASE},
+  {"pg_timeout", 	read_str, 		&(global_opts.pg_timeout),	DEFAULT_PG_TIMEOUT},
   {"",			NULL, 	  		NULL,					""}
 };
 

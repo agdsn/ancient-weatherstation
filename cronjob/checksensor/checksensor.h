@@ -50,6 +50,7 @@ typedef struct {
   char 			*pg_user;	/* Postgres-Username */
   char 			*pg_pass;	/* Postgres-Password */
   char 			*pg_database;	/* Postgres-Datenbank */
+  char 			*pg_timeout;	/* Postgres-Timeout */
   char 			*mail_host;	/* Hostname (oder ip) des Mailservers */
   int 			mail_port;	/* Port des Mailservers */
   char			mail_ssl;	/* Flag ob SSL (TLS) genutzt werden soll */
