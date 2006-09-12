@@ -24,33 +24,33 @@ static char *get_type_table_by_id(PGconn *, int );
 
 
 
-
+/* Holt eine Liste mit den Werten und den jeweiligen x-koordinaten */
 pix_list_ptr get_pix_list(int c_width){
-  double seconds_per_pix = ((double)c_width)/((double)img_cfg.show_interval);
-  char *conn_string 	 = get_conn_string();
-  PGconn *conn 		 = pg_check_connect(conn_string);
-  char *table 		 = get_type_table_by_id(conn, img_cfg.sens_id);
-  char *query		 = malloc(sizeof(char)*BUFFSIZE);
-  PGresult *res		 = NULL;
-  int time_field;
-  int val_field;
-  long time_temp;
-  int pix_coord;
-  int i;
-  long base_time;
-  pix_list_ptr list_ptr = NULL;
-  pix_list_ptr temp_ptr = NULL;
+  double seconds_per_pix = ((double)c_width)/((double)img_cfg.show_interval);		/* Pixel pro Sekunde */
+  char *conn_string 	 = get_conn_string();						/* Verbindungs-String */
+  PGconn *conn 		 = pg_check_connect(conn_string);				/* Datenbank - Verbindung */
+  char *table 		 = get_type_table_by_id(conn, img_cfg.sens_id);			/* Tabellen - Name */
+  char *query		 = malloc(sizeof(char)*BUFFSIZE);				/* Query */
+  PGresult *res		 = NULL;							/* Darenbank - Result */
+  int time_field;									/* Id ses Timestamp-Feldes */
+  int val_field;									/* Id des Wert - Feldes */
+  long time_temp;									/* Hilfsvariable */
+  int pix_coord;									/* x - Koordinate, an die der Wert gehört */
+  int i;										/* Laufvariable zum durchlaufen des Datenbank-resuls */
+  long base_time;									/* Zeit an der 0-Koordinate (lt. Datenbank!) */
+  pix_list_ptr list_ptr = NULL;								/* Zeiger auf den Anfang der Wertliste */
+  pix_list_ptr temp_ptr = NULL;								/* Zeiger zum durchlaufen der Wertliste */
 
   DEBUGOUT1("\nHole Daten...\n");
   DEBUGOUT2("  Ein Pixel entspricht %f sekunden\n", seconds_per_pix);
-  
+
   snprintf(query, BUFFSIZE, "SELECT round(date_part('epoch', current_timestamp)) AS now, round(date_part('epoch', timestamp)) AS times, %s AS val FROM %s WHERE  timestamp > (current_timestamp - INTERVAL '%d seconds') ORDER BY times ASC", img_cfg.table_field, table, img_cfg.show_interval );
 
   res = pg_check_exec(conn, query);
 
   time_field = PQfnumber(res, "times");
   val_field  = PQfnumber(res, "val");
-  
+
   base_time = atol(PQgetvalue(res, 0, PQfnumber(res, "now"))) - img_cfg.show_interval;
 
   for (i = 0; i < PQntuples(res); i++){
@@ -61,9 +61,9 @@ pix_list_ptr get_pix_list(int c_width){
     if(list_ptr == NULL){
       list_ptr = temp_ptr;
     }
-    
+
   }
-  
+
   PQclear(res);
   PQfinish(conn);
   free(query);
@@ -73,6 +73,7 @@ pix_list_ptr get_pix_list(int c_width){
   return list_ptr;
 }
 
+/* Speichert einen geholten Wert ab */
 static pix_list_ptr add_pix_value(pix_list_ptr ptr, int coord, int value){ 
 
   if(ptr == NULL){
@@ -84,10 +85,11 @@ static pix_list_ptr add_pix_value(pix_list_ptr ptr, int coord, int value){
     ptr->value_sum	= 0;
     DEBUGOUT1("  Erstes Element generiert...\n");
   }
-  
+
   if(coord == ptr->x_pix_coord){
     ptr->value_sum += value;
     ptr->value_count++;
+
     DEBUGOUT5("  Zu x-pos. %d %d. Wert (%d) hinzugefügt. Durchschn.: %d\n", ptr->x_pix_coord, ptr->value_count, value, (ptr->value_sum/ptr->value_count) );
   } else {
     ptr->next 		= malloc(sizeof(pix_list_t));
@@ -96,6 +98,7 @@ static pix_list_ptr add_pix_value(pix_list_ptr ptr, int coord, int value){
     ptr->value_sum 	= value;
     ptr->value_count 	= 1;
     ptr->next           = NULL;
+
     DEBUGOUT3("  An x-pos. %d Wert %d eingefuegt\n", ptr->x_pix_coord, ptr->value_sum);
   }
 
