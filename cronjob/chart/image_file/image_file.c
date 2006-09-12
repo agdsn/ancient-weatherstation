@@ -29,10 +29,17 @@
 #include "image_common.h"
 #include "image_file.h"
 #include "image_config.h"
+#include "image_draw.h"
 
 
 /* Optionen des Bildes */
 image_cfg img_cfg;
+
+
+static void regenerate_image();
+static int check_file_interval();
+
+
 
 /* Handelt ein Bild */
 void process_image_cfg(char *image_cfg_file){
@@ -49,18 +56,21 @@ void process_image_cfg(char *image_cfg_file){
     DEBUGOUT2("Width         = %d\n", img_cfg.width);
     DEBUGOUT2("Height        = %d\n", img_cfg.height);
     DEBUGOUT2("SensorId      = %d\n", img_cfg.sens_id);
+    DEBUGOUT2("TabellenFeld  = %s\n", img_cfg.table_field);
     DEBUGOUT1("\n");
   } else {
     return;
   }
-  check_file_interval();
+  if(check_file_interval()){
+  }
+
   sleep(3);
 }
 
 
 /* Checkt ob es wieder an der Zeit ist ein File 
  * neu zu erstellen */
-int check_file_interval(){
+static int check_file_interval(){
 
   struct stat stat_buff;
   time_t now;
@@ -68,6 +78,7 @@ int check_file_interval(){
 
   if(access(img_cfg.file_name, F_OK) == -1){
     DEBUGOUT2("Datei '%s' existiert nicht\n", img_cfg.file_name);
+    DEBUGOUT1("Sie muss neu generiert werden!\n");
     return 1;
   }
   if ((stat(img_cfg.file_name, &stat_buff)) != -1){
@@ -76,12 +87,18 @@ int check_file_interval(){
     diff_sek = difftime(now, stat_buff.st_mtime);
 
     DEBUGOUT3("Datei '%s' ist %d Sek. alt \n", img_cfg.file_name, diff_sek);
+    DEBUGOUT2("Sie soll aller %d Sek. neu generiert werden \n", img_cfg.gen_interval);
 
-    if(diff_sek > (img_cfg.gen_interval * 60))
+    if(diff_sek > img_cfg.gen_interval)
+    DEBUGOUT1("Sie muss neu generiert werden!\n");
       return 1;
 
   } else {
     exit_error(ERROR_STAT);
   }
   return 0;
+}
+
+static void regenerate_image(){
+  draw_to_file(NULL);
 }

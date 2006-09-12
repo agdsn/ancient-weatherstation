@@ -12,14 +12,6 @@
 #define BUFFSIZE_EXTRA 2048
 
 
-typedef struct pix_list *pix_list_ptr;
-typedef struct pix_list {
-  pix_list_ptr 	next;
-  int 		x_pix_coord;
-  int 		value_count;
-  int 		value_sum;
-} pix_list_t;
-
 
 
 static char *get_conn_string();
@@ -34,8 +26,14 @@ static char *get_type_table_by_id(PGconn *, int );
 
 pix_list_ptr get_pix_list(int c_width){
   double seconds_per_pix = (img_cfg.show_interval * 0.1)/(c_width * 0.1);
-  PGconn *connection = pg_check_connect(get_conn_string());
+  char *conn_string = get_conn_string();
+  PGconn *conn = pg_check_connect(conn_string);
 
+
+  PQfinish(conn);
+  free(conn_string);
+
+  return NULL;
 }
 
 /* baut den String fuer die Postgres-Verbindung zusammen */

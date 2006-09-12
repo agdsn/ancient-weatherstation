@@ -38,6 +38,7 @@ static const config_keyword keywords[] = {
   /* keyword		handler  	 	variable address			default */
   {"filename", 		read_str,               &(img_cfg.file_name),         		""},
   {"headline", 		read_str,               &(img_cfg.headline),         		""},
+  {"table_field", 	read_str,               &(img_cfg.table_field),        		""},
   {"gen_interval",    	read_time,          	&(img_cfg.gen_interval),         	""},
   {"show_interval",    	read_time,          	&(img_cfg.show_interval),         	""},
   {"label_interval",   	read_time,          	&(img_cfg.label_interval),         	""},
@@ -104,7 +105,7 @@ int get_image_cfg(char *file){
   buff = strcpy(buff, global_opts.image_cfg_location);
   buff = strcat(buff, file);
 
-  DEBUGOUT2("Lese Config-File: '%s' \n", buff);
+  DEBUGOUT2("\nLese Config-File: '%s' \n", buff);
 
   ret_var = read_config(buff, 1, keywords);
   return ret_var;
