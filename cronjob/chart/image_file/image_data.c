@@ -44,7 +44,7 @@ pix_list_ptr get_pix_list(int c_width){
   DEBUGOUT1("\nHole Daten...\n");
   DEBUGOUT2("  Ein Pixel entspricht %f sekunden\n", seconds_per_pix);
   
-  snprintf(query, BUFFSIZE, "SELECT round(date_part('epoch', current_timestamp)) AS now, round(date_part('epoch', timestamp)) AS times, %s AS val FROM %s WHERE  timestamp > (current_timestamp - INTERVAL '%d seconds') ORDER BY times DESC", img_cfg.table_field, table, img_cfg.show_interval );
+  snprintf(query, BUFFSIZE, "SELECT round(date_part('epoch', current_timestamp)) AS now, round(date_part('epoch', timestamp)) AS times, %s AS val FROM %s WHERE  timestamp > (current_timestamp - INTERVAL '%d seconds') ORDER BY times ASC", img_cfg.table_field, table, img_cfg.show_interval );
 
   res = pg_check_exec(conn, query);
 
@@ -64,40 +64,39 @@ pix_list_ptr get_pix_list(int c_width){
     
   }
   
-
-
-
-
-
-
   PQclear(res);
   PQfinish(conn);
   free(query);
   free(table);
   free(conn_string);
 
-  return NULL;
+  return list_ptr;
 }
 
-static pix_list_ptr add_pix_value(pix_list_ptr ptr, int coord, int value){
-  
+static pix_list_ptr add_pix_value(pix_list_ptr ptr, int coord, int value){ 
+
   if(ptr == NULL){
+    DEBUGOUT1("\nLese Daten ein:\n");
     ptr  		= malloc(sizeof(pix_list_t));
     ptr->next 		= NULL;
     ptr->x_pix_coord 	= 0;
     ptr->value_count    = 0;
     ptr->value_sum	= 0;
+    DEBUGOUT1("  Erstes Element generiert...\n");
   }
   
   if(coord == ptr->x_pix_coord){
     ptr->value_sum += value;
     ptr->value_count++;
+    DEBUGOUT5("  Zu x-pos. %d %d. Wert (%d) hinzugefügt. Durchschn.: %d\n", ptr->x_pix_coord, ptr->value_count, value, (ptr->value_sum/ptr->value_count) );
   } else {
     ptr->next 		= malloc(sizeof(pix_list_t));
     ptr 		= ptr->next;
+    ptr->x_pix_coord	= coord;
     ptr->value_sum 	= value;
     ptr->value_count 	= 1;
     ptr->next           = NULL;
+    DEBUGOUT3("  An x-pos. %d Wert %d eingefuegt\n", ptr->x_pix_coord, ptr->value_sum);
   }
 
   return ptr;
