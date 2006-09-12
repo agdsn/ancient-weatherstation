@@ -3,7 +3,7 @@
 #include "image_data.h"
 
 int draw_to_file(FILE *fd){
-  get_image_cfg(200);
+  get_pix_list(210);
 }
 
 static void create_image(){

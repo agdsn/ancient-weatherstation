@@ -62,6 +62,7 @@ void process_image_cfg(char *image_cfg_file){
     return;
   }
   if(check_file_interval()){
+    regenerate_image();
   }
 
   sleep(3);
@@ -96,6 +97,7 @@ static int check_file_interval(){
   } else {
     exit_error(ERROR_STAT);
   }
+  DEBUGOUT1("Datei ist aktuell genug!\n");
   return 0;
 }
 

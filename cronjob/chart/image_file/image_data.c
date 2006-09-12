@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
+#include <math.h>
 #include <postgresql/libpq-fe.h>
 #include "image_data.h"
 #include "image_common.h"
@@ -9,11 +10,11 @@
 #include "../definitions.h"
 
 #define BUFFSIZE 512
-#define BUFFSIZE_EXTRA 2048
 
 
 
 
+static pix_list_ptr add_pix_value(pix_list_ptr , int , int );
 static char *get_conn_string();
 static PGconn *pg_check_connect(char *);
 static PGresult *pg_check_exec(PGconn *, char *);
@@ -25,16 +26,84 @@ static char *get_type_table_by_id(PGconn *, int );
 
 
 pix_list_ptr get_pix_list(int c_width){
-  double seconds_per_pix = (img_cfg.show_interval * 0.1)/(c_width * 0.1);
-  char *conn_string = get_conn_string();
-  PGconn *conn = pg_check_connect(conn_string);
+  double seconds_per_pix = ((double)c_width)/((double)img_cfg.show_interval);
+  char *conn_string 	 = get_conn_string();
+  PGconn *conn 		 = pg_check_connect(conn_string);
+  char *table 		 = get_type_table_by_id(conn, img_cfg.sens_id);
+  char *query		 = malloc(sizeof(char)*BUFFSIZE);
+  PGresult *res		 = NULL;
+  int time_field;
+  int val_field;
+  long time_temp;
+  int pix_coord;
+  int i;
+  long base_time;
+  pix_list_ptr list_ptr = NULL;
+  pix_list_ptr temp_ptr = NULL;
+
+  DEBUGOUT1("\nHole Daten...\n");
+  DEBUGOUT2("  Ein Pixel entspricht %f sekunden\n", seconds_per_pix);
+  
+  snprintf(query, BUFFSIZE, "SELECT round(date_part('epoch', current_timestamp)) AS now, round(date_part('epoch', timestamp)) AS times, %s AS val FROM %s WHERE  timestamp > (current_timestamp - INTERVAL '%d seconds') ORDER BY times DESC", img_cfg.table_field, table, img_cfg.show_interval );
+
+  res = pg_check_exec(conn, query);
+
+  time_field = PQfnumber(res, "times");
+  val_field  = PQfnumber(res, "val");
+  
+  base_time = atol(PQgetvalue(res, 0, PQfnumber(res, "now"))) - img_cfg.show_interval;
+
+  for (i = 0; i < PQntuples(res); i++){
+    time_temp = atol(PQgetvalue(res, i, time_field)) - base_time;
+    pix_coord = floor( ((double)time_temp) * seconds_per_pix) ;
+    temp_ptr = add_pix_value(temp_ptr, pix_coord, atoi( PQgetvalue(res, i, val_field) ) );
+
+    if(list_ptr == NULL){
+      list_ptr = temp_ptr;
+    }
+    
+  }
+  
 
 
+
+
+
+
+  PQclear(res);
   PQfinish(conn);
+  free(query);
+  free(table);
   free(conn_string);
 
   return NULL;
 }
+
+static pix_list_ptr add_pix_value(pix_list_ptr ptr, int coord, int value){
+  
+  if(ptr == NULL){
+    ptr  		= malloc(sizeof(pix_list_t));
+    ptr->next 		= NULL;
+    ptr->x_pix_coord 	= 0;
+    ptr->value_count    = 0;
+    ptr->value_sum	= 0;
+  }
+  
+  if(coord == ptr->x_pix_coord){
+    ptr->value_sum += value;
+    ptr->value_count++;
+  } else {
+    ptr->next 		= malloc(sizeof(pix_list_t));
+    ptr 		= ptr->next;
+    ptr->value_sum 	= value;
+    ptr->value_count 	= 1;
+    ptr->next           = NULL;
+  }
+
+  return ptr;
+
+}
+
 
 /* baut den String fuer die Postgres-Verbindung zusammen */
 static char *get_conn_string(){
