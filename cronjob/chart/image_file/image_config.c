@@ -28,7 +28,7 @@
 #include "image_common.h"
 
 static int read_time(const char *, void *);
-
+static int read_color(const char *, void *);
 
 
 
@@ -49,11 +49,34 @@ static const config_keyword keywords[] = {
   {"height",		read_int,               &(img_cfg.height),    			""},
   {"sensor_id",		read_int,               &(img_cfg.sens_id),    			""},
   
+
+  {"bg_color",		read_color,             &(img_cfg.bg_color),    			""},
+
   {"",			NULL, 	  		NULL,					""}
 };
 
 
 
+static int read_color(const char *line, void *arg){
+  img_color_ptr *col = arg;
+  img_color_ptr tmp = NULL;
+  char *buff = malloc(sizeof(char)*3);
+
+  if(strlen(line) == 11){
+    if (strchr(line, ':') != NULL){
+      tmp        = malloc(sizeof(img_color_t));
+      tmp->r     = strtol(strncpy(buff, line, 2), NULL, 16);
+      tmp->b     = strtol(strncpy(buff, line+3, 2), NULL, 16);
+      tmp->g     = strtol(strncpy(buff, line+6, 2), NULL, 16);
+      tmp->alpha = strtol(strncpy(buff, line+9, 2), NULL, 16);
+    
+      DEBUGOUT5(" Farbe gelesen: rot:%2x gelb:%2x gruen:%2x mit alpha:%2x\n", tmp->r, tmp->b, tmp->g, tmp->alpha) ;
+    }
+  } 
+
+  *col = tmp;
+  
+}
 
 /* Ein Interval einlesen.
  * wandelt Zeitangaben von der Form:

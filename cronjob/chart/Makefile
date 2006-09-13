@@ -25,7 +25,7 @@ all: $(BIN_NAME)
 # Binary Linken
 $(BIN_NAME): $(OBJS)
 	@ echo Linke: $(LD) $(DEBUG) $(NOLOG) -L$$(pg_config --libdir)/pgsql -lm -lpq $(LDFLAS) $(BIN_NAME) $(OBJS)
-	@ $(LD) $(DEBUG) $(NOLOG) -L$$(pg_config --libdir)/pgsql -lm -lpq $(LDFLAS) $(BIN_NAME) $(OBJS)
+	@ $(LD) $(DEBUG) $(NOLOG) -L$$(pg_config --libdir)/pgsql -lefence -lm -lpq $(LDFLAS) $(BIN_NAME) $(OBJS)
 	@ echo Binary $(BIN_NAME) ist fertig!
 
 # Abhängigkeiten

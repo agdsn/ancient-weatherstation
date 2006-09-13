@@ -33,7 +33,7 @@
 
 
 /* Optionen des Bildes */
-image_cfg img_cfg;
+image_cfg_t img_cfg;
 
 
 static void regenerate_image();
@@ -67,7 +67,7 @@ void process_image_cfg(char *image_cfg_file){
     regenerate_image();
   }
 
-//  sleep(3);
+  //sleep(30);
 }
 
 
