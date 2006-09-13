@@ -9,13 +9,13 @@ typedef int color;
 
 
 static gdImagePtr create_image();
-static void draw_image();
+static gdImagePtr draw_image(gdImagePtr);
 static void write_image_png(gdImagePtr, FILE *);
 
 
 int draw_to_file(FILE *fd){
   gdImagePtr img = create_image();
-  draw_image();
+  draw_image(img);
   write_image_png(img, fd);
 }
 
@@ -33,9 +33,9 @@ static gdImagePtr create_image(){
   return new_img;
 }
 
-static void draw_image(){
+static gdImagePtr draw_image(gdImagePtr img){
   pix_list_ptr pix_list = get_pix_list(300);
-
+  scale_y_coords(pix_list, 100, 40, -10);  
 }
 
 static void write_image_png(gdImagePtr img, FILE *fd){
@@ -43,3 +43,5 @@ static void write_image_png(gdImagePtr img, FILE *fd){
   gdImageSaveAlpha(img, 1);
   gdImagePng(img, fd);
 }
+
+

@@ -5,6 +5,7 @@ typedef struct pix_list *pix_list_ptr;
 typedef struct pix_list {
   pix_list_ptr 	next;
   int 		x_pix_coord;
+  int 		y_pix_coord;
   int 		value_count;
   int 		value_sum;
 } pix_list_t;
@@ -19,3 +20,12 @@ pix_list_ptr get_pix_list(int );
 pix_list_ptr get_min();
 
 pix_list_ptr get_max();
+
+/* Skaliert die X-Koordinaten der Punkte im angegebenem Bereich
+ * 1. Argument: die Pix-Liste die skaliert werden soll
+ * 2. Argument: die anzahl der Pixel in y-Richtung
+ * 3. Argument: max. Wert
+ * 4. Argument: min. Wert
+ * Rueckgabe: Position der 0-Linie von oben aus
+ */
+int scale_y_coords(pix_list_ptr , int , int , int );

@@ -24,11 +24,32 @@ static PGresult *pg_check_exec(PGconn *, char *);
 static char *get_type_table_by_id(PGconn *, int );
 
 
+/* Skaliert die X-Koordinaten der Punkte im angegebenem Bereich
+ * ausführliche Beschreibung im header-file */
+int scale_y_coords(pix_list_ptr ptr, int c_height, int max_label, int min_label){
+  int range            = (max_label - min_label + 1) * 10;				/* Anzahl von 0,1-Schritten */
+  double pix_per_scale = ((double)c_height) / ((double)range); 				/* Pixel pro 0,1 */
+  pix_list_ptr temp    = ptr;
+  int zero_line        = floor( ((double)max_label) * pix_per_scale);			/* Nullinie */
+  
+  DEBUGOUT1("\nBerechne y-Koordinaten:\n");
 
+  for (; temp; temp = temp->next){
+    temp->y_pix_coord = floor( ( ((double)temp->value_sum) / ((double)temp->value_count) ) * pix_per_scale);
+    DEBUGOUT3("  neue y-Koordinate: %d bei x: %d\n",temp->y_pix_coord, temp->x_pix_coord);
+  }
+
+  DEBUGOUT2(" Nullinie bei: %d\n", zero_line);
+
+  return zero_line;
+}
+
+/* Maximaler wert */
 pix_list_ptr get_max(){
   return min;
 }
 
+/* Minimaler Wert */
 pix_list_ptr get_min(){
   return max;
 }
@@ -73,8 +94,15 @@ pix_list_ptr get_pix_list(int c_width){
     pix_coord = floor( ((double)time_temp) * seconds_per_pix) ;
     temp_ptr = add_pix_value(temp_ptr, pix_coord, atoi( PQgetvalue(res, i, val_field) ) );
 
-    if (list_ptr == NULL)
+    if (list_ptr == NULL){
       list_ptr = temp_ptr;
+      
+      /* Globale Variablen neu initialisieren um 
+       * mehtete Bilder in einem Thread bauen zu
+       * können */
+      min = temp_ptr;
+      max = temp_ptr;
+    }
 
     /* Min / Max ermitteln */
     if (min != NULL){
@@ -112,6 +140,7 @@ static pix_list_ptr add_pix_value(pix_list_ptr ptr, int coord, int value){
     ptr  		= malloc(sizeof(pix_list_t));
     ptr->next 		= NULL;
     ptr->x_pix_coord 	= 0;
+    ptr->y_pix_coord 	= 0;
     ptr->value_count    = 0;
     ptr->value_sum	= 0;
     DEBUGOUT1("  Erstes Element generiert...\n");
@@ -126,6 +155,7 @@ static pix_list_ptr add_pix_value(pix_list_ptr ptr, int coord, int value){
     ptr->next 		= malloc(sizeof(pix_list_t));
     ptr 		= ptr->next;
     ptr->x_pix_coord	= coord;
+    ptr->y_pix_coord	= coord;
     ptr->value_sum 	= value;
     ptr->value_count 	= 1;
     ptr->next           = NULL;
