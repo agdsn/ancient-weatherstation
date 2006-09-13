@@ -43,9 +43,9 @@ label_list_ptr get_x_label_list(int c_width){
 
     if (ptr != NULL){
       temp_ptr->next = new_ptr;
-      temp_ptr = temp_ptr->next;
+      temp_ptr       = temp_ptr->next;
     } else {
-      ptr = new_ptr;
+      ptr      = new_ptr;
       temp_ptr = new_ptr;
     }
   }
