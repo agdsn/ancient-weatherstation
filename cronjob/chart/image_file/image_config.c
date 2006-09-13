@@ -29,6 +29,7 @@
 
 static int read_time(const char *, void *);
 static int read_color(const char *, void *);
+static int read_double(const char *, void *);
 
 
 
@@ -48,14 +49,25 @@ static const config_keyword keywords[] = {
   {"width",		read_int,               &(img_cfg.width),    			""},
   {"height",		read_int,               &(img_cfg.height),    			""},
   {"sensor_id",		read_int,               &(img_cfg.sens_id),    			""},
+  {"value_koeffizient",	read_double,            &(img_cfg.val_koeff),  			""},
   
 
   {"bg_color",		read_color,             &(img_cfg.bg_color),   			""},
+  {"dia_bg_color",	read_color,             &(img_cfg.dia_bg_color),		""},
+  {"dia_line_color",	read_color,             &(img_cfg.dia_line_color),		""},
+  {"dia_grid_color",	read_color,             &(img_cfg.dia_grid_color),		""},
+  {"dia_border_color",	read_color,             &(img_cfg.dia_border_color),		""},
+  {"zero_line_color",	read_color,             &(img_cfg.zero_line_color),   		""},
 
   {"",			NULL, 	  		NULL,					""}
 };
 
 
+static int read_double(const char *line, void *arg){
+  double *dest = arg;
+  *dest = atof(line);
+  return 1;
+}
 
 static int read_color(const char *line, void *arg){
   img_color_ptr *col = arg;

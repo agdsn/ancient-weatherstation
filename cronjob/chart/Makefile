@@ -3,7 +3,7 @@ LD      = gcc
 RM	= rm
 CFLAGS  = -c
 LDFLAS  = -o
-LD_LIBS = -lefence -lm -lpq -lgd -lpng -lz -lfreetype
+LD_LIBS = -lm -lpq -lgd -lpng -lz -lfreetype
 #INCL	= -I$$(pg_config --includedir)
 
 BIN_NAME = chart
@@ -37,11 +37,14 @@ chart.o: chart.c \
 	common.h \
 	image_file/image_file.h
 common.o: common.c \
-	common.h
+	common.h \
+	definitions.h
 config.o: config.c \
 	config.h \
 	definitions.h \
 	common.h
+image_file/image_common.o: image_file/image_common.c \
+	image_file/image_common.h
 image_file/image_config.o: image_file/image_config.c \
 	common.h \
 	definitions.h \
@@ -54,7 +57,8 @@ image_file/image_data.o: image_file/image_data.c \
 	definitions.h
 image_file/image_draw.o: image_file/image_draw.c \
 	image_file/image_draw.h \
-	image_file/image_data.h
+	image_file/image_data.h \
+	image_file/image_common.h
 image_file/image_file.o: image_file/image_file.c \
 	definitions.h \
 	common.h \
@@ -62,8 +66,6 @@ image_file/image_file.o: image_file/image_file.c \
 	image_file/image_file.h \
 	image_file/image_config.h \
 	image_file/image_draw.h
-image_file/image_common.o: image_file/image_common.c \
-	image_file/image_common.h
 
 # Compillieren
 $(OBJS):

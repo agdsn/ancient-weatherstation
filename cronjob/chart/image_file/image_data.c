@@ -15,6 +15,7 @@
 
 static pix_list_ptr min = NULL;
 static pix_list_ptr max = NULL;
+static long base_time;									/* Zeit an der 0-Koordinate (lt. Datenbank!) */
 
 
 static pix_list_ptr add_pix_value(pix_list_ptr , long, int , int );
@@ -24,13 +25,42 @@ static PGresult *pg_check_exec(PGconn *, char *);
 static char *get_type_table_by_id(PGconn *, int );
 
 
+/* Baut die Liste mit den Labels an der X-Achse */
+label_list_ptr get_x_label_list(int c_width){
+  double factor = ((double)img_cfg.label_interval) * ( ((double)c_width) / ((double)img_cfg.show_interval) );
+  int num       = floor( ((double)img_cfg.show_interval) /  ((double)img_cfg.label_interval) );
+  int i;
+  label_list_ptr ptr      = NULL;
+  label_list_ptr new_ptr  = NULL;
+  label_list_ptr temp_ptr = NULL;
+
+  for ( i = 1; i < num; i++ ) {
+    new_ptr            = malloc(sizeof(label_list_t));
+    new_ptr->pos       = floor( ((double)i) * factor);
+    new_ptr->timestamp = base_time + (i * img_cfg.label_interval);
+    new_ptr->text      = "NOT YET IMPLEMENTED";
+    new_ptr->next      = NULL;
+
+    if (ptr != NULL){
+      temp_ptr->next = new_ptr;
+      temp_ptr = temp_ptr->next;
+    } else {
+      ptr = new_ptr;
+      temp_ptr = new_ptr;
+    }
+  }
+ 
+  return ptr;
+}
+
+
 /* Skaliert die X-Koordinaten der Punkte im angegebenem Bereich
  * ausführliche Beschreibung im header-file */
 int scale_y_coords(pix_list_ptr ptr, int c_height, int max_label, int min_label){
-  int range            = (max_label - min_label + 1) * 10;				/* Anzahl von 0,1-Schritten */
+  int range            = (max_label - min_label + 1) ;				/* Anzahl von 0,1-Schritten */
   double pix_per_scale = ((double)c_height) / ((double)range); 				/* Pixel pro 0,1 */
   pix_list_ptr temp    = ptr;
-  int zero_line        = floor( ((double)( (max_label * 10) + 1)) * pix_per_scale);			/* Nullinie */
+  int zero_line        = floor( ((double)(max_label + 1)) * pix_per_scale);			/* Nullinie */
   
   DEBUGOUT1("\nBerechne y-Koordinaten:\n");
 
@@ -67,7 +97,6 @@ pix_list_ptr get_pix_list(int c_width){
   long time_temp;									/* Hilfsvariable */
   int pix_coord;									/* x - Koordinate, an die der Wert gehört */
   int i;										/* Laufvariable zum durchlaufen des Datenbank-resuls */
-  long base_time;									/* Zeit an der 0-Koordinate (lt. Datenbank!) */
   long timestamp;
   pix_list_ptr list_ptr = NULL;								/* Zeiger auf den Anfang der Wertliste */
   pix_list_ptr temp_ptr = NULL;								/* Zeiger zum durchlaufen der Wertliste */
@@ -141,7 +170,6 @@ static pix_list_ptr add_pix_value(pix_list_ptr ptr, long timestamp, int coord, i
     DEBUGOUT1("\nLese Daten ein:\n");
     ptr  		= malloc(sizeof(pix_list_t));
     ptr->next 		= NULL;
-    ptr->timestamp	= timestamp;
     ptr->x_pix_coord 	= coord;
     ptr->y_pix_coord 	= 0;
     ptr->value_count    = 1;
@@ -157,7 +185,6 @@ static pix_list_ptr add_pix_value(pix_list_ptr ptr, long timestamp, int coord, i
     } else {
       ptr->next		= malloc(sizeof(pix_list_t));
       ptr 		= ptr->next;
-      ptr->timestamp	= timestamp;
       ptr->x_pix_coord	= coord;
       ptr->y_pix_coord	= 0;
       ptr->value_sum 	= value;
