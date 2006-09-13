@@ -107,6 +107,8 @@ int main(int argc, char *argv[]){
   if(walk_image_cfg_list())
     wait_for_childs(NULL);
 
+  DEBUGOUT1("\n-------------------------------------------------------------------\nEnde\n");
+
   return EXIT_SUCCESS;
 }
 

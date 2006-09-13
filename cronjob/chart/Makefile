@@ -3,6 +3,7 @@ LD      = gcc
 RM	= rm
 CFLAGS  = -c
 LDFLAS  = -o
+LD_LIBS = -lefence -lm -lpq -lgd -lpng -lz -lfreetype
 #INCL	= -I$$(pg_config --includedir)
 
 BIN_NAME = chart
@@ -24,8 +25,8 @@ all: $(BIN_NAME)
 
 # Binary Linken
 $(BIN_NAME): $(OBJS)
-	@ echo Linke: $(LD) $(DEBUG) $(NOLOG) -L$$(pg_config --libdir)/pgsql -lm -lpq $(LDFLAS) $(BIN_NAME) $(OBJS)
-	@ $(LD) $(DEBUG) $(NOLOG) -L$$(pg_config --libdir)/pgsql -lefence -lm -lpq $(LDFLAS) $(BIN_NAME) $(OBJS)
+	@ echo Linke: $(LD) $(DEBUG) $(NOLOG) -L$$(pg_config --libdir)/pgsql $(LD_LIBS) $(LDFLAS) $(BIN_NAME) $(OBJS)
+	@ $(LD) $(DEBUG) $(NOLOG) -L$$(pg_config --libdir)/pgsql $(LD_LIBS) $(LDFLAS) $(BIN_NAME) $(OBJS)
 	@ echo Binary $(BIN_NAME) ist fertig!
 
 # Abhängigkeiten

@@ -92,9 +92,10 @@ static int check_file_interval(){
     DEBUGOUT3("Datei '%s' ist %d Sek. alt \n", img_cfg.file_name, diff_sek);
     DEBUGOUT2("Sie soll aller %d Sek. neu generiert werden \n", img_cfg.gen_interval);
 
-    if(diff_sek > img_cfg.gen_interval)
-    DEBUGOUT1("Sie muss neu generiert werden!\n");
+    if(diff_sek > img_cfg.gen_interval){
+      DEBUGOUT1("Sie muss neu generiert werden!\n");
       return 1;
+    }
 
   } else {
     exit_error(ERROR_STAT);
@@ -104,5 +105,6 @@ static int check_file_interval(){
 }
 
 static void regenerate_image(){
-  draw_to_file(NULL);
+  FILE *fd = fopen(img_cfg.file_name, "wb");
+  draw_to_file(fd);
 }

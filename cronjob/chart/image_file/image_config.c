@@ -69,13 +69,16 @@ static int read_color(const char *line, void *arg){
       tmp->b     = strtol(strncpy(buff, line+3, 2), NULL, 16);
       tmp->g     = strtol(strncpy(buff, line+6, 2), NULL, 16);
       tmp->alpha = strtol(strncpy(buff, line+9, 2), NULL, 16);
-    
+
       DEBUGOUT5(" Farbe gelesen: rot:%2x gelb:%2x gruen:%2x mit alpha:%2x\n", tmp->r, tmp->b, tmp->g, tmp->alpha) ;
     }
   } 
 
   *col = tmp;
-  
+
+  free(buff);
+
+  return 1; 
 }
 
 /* Ein Interval einlesen.
