@@ -39,6 +39,8 @@ static const config_keyword keywords[] = {
   {"filename", 		read_str,               &(img_cfg.file_name),         		""},
   {"headline", 		read_str,               &(img_cfg.headline),         		""},
   {"table_field", 	read_str,               &(img_cfg.table_field),        		""},
+  {"manual_table",   	read_yn,          	&(img_cfg.manual_table),         	"no"},
+  {"manual_table_name", read_str,               &(img_cfg.table_name),        		""},
   {"gen_interval",    	read_time,          	&(img_cfg.gen_interval),         	""},
   {"show_interval",    	read_time,          	&(img_cfg.show_interval),         	""},
   {"label_interval",   	read_time,          	&(img_cfg.label_interval),         	""},

@@ -57,6 +57,8 @@ void process_image_cfg(char *image_cfg_file){
     DEBUGOUT2("Height        = %d\n", img_cfg.height);
     DEBUGOUT2("SensorId      = %d\n", img_cfg.sens_id);
     DEBUGOUT2("TabellenFeld  = %s\n", img_cfg.table_field);
+    DEBUGOUT2("ManualTabelle = %d\n", img_cfg.manual_table);
+    DEBUGOUT2("TabellenName  = %s\n", img_cfg.table_name);
     DEBUGOUT1("\n");
   } else {
     return;
@@ -65,7 +67,7 @@ void process_image_cfg(char *image_cfg_file){
     regenerate_image();
   }
 
-  sleep(3);
+//  sleep(3);
 }
 
 

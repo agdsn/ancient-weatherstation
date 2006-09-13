@@ -72,7 +72,7 @@ $(OBJS):
 # Programm mit debug-ausgabe bauen
 debug: 
 	@ echo "baue Version mit Debugoutput ..."
-	@ $(MAKE) all DEBUG=-DDEBUG
+	@ $(MAKE) all DEBUG="-DDEBUG -g"
 
 # Installieren
 install:

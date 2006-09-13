@@ -15,3 +15,7 @@ typedef struct pix_list {
  * 1. Argument: die effektive Breite des Bereiches in dem gezeichnet werden soll
  */
 pix_list_ptr get_pix_list(int );
+
+pix_list_ptr get_min();
+
+pix_list_ptr get_max();

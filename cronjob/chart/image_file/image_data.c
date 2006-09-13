@@ -25,14 +25,20 @@ static char *get_type_table_by_id(PGconn *, int );
 
 
 
+pix_list_ptr get_max(){
+  return min;
+}
 
+pix_list_ptr get_min(){
+  return max;
+}
 
 /* Holt eine Liste mit den Werten und den jeweiligen x-koordinaten */
 pix_list_ptr get_pix_list(int c_width){
   double seconds_per_pix = ((double)c_width)/((double)img_cfg.show_interval);		/* Pixel pro Sekunde */
   char *conn_string 	 = get_conn_string();						/* Verbindungs-String */
   PGconn *conn 		 = pg_check_connect(conn_string);				/* Datenbank - Verbindung */
-  char *table 		 = get_type_table_by_id(conn, img_cfg.sens_id);			/* Tabellen - Name */
+  char *table 		 = NULL;							/* Tabellen - Name */
   char *query		 = malloc(sizeof(char)*BUFFSIZE);				/* Query */
   PGresult *res		 = NULL;							/* Darenbank - Result */
   int time_field;									/* Id ses Timestamp-Feldes */
@@ -46,6 +52,12 @@ pix_list_ptr get_pix_list(int c_width){
 
   DEBUGOUT1("\nHole Daten...\n");
   DEBUGOUT2("  Ein Pixel entspricht %f sekunden\n", seconds_per_pix);
+
+  if (img_cfg.manual_table) {
+    table = strdup(img_cfg.table_name);
+  } else {
+    table = get_type_table_by_id(conn, img_cfg.sens_id);
+  }
 
   snprintf(query, BUFFSIZE, "SELECT round(date_part('epoch', current_timestamp)) AS now, round(date_part('epoch', timestamp)) AS times, %s AS val FROM %s WHERE  timestamp > (current_timestamp - INTERVAL '%d seconds') ORDER BY times ASC", img_cfg.table_field, table, img_cfg.show_interval );
 
@@ -79,7 +91,8 @@ pix_list_ptr get_pix_list(int c_width){
       max = temp_ptr;
     }
   }
-
+  
+  DEBUGOUT2(" %d Werte geholt \n", i);
   DEBUGOUT3(" Min: x-pos.: %d, Wert: %d\n", min->x_pix_coord, (min->value_sum / min->value_count) );
   DEBUGOUT3(" Max: x-pos.: %d, Wert: %d\n", max->x_pix_coord, (max->value_sum / max->value_count) );
   PQclear(res);
