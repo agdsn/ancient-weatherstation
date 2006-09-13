@@ -8,6 +8,7 @@ typedef struct pix_list {
   int 		y_pix_coord;
   int 		value_count;
   int 		value_sum;
+  long		timestamp;
 } pix_list_t;
 
 

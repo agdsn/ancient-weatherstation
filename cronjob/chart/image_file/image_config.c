@@ -50,7 +50,7 @@ static const config_keyword keywords[] = {
   {"sensor_id",		read_int,               &(img_cfg.sens_id),    			""},
   
 
-  {"bg_color",		read_color,             &(img_cfg.bg_color),    			""},
+  {"bg_color",		read_color,             &(img_cfg.bg_color),   			""},
 
   {"",			NULL, 	  		NULL,					""}
 };

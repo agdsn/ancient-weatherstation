@@ -17,7 +17,7 @@ static pix_list_ptr min = NULL;
 static pix_list_ptr max = NULL;
 
 
-static pix_list_ptr add_pix_value(pix_list_ptr , int , int );
+static pix_list_ptr add_pix_value(pix_list_ptr , long, int , int );
 static char *get_conn_string();
 static PGconn *pg_check_connect(char *);
 static PGresult *pg_check_exec(PGconn *, char *);
@@ -30,12 +30,12 @@ int scale_y_coords(pix_list_ptr ptr, int c_height, int max_label, int min_label)
   int range            = (max_label - min_label + 1) * 10;				/* Anzahl von 0,1-Schritten */
   double pix_per_scale = ((double)c_height) / ((double)range); 				/* Pixel pro 0,1 */
   pix_list_ptr temp    = ptr;
-  int zero_line        = floor( ((double)max_label) * pix_per_scale);			/* Nullinie */
+  int zero_line        = floor( ((double)( (max_label * 10) + 1)) * pix_per_scale);			/* Nullinie */
   
   DEBUGOUT1("\nBerechne y-Koordinaten:\n");
 
   for (; temp; temp = temp->next){
-    temp->y_pix_coord = floor( ( ((double)temp->value_sum) / ((double)temp->value_count) ) * pix_per_scale);
+    temp->y_pix_coord = -1 * floor( ( ((double)temp->value_sum) / ((double)temp->value_count) ) * pix_per_scale);
     DEBUGOUT3("  neue y-Koordinate: %d bei x: %d\n",temp->y_pix_coord, temp->x_pix_coord);
   }
 
@@ -68,6 +68,7 @@ pix_list_ptr get_pix_list(int c_width){
   int pix_coord;									/* x - Koordinate, an die der Wert gehört */
   int i;										/* Laufvariable zum durchlaufen des Datenbank-resuls */
   long base_time;									/* Zeit an der 0-Koordinate (lt. Datenbank!) */
+  long timestamp;
   pix_list_ptr list_ptr = NULL;								/* Zeiger auf den Anfang der Wertliste */
   pix_list_ptr temp_ptr = NULL;								/* Zeiger zum durchlaufen der Wertliste */
 
@@ -90,9 +91,10 @@ pix_list_ptr get_pix_list(int c_width){
   base_time = atol(PQgetvalue(res, 0, PQfnumber(res, "now"))) - img_cfg.show_interval;
 
   for (i = 0; i < PQntuples(res); i++){
-    time_temp = atol(PQgetvalue(res, i, time_field)) - base_time;
+    timestamp = atol(PQgetvalue(res, i, time_field));
+    time_temp = timestamp - base_time;
     pix_coord = floor( ((double)time_temp) * seconds_per_pix) ;
-    temp_ptr = add_pix_value(temp_ptr, pix_coord, atoi( PQgetvalue(res, i, val_field) ) );
+    temp_ptr = add_pix_value(temp_ptr, timestamp, pix_coord, atoi( PQgetvalue(res, i, val_field) ) );
 
     if (list_ptr == NULL){
       list_ptr = temp_ptr;
@@ -133,36 +135,38 @@ pix_list_ptr get_pix_list(int c_width){
 }
 
 /* Speichert einen geholten Wert ab */
-static pix_list_ptr add_pix_value(pix_list_ptr ptr, int coord, int value){ 
+static pix_list_ptr add_pix_value(pix_list_ptr ptr, long timestamp, int coord, int value){ 
 
   if(ptr == NULL){
     DEBUGOUT1("\nLese Daten ein:\n");
     ptr  		= malloc(sizeof(pix_list_t));
     ptr->next 		= NULL;
-    ptr->x_pix_coord 	= 0;
+    ptr->timestamp	= timestamp;
+    ptr->x_pix_coord 	= coord;
     ptr->y_pix_coord 	= 0;
-    ptr->value_count    = 0;
-    ptr->value_sum	= 0;
-    DEBUGOUT1("  Erstes Element generiert...\n");
-  }
-
-  if(coord == ptr->x_pix_coord){
-    ptr->value_sum += value;
-    ptr->value_count++;
-
-    DEBUGOUT5("  Zu x-pos. %d %d. Wert (%d) hinzugefügt. Durchschn.: %d\n", ptr->x_pix_coord, ptr->value_count, value, (ptr->value_sum/ptr->value_count) );
+    ptr->value_count    = 1;
+    ptr->value_sum	= value;
+    DEBUGOUT3("  Erstes Element generiert...x-pos.: %d Wert: %d\n",ptr->x_pix_coord, ptr->value_sum);
   } else {
-    ptr->next 		= malloc(sizeof(pix_list_t));
-    ptr 		= ptr->next;
-    ptr->x_pix_coord	= coord;
-    ptr->y_pix_coord	= coord;
-    ptr->value_sum 	= value;
-    ptr->value_count 	= 1;
-    ptr->next           = NULL;
 
-    DEBUGOUT3("  An x-pos. %d Wert %d eingefuegt\n", ptr->x_pix_coord, ptr->value_sum);
+    if(coord == ptr->x_pix_coord){
+      ptr->value_sum += value;
+      ptr->value_count++;
+
+      DEBUGOUT5("  Zu x-pos. %d %d. Wert (%d) hinzugefügt. Durchschn.: %d\n", ptr->x_pix_coord, ptr->value_count, value, (ptr->value_sum/ptr->value_count) );
+    } else {
+      ptr->next		= malloc(sizeof(pix_list_t));
+      ptr 		= ptr->next;
+      ptr->timestamp	= timestamp;
+      ptr->x_pix_coord	= coord;
+      ptr->y_pix_coord	= 0;
+      ptr->value_sum 	= value;
+      ptr->value_count 	= 1;
+      ptr->next           = NULL;
+
+      DEBUGOUT3("  An x-pos. %d Wert %d eingefuegt\n", ptr->x_pix_coord, ptr->value_sum);
+    }
   }
-
   return ptr;
 
 }
