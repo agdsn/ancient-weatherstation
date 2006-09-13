@@ -13,6 +13,9 @@
 
 
 
+static pix_list_ptr min = NULL;
+static pix_list_ptr max = NULL;
+
 
 static pix_list_ptr add_pix_value(pix_list_ptr , int , int );
 static char *get_conn_string();
@@ -58,12 +61,27 @@ pix_list_ptr get_pix_list(int c_width){
     pix_coord = floor( ((double)time_temp) * seconds_per_pix) ;
     temp_ptr = add_pix_value(temp_ptr, pix_coord, atoi( PQgetvalue(res, i, val_field) ) );
 
-    if(list_ptr == NULL){
+    if (list_ptr == NULL)
       list_ptr = temp_ptr;
+
+    /* Min / Max ermitteln */
+    if (min != NULL){
+      if ( (temp_ptr->value_sum / temp_ptr->value_count) < (min->value_sum / min->value_count) )
+        min = temp_ptr;
+    } else {
+      min = temp_ptr;
     }
 
+    if (max != NULL){
+      if ( (temp_ptr->value_sum / temp_ptr->value_count) > (max->value_sum / max->value_count) )
+        max = temp_ptr;
+    } else {
+      max = temp_ptr;
+    }
   }
 
+  DEBUGOUT3(" Min: x-pos.: %d, Wert: %d\n", min->x_pix_coord, (min->value_sum / min->value_count) );
+  DEBUGOUT3(" Max: x-pos.: %d, Wert: %d\n", max->x_pix_coord, (max->value_sum / max->value_count) );
   PQclear(res);
   PQfinish(conn);
   free(query);
