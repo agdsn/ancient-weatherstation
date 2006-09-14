@@ -1,10 +1,12 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <gd.h>
 #include "../definitions.h"
 #include "image_draw.h"
 #include "image_data.h"
 #include "image_common.h"
 
+#define SHORTBUFFSIZE 64
 
 typedef int color;
 typedef struct dimension {
@@ -58,15 +60,18 @@ static gdImagePtr draw_image(gdImagePtr img){
 
   int max_val 		= 0;
   int min_val 		= 0;
-  int offset_x_left 	= 60;
+  int offset_x_left 	= 10;
   int offset_y_top 	= 5;
   int offset_x_right 	= 20;
   int offset_y_bottom 	= 80;
-  int dia_width		= img_cfg.width - offset_x_left - offset_x_right;
+  int dia_width		= 0;
   int dia_height 	= 0; 
   int zero_line 	= 0;
   int dia_y_padding	= 10;
   int brect[8];
+  int y_label_max_width = 0;
+
+  char *buff;
 
   dimension_t head_d;
   dimension_t y_label_d;
@@ -78,13 +83,25 @@ static gdImagePtr draw_image(gdImagePtr img){
   color diag_grid_c	= alloc_alpha_color(img, img_cfg.dia_grid_color);
   color dia_border_c	= alloc_alpha_color(img, img_cfg.dia_border_color);
   color headline_c 	= alloc_alpha_color(img, img_cfg.headline_color);
+  color label_c		= alloc_alpha_color(img, img_cfg.label_color);
+
+  if(img_cfg.unit != NULL){
+    buff = malloc(sizeof(char)*SHORTBUFFSIZE);
+    snprintf(buff, SHORTBUFFSIZE, "99999%s", img_cfg.unit);
+    y_label_d = calc_text_dim(buff, 7, 0);
+    free(buff);
+  } else {
+    y_label_d = calc_text_dim("99999", 7, 0);
+  }  
+  y_label_max_width = y_label_d.width;
+  offset_x_left = offset_x_left + y_label_max_width +5;
+  dia_width = img_cfg.width - offset_x_left - offset_x_right;
 
 
   /* Ueberschrift */
   head_d = calc_text_dim(img_cfg.headline, 16, 0);
   gdImageStringTTF(img, &brect[0], headline_c, IMG_FONT, 16, 0, 10, offset_y_top + head_d.to_base, img_cfg.headline);
   offset_y_top = (offset_y_top * 2) + head_d.height;
-
 
 
   dia_height = img_cfg.height - offset_y_top - offset_y_bottom;
@@ -96,10 +113,12 @@ static gdImagePtr draw_image(gdImagePtr img){
   gdImageFilledRectangle(img, offset_x_left, offset_y_top, img_cfg.width - offset_x_right, img_cfg.height - offset_y_bottom, dia_bg_c);
 
 
-  /* horizontale linien + y - Labels */
   y_labels = get_y_label_list(dia_height, dia_y_padding, 0);
+  /* horizontale linien + y - Labels */
   for (; y_labels; y_labels = y_labels->next){
     gdImageLine(img, offset_x_left - 2, offset_y_top + y_labels->pos, img_cfg.width - offset_x_right, offset_y_top + y_labels->pos, diag_grid_c);
+    y_label_d = calc_text_dim(y_labels->text, 7, 0);
+    gdImageStringTTF(img, &brect[0], label_c, IMG_FONT, 7, 0, (offset_x_left - 5 - y_label_max_width) + (y_label_max_width - y_label_d.width), offset_y_top + y_labels->pos + (y_label_d.height / 2), y_labels->text);
   }
 
   /* y-Werte skalieren */

@@ -18,6 +18,7 @@ typedef struct image_cfg {
   int 	 label_sum;
   int 	 width;
   int 	 height;
+  char   *unit;
   int  	 sens_id;
   double val_koeff;
 

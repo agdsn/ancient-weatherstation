@@ -48,6 +48,7 @@ static const config_keyword keywords[] = {
   {"label_sum",   	read_yn,          	&(img_cfg.label_sum),	         	""},
   {"width",		read_int,               &(img_cfg.width),    			""},
   {"height",		read_int,               &(img_cfg.height),    			""},
+  {"unit",		read_str,               &(img_cfg.unit),    			""},
   {"sensor_id",		read_int,               &(img_cfg.sens_id),    			""},
   {"value_koeffizient",	read_double,            &(img_cfg.val_koeff),  			""},
   

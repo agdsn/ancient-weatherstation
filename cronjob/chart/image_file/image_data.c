@@ -27,7 +27,7 @@ static PGresult *pg_check_exec(PGconn *, char *);
 static char *get_type_table_by_id(PGconn *, int );
 
 
-
+/* Bibt die Liste mit den y-Labels zurueck */
 label_list_ptr get_y_label_list(int c_hight, int padding, int zero_min){
   int max_val      = ceil( ( ((double)max->value_sum) / ((double)max->value_count) ) * img_cfg.val_koeff);
   int min_val      = floor( ( ((double)min->value_sum) / ((double)min->value_count) ) * img_cfg.val_koeff);
@@ -37,8 +37,9 @@ label_list_ptr get_y_label_list(int c_hight, int padding, int zero_min){
   double padd_val  = 0;
   int temp         = 0; 
   double koeff     = 1;
-  int interval     = 0;
+  double interval     = 0;
   int num          = 0;
+  int max_num      = 0;
   int i;
   int new_val      = 0;
   char * buff      = NULL;
@@ -63,26 +64,34 @@ label_list_ptr get_y_label_list(int c_hight, int padding, int zero_min){
   real_max  = max_val + padd_val; 
   real_diff = real_max - real_min;  
 
-  DEBUGOUT4(" Realer Max. Wert: %3.3f, Realer Min. Wert: %3.3f (inkl. Koeffizient: %3.3f)\n", real_max, real_min, img_cfg.val_koeff);
+  DEBUGOUT5(" Realer Max. Wert: %3.3f, Realer Min. Wert: %3.3f Differenz: %3.3f (inkl. Koeffizient: %3.3f)\n", real_max, real_min, real_diff, img_cfg.val_koeff);
 
-  temp = floor( ((double)diff) * 0.1);
 
-  while (temp >= 10) {
-    koeff = koeff * 0.1;
-    temp = floor(koeff * ((double)temp));
+  /* Interval der Labels berechnen */
+  temp     = floor( real_diff );
+  interval = 1;
+  max_num  = floor(c_hight / 20);
+  while ((num = floor( temp / interval )) > max_num){
+    interval++;
+  }
+  
+  DEBUGOUT2(" Interval: %f \n", interval);
+
+  /* An Labels auf die 0 'eichen' */
+  temp = ceil(real_min);
+  while (fmod(((double)temp), ((double)interval)) != 0){
+    temp++;
   }
 
-  interval = temp / koeff;
-  num      = floor( real_diff / interval );
-
-  DEBUGOUT2(" Interval: %d \n", interval);
-
-  temp = ceil(real_min);
   buff = malloc(sizeof(char)*BUFFSIZE);
 
   for (i = 0; i < num; i++){
     new_val = temp + (i * interval);    
-    snprintf(buff, BUFFSIZE, "%d", new_val);
+    if(img_cfg.unit != NULL){
+      snprintf(buff, BUFFSIZE, "%d%s", new_val, img_cfg.unit);
+    } else {
+      snprintf(buff, BUFFSIZE, "%d", new_val);
+    }
 
     new_ptr            = malloc(sizeof(label_list_t));
     new_ptr->pos       = floor( (real_max -  ((double)new_val) ) * factor);
