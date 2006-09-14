@@ -15,6 +15,8 @@
 
 static pix_list_ptr min = NULL;
 static pix_list_ptr max = NULL;
+double real_min = 0;
+double real_max = 0;
 static long base_time;									/* Zeit an der 0-Koordinate (lt. Datenbank!) */
 
 
@@ -23,6 +25,94 @@ static char *get_conn_string();
 static PGconn *pg_check_connect(char *);
 static PGresult *pg_check_exec(PGconn *, char *);
 static char *get_type_table_by_id(PGconn *, int );
+
+
+
+label_list_ptr get_y_label_list(int c_hight, int padding, int zero_min){
+  int max_val = ceil( ( ((double)max->value_sum) / ((double)max->value_count) ) * img_cfg.val_koeff);
+  int min_val = floor( ( ((double)min->value_sum) / ((double)min->value_count) ) * img_cfg.val_koeff);
+  double factor = 0;
+  int diff = 0;
+  double real_diff = 0;
+  double padd_val = 0;
+  int temp = 0; 
+  double koeff = 1;
+  int interval = 0;
+  int num = 0;
+  int i;
+  int new_val = 0;
+  char * buff = NULL;
+
+  label_list_ptr ptr      = NULL;
+  label_list_ptr new_ptr  = NULL;
+  label_list_ptr temp_ptr = NULL;
+
+
+  DEBUGOUT1("\nBaue y-Labels...\n");
+  DEBUGOUT4(" Max. Wert: %d, Min. Wert: %d (inkl. Koeffizient: %3.3f)\n", max_val, min_val, img_cfg.val_koeff);
+
+  if (zero_min){
+    min_val = 0;
+  }
+
+  diff = max_val - min_val;
+
+  factor =  ( ((double)c_hight - (2 * padding)) / ((double)diff) );
+
+  padd_val = (1 / factor) * ((double)padding); 
+
+  real_min = min_val - padd_val;
+  real_max = max_val + padd_val; 
+  real_diff = real_max - real_min;  
+
+  DEBUGOUT4(" Realer Max. Wert: %3.3f, Realer Min. Wert: %3.3f (inkl. Koeffizient: %3.3f)\n", real_max, real_min, img_cfg.val_koeff);
+
+  temp = floor( ((double)diff) * 0.1);
+
+  while (temp >= 10) {
+    koeff = koeff * 0.1;
+    temp = floor(koeff * ((double)temp));
+  }
+
+  interval = temp / koeff;
+
+  num = floor( real_diff / interval );
+
+  DEBUGOUT2(" Interval: %d \n", interval);
+
+  temp = ceil(real_min);
+  
+  
+  buff = malloc(sizeof(char)*BUFFSIZE);
+
+  for (i = 0; i < num; i++){
+    new_val = temp + (i * interval);    
+    snprintf(buff, BUFFSIZE, "%d", new_val);
+
+    new_ptr            = malloc(sizeof(label_list_t));
+    new_ptr->pos       = floor( (real_max -  ((double)new_val) ) * factor);
+    new_ptr->value     = new_val;
+    new_ptr->text      = strdup(buff);
+    new_ptr->next      = NULL;
+
+    if (ptr != NULL){
+      temp_ptr->next = new_ptr;
+      temp_ptr       = temp_ptr->next;
+    } else {
+      ptr      = new_ptr;
+      temp_ptr = new_ptr;
+    }
+
+    DEBUGOUT3("  Label '%s' an Position %d\n", new_ptr->text, new_ptr->pos);
+  }
+
+  free(buff);
+
+  DEBUGOUT2(" %d Labels generiert\n", num);
+
+  return ptr;
+
+}
 
 
 /* Baut die Liste mit den Labels an der X-Achse */
@@ -34,10 +124,12 @@ label_list_ptr get_x_label_list(int c_width){
   label_list_ptr new_ptr  = NULL;
   label_list_ptr temp_ptr = NULL;
 
+  DEBUGOUT1("\nBaue x-Labels...\n");
+
   for ( i = 1; i < num; i++ ) {
     new_ptr            = malloc(sizeof(label_list_t));
     new_ptr->pos       = floor( ((double)i) * factor);
-    new_ptr->timestamp = base_time + (i * img_cfg.label_interval);
+    new_ptr->value     = base_time + (i * img_cfg.label_interval);
     new_ptr->text      = "NOT YET IMPLEMENTED";
     new_ptr->next      = NULL;
 
@@ -48,30 +140,39 @@ label_list_ptr get_x_label_list(int c_width){
       ptr      = new_ptr;
       temp_ptr = new_ptr;
     }
+
+    DEBUGOUT3("  Label '%s' an Position %d\n", new_ptr->text, new_ptr->pos);
   }
- 
+
+  DEBUGOUT2(" %d Labels generiert\n", num); 
+
   return ptr;
 }
 
 
 /* Skaliert die X-Koordinaten der Punkte im angegebenem Bereich
  * ausführliche Beschreibung im header-file */
-int scale_y_coords(pix_list_ptr ptr, int c_height, int max_label, int min_label){
-  int range            = (max_label - min_label + 1) ;				/* Anzahl von 0,1-Schritten */
+int scale_y_coords(pix_list_ptr ptr, int c_height){
+  double range            = (((real_max - real_min) / img_cfg.val_koeff ) + 1) ;				/* Anzahl von 0,1-Schritten */
   double pix_per_scale = ((double)c_height) / ((double)range); 				/* Pixel pro 0,1 */
   pix_list_ptr temp    = ptr;
-  int zero_line        = floor( ((double)(max_label + 1)) * pix_per_scale);			/* Nullinie */
+  int zero_line        = floor( ((double)((real_max  / img_cfg.val_koeff) + 1)) * pix_per_scale);			/* Nullinie */
   
   DEBUGOUT1("\nBerechne y-Koordinaten:\n");
 
   for (; temp; temp = temp->next){
-    temp->y_pix_coord = -1 * floor( ( ((double)temp->value_sum) / ((double)temp->value_count) ) * pix_per_scale);
+    temp->y_pix_coord = (-1 * floor( ( ((double)temp->value_sum) / ((double)temp->value_count) ) * pix_per_scale)) + zero_line;
     DEBUGOUT3("  neue y-Koordinate: %d bei x: %d\n",temp->y_pix_coord, temp->x_pix_coord);
   }
 
-  DEBUGOUT2(" Nullinie bei: %d\n", zero_line);
+    DEBUGOUT2(" Nullinie bei: %d\n", zero_line);
 
-  return zero_line;
+  if ((real_max - real_min + 1) >= real_max){
+    return zero_line;
+  } else {
+    return -1;
+  }
+
 }
 
 /* Maximaler wert */

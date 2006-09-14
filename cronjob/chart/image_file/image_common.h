@@ -27,6 +27,7 @@ typedef struct image_cfg {
   img_color_ptr dia_grid_color;
   img_color_ptr dia_border_color;
   img_color_ptr zero_line_color;
+  img_color_ptr label_color;
 
 
 

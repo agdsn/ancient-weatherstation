@@ -49,6 +49,7 @@ static gdImagePtr draw_image(gdImagePtr img){
   int dia_width		= img_cfg.width - offset_x_left - offset_x_right;
   int dia_height 	= img_cfg.height - offset_y_top - offset_y_bottom;
   int zero_line 	= 0;
+  int dia_y_padding	= 10;
 
   color val_line_c 	= alloc_alpha_color(img, img_cfg.dia_line_color);
   color zero_line_c	= alloc_alpha_color(img, img_cfg.zero_line_color);
@@ -58,23 +59,35 @@ static gdImagePtr draw_image(gdImagePtr img){
   /* Werte holen */
   pix_list = get_pix_list(dia_width);
 
-  /* y-Werte skalieren */
-  zero_line = scale_y_coords(pix_list, dia_height, 400, -100);  
+  
 
 
-  x_labels = get_x_label_list(dia_width);
+  
+
+
 
 
   /* Diagramhintergrund */
   gdImageFilledRectangle(img, offset_x_left, offset_y_top, img_cfg.width - offset_x_right, img_cfg.height - offset_y_bottom, dia_bg_c);
 
+
+  y_labels = get_y_label_list(dia_height, dia_y_padding, 0);
+  for (; y_labels; y_labels = y_labels->next){
+    gdImageLine(img, offset_x_left, offset_y_top + y_labels->pos, img_cfg.width - offset_x_right, offset_y_top + y_labels->pos, diag_grid_c);
+  }
+
+  /* y-Werte skalieren */
+  zero_line = scale_y_coords(pix_list, dia_height);  
+
   /* Vertikale linien + x - Labels*/
+  x_labels = get_x_label_list(dia_width);
   for(; x_labels; x_labels = x_labels->next){
     gdImageLine(img, offset_x_left + x_labels->pos, offset_y_top, offset_x_left + x_labels->pos, img_cfg.height - offset_y_bottom, diag_grid_c);
   }
 
   /* Nullinie */
-  gdImageLine(img, offset_x_left, zero_line + offset_y_top, img_cfg.width - offset_x_right, zero_line + offset_y_top, zero_line_c); 
+  if (zero_line != -1)
+    gdImageLine(img, offset_x_left, zero_line + offset_y_top, img_cfg.width - offset_x_right, zero_line + offset_y_top, zero_line_c); 
 
 
   /* Werte Zeichnen */

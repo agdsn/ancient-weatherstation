@@ -58,6 +58,7 @@ static const config_keyword keywords[] = {
   {"dia_grid_color",	read_color,             &(img_cfg.dia_grid_color),		""},
   {"dia_border_color",	read_color,             &(img_cfg.dia_border_color),		""},
   {"zero_line_color",	read_color,             &(img_cfg.zero_line_color),   		""},
+  {"label_color",	read_color,             &(img_cfg.label_color),   		""},
 
   {"",			NULL, 	  		NULL,					""}
 };
