@@ -162,12 +162,12 @@ int scale_y_coords(pix_list_ptr ptr, int c_height){
 
     DEBUGOUT2(" Nullinie bei: %d\n", zero_line);
 
+//printf("%f -- %f -- %d\n", range, pix_per_scale, zero_line);
   if ((real_max - real_min + 1) >= real_max){
     return zero_line;
   } else {
     return -1;
   }
-
 }
 
 /* Maximaler wert */
@@ -206,7 +206,7 @@ pix_list_ptr get_pix_list(int c_width){
     table = get_type_table_by_id(conn, img_cfg.sens_id);
   }
 
-  snprintf(query, BUFFSIZE, "SELECT round(date_part('epoch', current_timestamp)) AS now, round(date_part('epoch', timestamp)) AS times, %s AS val FROM %s WHERE  timestamp > (current_timestamp - INTERVAL '%d seconds') ORDER BY times ASC", img_cfg.table_field, table, img_cfg.show_interval );
+  snprintf(query, BUFFSIZE, "SELECT round(date_part('epoch', current_timestamp)) AS now, round(date_part('epoch', timestamp)) AS times, %s AS val FROM %s WHERE sens_id=%d AND  timestamp > (current_timestamp - INTERVAL '%d seconds') ORDER BY times ASC", img_cfg.table_field, table, img_cfg.sens_id, img_cfg.show_interval );
 
   res = pg_check_exec(conn, query);
 

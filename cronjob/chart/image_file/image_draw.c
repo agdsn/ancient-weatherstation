@@ -61,9 +61,9 @@ static gdImagePtr draw_image(gdImagePtr img){
   int offset_x_left 	= 60;
   int offset_y_top 	= 5;
   int offset_x_right 	= 20;
-  int offset_y_bottom 	= 20;
+  int offset_y_bottom 	= 80;
   int dia_width		= img_cfg.width - offset_x_left - offset_x_right;
-  int dia_height 	= img_cfg.height - offset_y_top - offset_y_bottom;
+  int dia_height 	= 0; 
   int zero_line 	= 0;
   int dia_y_padding	= 10;
   int brect[8];
@@ -85,11 +85,12 @@ static gdImagePtr draw_image(gdImagePtr img){
   gdImageStringTTF(img, &brect[0], headline_c, IMG_FONT, 16, 0, 10, offset_y_top + head_d.to_base, img_cfg.headline);
   offset_y_top = (offset_y_top * 2) + head_d.height;
 
+
+
+  dia_height = img_cfg.height - offset_y_top - offset_y_bottom;
+
   /* Werte holen */
   pix_list = get_pix_list(dia_width);
-
-  
-
 
   /* Diagramhintergrund */
   gdImageFilledRectangle(img, offset_x_left, offset_y_top, img_cfg.width - offset_x_right, img_cfg.height - offset_y_bottom, dia_bg_c);
@@ -117,7 +118,7 @@ static gdImagePtr draw_image(gdImagePtr img){
 
   /* Werte Zeichnen */
   for (; pix_list->next; pix_list = pix_list->next){
-    gdImageLine(img, (offset_x_left + pix_list->x_pix_coord), (zero_line + offset_y_top + pix_list->y_pix_coord), (offset_x_left + pix_list->next->x_pix_coord), (zero_line + offset_y_top + pix_list->next->y_pix_coord), val_line_c);
+    gdImageLine(img, (offset_x_left + pix_list->x_pix_coord), (offset_y_top + pix_list->y_pix_coord), (offset_x_left + pix_list->next->x_pix_coord), (offset_y_top + pix_list->next->y_pix_coord), val_line_c);
   }
 
   gdImageRectangle(img,  offset_x_left, offset_y_top, img_cfg.width - offset_x_right, img_cfg.height - offset_y_bottom, dia_border_c);
