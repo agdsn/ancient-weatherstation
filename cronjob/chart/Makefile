@@ -56,6 +56,7 @@ image_file/image_data.o: image_file/image_data.c \
 	common.h \
 	definitions.h
 image_file/image_draw.o: image_file/image_draw.c \
+	definitions.h \
 	image_file/image_draw.h \
 	image_file/image_data.h \
 	image_file/image_common.h
