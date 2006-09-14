@@ -29,19 +29,19 @@ static char *get_type_table_by_id(PGconn *, int );
 
 
 label_list_ptr get_y_label_list(int c_hight, int padding, int zero_min){
-  int max_val = ceil( ( ((double)max->value_sum) / ((double)max->value_count) ) * img_cfg.val_koeff);
-  int min_val = floor( ( ((double)min->value_sum) / ((double)min->value_count) ) * img_cfg.val_koeff);
-  double factor = 0;
-  int diff = 0;
+  int max_val      = ceil( ( ((double)max->value_sum) / ((double)max->value_count) ) * img_cfg.val_koeff);
+  int min_val      = floor( ( ((double)min->value_sum) / ((double)min->value_count) ) * img_cfg.val_koeff);
+  double factor    = 0;
+  int diff         = 0;
   double real_diff = 0;
-  double padd_val = 0;
-  int temp = 0; 
-  double koeff = 1;
-  int interval = 0;
-  int num = 0;
+  double padd_val  = 0;
+  int temp         = 0; 
+  double koeff     = 1;
+  int interval     = 0;
+  int num          = 0;
   int i;
-  int new_val = 0;
-  char * buff = NULL;
+  int new_val      = 0;
+  char * buff      = NULL;
 
   label_list_ptr ptr      = NULL;
   label_list_ptr new_ptr  = NULL;
@@ -55,14 +55,12 @@ label_list_ptr get_y_label_list(int c_hight, int padding, int zero_min){
     min_val = 0;
   }
 
-  diff = max_val - min_val;
-
-  factor =  ( ((double)c_hight - (2 * padding)) / ((double)diff) );
-
+  diff     = max_val - min_val;
+  factor   =  ( ((double)c_hight - (2 * padding)) / ((double)diff) );
   padd_val = (1 / factor) * ((double)padding); 
 
-  real_min = min_val - padd_val;
-  real_max = max_val + padd_val; 
+  real_min  = min_val - padd_val;
+  real_max  = max_val + padd_val; 
   real_diff = real_max - real_min;  
 
   DEBUGOUT4(" Realer Max. Wert: %3.3f, Realer Min. Wert: %3.3f (inkl. Koeffizient: %3.3f)\n", real_max, real_min, img_cfg.val_koeff);
@@ -75,14 +73,11 @@ label_list_ptr get_y_label_list(int c_hight, int padding, int zero_min){
   }
 
   interval = temp / koeff;
-
-  num = floor( real_diff / interval );
+  num      = floor( real_diff / interval );
 
   DEBUGOUT2(" Interval: %d \n", interval);
 
   temp = ceil(real_min);
-  
-  
   buff = malloc(sizeof(char)*BUFFSIZE);
 
   for (i = 0; i < num; i++){
