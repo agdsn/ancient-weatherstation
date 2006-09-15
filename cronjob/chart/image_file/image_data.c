@@ -115,7 +115,6 @@ label_list_ptr get_y_label_list(int c_hight, int padding, int zero_min){
   DEBUGOUT2(" %d Labels generiert\n", num);
 
   return ptr;
-
 }
 
 
@@ -123,18 +122,23 @@ label_list_ptr get_y_label_list(int c_hight, int padding, int zero_min){
 label_list_ptr get_x_label_list(int c_width){
   double factor = ((double)img_cfg.label_interval) * ( ((double)c_width) / ((double)img_cfg.show_interval) );
   int num       = floor( ((double)img_cfg.show_interval) /  ((double)img_cfg.label_interval) );
+  char *buff    = malloc(sizeof(char)*BUFFSIZE);
   int i;
+  time_t timestamp;
   label_list_ptr ptr      = NULL;
   label_list_ptr new_ptr  = NULL;
   label_list_ptr temp_ptr = NULL;
 
   DEBUGOUT1("\nBaue x-Labels...\n");
-
+ 
   for ( i = 1; i < num; i++ ) {
+    timestamp = base_time + (i * img_cfg.label_interval);
+    strftime(buff, BUFFSIZE, "%d.%m.%y", localtime(&timestamp) );
+
     new_ptr            = malloc(sizeof(label_list_t));
     new_ptr->pos       = floor( ((double)i) * factor);
     new_ptr->value     = base_time + (i * img_cfg.label_interval);
-    new_ptr->text      = "NOT YET IMPLEMENTED";
+    new_ptr->text      = strdup(buff);
     new_ptr->next      = NULL;
 
     if (ptr != NULL){
@@ -149,6 +153,8 @@ label_list_ptr get_x_label_list(int c_width){
   }
 
   DEBUGOUT2(" %d Labels generiert\n", num); 
+  
+  free(buff);
 
   return ptr;
 }
@@ -180,13 +186,31 @@ int scale_y_coords(pix_list_ptr ptr, int c_height){
 }
 
 /* Maximaler wert */
-pix_list_ptr get_max(){
+pix_list_ptr get_max_val(){
   return min;
 }
 
 /* Minimaler Wert */
-pix_list_ptr get_min(){
+pix_list_ptr get_min_val(){
   return max;
+}
+
+char *get_max_time(){
+  char *buff = malloc(sizeof(char)*BUFFSIZE);
+  time_t timestamp = base_time + img_cfg.show_interval;
+
+  strftime(buff, BUFFSIZE, "%d.%m.%y\r\n  %H:%M", localtime(&timestamp) );
+
+  return buff;
+}
+
+char *get_min_time(){
+  char *buff = malloc(sizeof(char)*BUFFSIZE);
+  time_t timestamp = base_time ;
+
+  strftime(buff, BUFFSIZE, "%d.%m.%y\r\n  %H:%M", localtime(&timestamp) );
+
+  return buff;
 }
 
 /* Holt eine Liste mit den Werten und den jeweiligen x-koordinaten */

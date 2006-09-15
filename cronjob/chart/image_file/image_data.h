@@ -28,12 +28,16 @@ pix_list_ptr get_pix_list(int );
 
 
 /* Max. Wert */
-pix_list_ptr get_min();
+pix_list_ptr get_min_val();
 
 
 /* Min. Wert */
-pix_list_ptr get_max();
+pix_list_ptr get_max_val();
  
+
+char *get_max_time();
+char *get_min_time();
+
 
 /* Skaliert die X-Koordinaten der Punkte im angegebenem Bereich
  * 1. Argument: die Pix-Liste die skaliert werden soll

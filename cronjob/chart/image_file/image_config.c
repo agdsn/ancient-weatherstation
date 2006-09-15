@@ -50,6 +50,8 @@ static const config_keyword keywords[] = {
   {"height",		read_int,               &(img_cfg.height),    			""},
   {"unit",		read_str,               &(img_cfg.unit),    			""},
   {"sensor_id",		read_int,               &(img_cfg.sens_id),    			""},
+  {"x_axis_desc",	read_str,               &(img_cfg.x_desc),    			""},
+  {"y_axis_desc",	read_str,               &(img_cfg.y_desc),    			""},
   {"value_koeffizient",	read_double,            &(img_cfg.val_koeff),  			""},
   
 
