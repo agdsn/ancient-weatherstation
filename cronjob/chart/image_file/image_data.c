@@ -28,16 +28,16 @@ static char *get_type_table_by_id(PGconn *, int );
 
 
 /* Bibt die Liste mit den y-Labels zurueck */
-label_list_ptr get_y_label_list(int c_hight, int padding, int zero_min){
-  int max_val      = ceil( ( ((double)max->value_sum) / ((double)max->value_count) ) * img_cfg.val_koeff);
-  int min_val      = floor( ( ((double)min->value_sum) / ((double)min->value_count) ) * img_cfg.val_koeff);
+label_list_ptr get_y_label_list(int c_hight, int padding){
+  int max_val      = 0;
+  int min_val	   = 0;
   double factor    = 0;
   int diff         = 0;
   double real_diff = 0;
   double padd_val  = 0;
   int temp         = 0; 
   double koeff     = 1;
-  double interval     = 0;
+  double interval  = 0;
   int num          = 0;
   int max_num      = 0;
   int i;
@@ -52,9 +52,16 @@ label_list_ptr get_y_label_list(int c_hight, int padding, int zero_min){
   DEBUGOUT1("\nBaue y-Labels...\n");
   DEBUGOUT4(" Max. Wert: %d, Min. Wert: %d (inkl. Koeffizient: %3.3f)\n", max_val, min_val, img_cfg.val_koeff);
 
-  if (zero_min){
-    min_val = 0;
+  if (!img_cfg.label_sum){
+    max_val = ceil( ( ((double)max->value_sum) / ((double)max->value_count) ) * img_cfg.val_koeff);
+    min_val = floor( ( ((double)min->value_sum) / ((double)min->value_count) ) * img_cfg.val_koeff);
+  } else {
+    max_val = ceil( ( ((double)max->value_sum) ) * img_cfg.val_koeff);
+    min_val = floor( ( ((double)min->value_sum) ) * img_cfg.val_koeff);
   }
+  if (img_cfg.zero_min){
+    min_val = 0;
+  } 
 
   diff     = max_val - min_val;
   factor   =  ( ((double)c_hight - (2 * padding)) / ((double)diff) );
@@ -171,7 +178,11 @@ int scale_y_coords(pix_list_ptr ptr, int c_height){
   DEBUGOUT1("\nBerechne y-Koordinaten:\n");
 
   for (; temp; temp = temp->next){
-    temp->y_pix_coord = (-1 * floor( ( ((double)temp->value_sum) / ((double)temp->value_count) ) * pix_per_scale)) + zero_line;
+    if(!img_cfg.label_sum){
+      temp->y_pix_coord = (-1 * floor( ( ((double)temp->value_sum) / ((double)temp->value_count) ) * pix_per_scale)) + zero_line;
+    } else {
+      temp->y_pix_coord = (-1 * floor(  ((double)temp->value_sum) * pix_per_scale)) + zero_line;
+    }
     DEBUGOUT3("  neue y-Koordinate: %d bei x: %d\n",temp->y_pix_coord, temp->x_pix_coord);
   }
 
@@ -224,7 +235,7 @@ pix_list_ptr get_pix_list(int c_width){
   int val_field;									/* Id des Wert - Feldes */
   long time_temp;									/* Hilfsvariable */
   int pix_coord;									/* x - Koordinate, an die der Wert gehört */
-  int i;										/* Laufvariable zum durchlaufen des Datenbank-resuls */
+  int i, s, t, u;									/* Laufvariable zum durchlaufen des Datenbank-resuls */
   long timestamp;
   pix_list_ptr list_ptr = NULL;								/* Zeiger auf den Anfang der Wertliste */
   pix_list_ptr temp_ptr = NULL;								/* Zeiger zum durchlaufen der Wertliste */
@@ -238,6 +249,7 @@ pix_list_ptr get_pix_list(int c_width){
     table = get_type_table_by_id(conn, img_cfg.sens_id);
   }
 
+
   snprintf(query, BUFFSIZE, "SELECT round(date_part('epoch', current_timestamp)) AS now, round(date_part('epoch', timestamp)) AS times, %s AS val FROM %s WHERE sens_id=%d AND  timestamp > (current_timestamp - INTERVAL '%d seconds') ORDER BY times ASC", img_cfg.table_field, table, img_cfg.sens_id, img_cfg.show_interval );
 
   res = pg_check_exec(conn, query);
@@ -250,6 +262,12 @@ pix_list_ptr get_pix_list(int c_width){
   for (i = 0; i < PQntuples(res); i++){
     timestamp = atol(PQgetvalue(res, i, time_field));
     time_temp = timestamp - base_time;
+    if(img_cfg.bars){
+      time_temp --;
+      if(time_temp < 1)
+        time_temp++;
+      time_temp = floor( ((double)time_temp) / ((double)img_cfg.label_interval) ) * img_cfg.label_interval;
+    }
     pix_coord = floor( ((double)time_temp) * seconds_per_pix) ;
     temp_ptr = add_pix_value(temp_ptr, timestamp, pix_coord, atoi( PQgetvalue(res, i, val_field) ) );
 
@@ -263,20 +281,33 @@ pix_list_ptr get_pix_list(int c_width){
       max = temp_ptr;
     }
 
-    /* Min / Max ermitteln */
+  }
+
+  /* Min / Max ermitteln */
+  temp_ptr = list_ptr;
+  u = 1;
+  s = 1;
+  t = 1;
+  for (; temp_ptr; temp_ptr = temp_ptr->next){
+    if(!img_cfg.label_sum){
+      t = temp_ptr->value_count;
+      s = min->value_count;
+      u = max->value_count;
+    }
     if (min != NULL){
-      if ( (temp_ptr->value_sum / temp_ptr->value_count) < (min->value_sum / min->value_count) )
+      if ( (temp_ptr->value_sum / t) < (min->value_sum / s) )
         min = temp_ptr;
     } else {
       min = temp_ptr;
     }
 
     if (max != NULL){
-      if ( (temp_ptr->value_sum / temp_ptr->value_count) > (max->value_sum / max->value_count) )
+      if ( (temp_ptr->value_sum / t) > (max->value_sum / u) )
         max = temp_ptr;
     } else {
       max = temp_ptr;
     }
+
   }
   
   DEBUGOUT2(" %d Werte geholt \n", i);

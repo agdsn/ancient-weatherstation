@@ -76,6 +76,7 @@ static gdImagePtr draw_image(gdImagePtr img){
   int brect[8];
   int y_label_max_width = 0;
   int i;
+  int temp_x2, temp_x1, temp_y1;
 
   char *buff;
   time_t ts;
@@ -144,7 +145,7 @@ static gdImagePtr draw_image(gdImagePtr img){
 
 
   /* horizontale linien + y - Labels */
-  y_labels = get_y_label_list(dia_height, dia_y_padding, 0);
+  y_labels = get_y_label_list(dia_height, dia_y_padding);
   for (; y_labels; y_labels = y_labels->next){
     gdImageLine(img, offset_x_left - 2, offset_y_top + y_labels->pos, img_cfg.width - offset_x_right, offset_y_top + y_labels->pos, diag_grid_x_c);
     y_label_d = calc_text_dim(y_labels->text, 7, 0);
@@ -172,12 +173,29 @@ static gdImagePtr draw_image(gdImagePtr img){
 
 
   /* Werte Zeichnen */
-  for (; pix_list->next; pix_list = pix_list->next){
-    gdImageLine(img, (offset_x_left + pix_list->x_pix_coord), (offset_y_top + pix_list->y_pix_coord), (offset_x_left + pix_list->next->x_pix_coord), (offset_y_top + pix_list->next->y_pix_coord), val_line_c);
+  if(!img_cfg.bars){
+    for (; pix_list->next; pix_list = pix_list->next){
+      gdImageLine(img, (offset_x_left + pix_list->x_pix_coord), (offset_y_top + pix_list->y_pix_coord), (offset_x_left + pix_list->next->x_pix_coord), (offset_y_top + pix_list->next->y_pix_coord), val_line_c);
+    }
+  } else {
+    if (zero_line != -1){
+      temp_y1 = zero_line + offset_y_top;
+    } else {
+      temp_y1 = img_cfg.height - offset_y_bottom;
+    }
+    for (; pix_list; pix_list = pix_list->next){
+      temp_x1 = pix_list->x_pix_coord + offset_x_left;
+      if (pix_list->next != NULL){
+	temp_x2 = pix_list->next->x_pix_coord + offset_x_left;
+      } else {
+	temp_x2 = offset_x_left + dia_width;
+      }
+      gdImageFilledRectangle(img, temp_x1 + 3, (offset_y_top + pix_list->y_pix_coord), temp_x2 - 3 ,  temp_y1 , val_line_c);
+    }
   }
 
   /* Rahmen */
-  gdImageRectangle(img,  offset_x_left, offset_y_top, img_cfg.width - offset_x_right, img_cfg.height - offset_y_bottom, dia_border_c);
+  gdImageRectangle(img,  offset_x_left, offset_y_top, img_cfg.width - offset_x_right,  img_cfg.height - offset_y_bottom, dia_border_c);
 
 
 

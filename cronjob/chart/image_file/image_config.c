@@ -53,6 +53,8 @@ static const config_keyword keywords[] = {
   {"height",			read_int,               &(img_cfg.height),    			DEFAULT_HEIGHT},
   {"unit",			read_str,               &(img_cfg.unit),    			DEFAULT_UNIT},
   {"sensor_id",			read_int,               &(img_cfg.sens_id),    			DEFAULT_SENS_ID},
+  {"zero_min",			read_yn,               &(img_cfg.zero_min),    		DEFAULT_ZERO_MIN},
+  {"as_bars",			read_yn,               &(img_cfg.bars),	    		DEFAULT_AS_BARS},
   {"x_axis_desc",		read_str,               &(img_cfg.x_desc),    			DEFAULT_X_AX_DESC},
   {"y_axis_desc",		read_str,               &(img_cfg.y_desc),    			DEFAULT_Y_AX_DESC},
   {"x_format",			read_fmt_str,           &(img_cfg.x_fmt),    			DEFAULT_X_FORMAT},

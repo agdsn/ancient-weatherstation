@@ -25,6 +25,8 @@ typedef struct image_cfg {
   double val_koeff;
   char   *x_fmt_extra;
   char   *x_fmt;
+  int    zero_min;
+  int    bars;
 
   img_color_ptr bg_color;
   img_color_ptr dia_bg_color;

@@ -53,4 +53,4 @@ int scale_y_coords(pix_list_ptr , int );
  */
 label_list_ptr get_x_label_list(int );
 
-label_list_ptr get_y_label_list(int, int, int);
+label_list_ptr get_y_label_list(int, int);

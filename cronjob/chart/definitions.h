@@ -37,6 +37,8 @@
 #define DEFAULT_SHOW_INTERVAL	"2d"
 #define DEFAULT_LABEL_INTERVAL	"2h"
 #define DEFAULT_LABEL_SUM	"no"
+#define DEFAULT_ZERO_MIN	"no"
+#define DEFAULT_AS_BARS		"no"
 #define DEFAULT_WIDTH		"800"
 #define DEFAULT_HEIGHT		"300"
 #define DEFAULT_SENS_ID		"1"
