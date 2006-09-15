@@ -29,6 +29,39 @@
 #define DEFAULT_CONFIG_FILE	"./chart.conf"		/* Standart-Configdatei */
 
 
+/* Image-Default-Werte ----------------------------------------------- */
+#define DEFAULT_HEADLINE 	"Wetter - Diagram"
+#define DEFAULT_MANUAL_TABLE	"no"
+#define DEFAULT_TABLE_FIELD	"temp"
+#define DEFAULT_GEN_INTERVAL	"15m"
+#define DEFAULT_SHOW_INTERVAL	"2d"
+#define DEFAULT_LABEL_INTERVAL	"2h"
+#define DEFAULT_LABEL_SUM	"no"
+#define DEFAULT_WIDTH		"800"
+#define DEFAULT_HEIGHT		"300"
+#define DEFAULT_SENS_ID		"1"
+#define DEFAULT_VAL_KOEFF	"0.1"
+#define DEFAULT_UNIT		"°C"
+#define DEFAULT_X_AX_DESC	"X-Axis"
+#define DEFAULT_Y_AX_DESC	"Y-Axis"
+#define DEFAULT_X_FORMAT	"%H:%M"
+#define DEFAULT_X_FORMAT_EXTRA	"%d.%m.%y|  %H:%M"
+
+#define DEFAULT_BG_COLOR		"DF:DF:EF:00"
+#define DEFAULT_DIA_BG_COLOR		"F0:A0:D0:D0"
+#define DEFAULT_ZERO_LINE_COLOR		"BF:80:80:40"
+#define DEFAULT_DIA_LINE_COLOR		"60:30:50:30"
+#define DEFAULT_DIA_GRID_X_COLOR	"60:60:60:EF"
+#define DEFAULT_DIA_GRID_Y_COLOR	"60:60:60:EF"
+#define DEFAULT_DIA_BORDER_COLOR	"a0:a0:a0:af"
+#define DEFAULT_HEADLINE_COLOR		"80:10:10:30"
+#define DEFAULT_LABEL_X_COLOR		"60:60:60:30"
+#define DEFAULT_LABEL_EXTRA_X_COLOR	"60:10:10:20"
+#define DEFAULT_LABEL_Y_COLOR		"20:20:20:20"
+#define DEFAULT_DESCR_X_COLOR		"10:50:10:20"
+#define DEFAULT_DESCR_Y_COLOR		"10:10:50:20"
+
+
 
 /*Alle möglichen Definitionen, die in allen code-schnipseln benötigt werden*/
 

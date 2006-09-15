@@ -91,10 +91,15 @@ static gdImagePtr draw_image(gdImagePtr img){
   color val_line_c 	= alloc_alpha_color(img, img_cfg.dia_line_color);
   color zero_line_c	= alloc_alpha_color(img, img_cfg.zero_line_color);
   color dia_bg_c	= alloc_alpha_color(img, img_cfg.dia_bg_color);
-  color diag_grid_c	= alloc_alpha_color(img, img_cfg.dia_grid_color);
+  color diag_grid_x_c	= alloc_alpha_color(img, img_cfg.dia_grid_x_color);
+  color diag_grid_y_c	= alloc_alpha_color(img, img_cfg.dia_grid_y_color);
   color dia_border_c	= alloc_alpha_color(img, img_cfg.dia_border_color);
   color headline_c 	= alloc_alpha_color(img, img_cfg.headline_color);
-  color label_c		= alloc_alpha_color(img, img_cfg.label_color);
+  color label_x_c	= alloc_alpha_color(img, img_cfg.label_x_color);
+  color label_xl_c	= alloc_alpha_color(img, img_cfg.label_extra_x_color);
+  color label_y_c	= alloc_alpha_color(img, img_cfg.label_y_color);
+  color desc_x_c	= alloc_alpha_color(img, img_cfg.desc_x_color);
+  color desc_y_c	= alloc_alpha_color(img, img_cfg.desc_y_color);
 
   /* Ueberschrift */
   head_d = calc_text_dim(img_cfg.headline, 16, 0);
@@ -128,8 +133,8 @@ static gdImagePtr draw_image(gdImagePtr img){
   free(buff);
 
   /* Beschriftung y-, x-Achse */
-  gdImageStringFT(img, &brect[0], headline_c, IMG_FONT, 9, 1.57079, 5 + ((y_desc_d.r_b_x - y_desc_d.r_t_x) / 2), offset_y_top + (dia_height / 2) + ((y_desc_d.l_t_y - y_desc_d.r_t_y) / 2), img_cfg.y_desc);
-  gdImageStringFT(img, &brect[0], headline_c, IMG_FONT, 9, 0 , (offset_x_left + (dia_width / 2)) - (x_desc_d.width / 2), (img_cfg.height - 5) - x_desc_d.l_b_y, img_cfg.x_desc);
+  gdImageStringFT(img, &brect[0], desc_y_c, IMG_FONT, 9, 1.57079, 5 + ((y_desc_d.r_b_x - y_desc_d.r_t_x) / 2), offset_y_top + (dia_height / 2) + ((y_desc_d.l_t_y - y_desc_d.r_t_y) / 2), img_cfg.y_desc);
+  gdImageStringFT(img, &brect[0], desc_x_c, IMG_FONT, 9, 0 , (offset_x_left + (dia_width / 2)) - (x_desc_d.width / 2), (img_cfg.height - 5) - x_desc_d.l_b_y, img_cfg.x_desc);
 
   /* Werte holen */
   pix_list = get_pix_list(dia_width);
@@ -141,9 +146,9 @@ static gdImagePtr draw_image(gdImagePtr img){
   /* horizontale linien + y - Labels */
   y_labels = get_y_label_list(dia_height, dia_y_padding, 0);
   for (; y_labels; y_labels = y_labels->next){
-    gdImageLine(img, offset_x_left - 2, offset_y_top + y_labels->pos, img_cfg.width - offset_x_right, offset_y_top + y_labels->pos, diag_grid_c);
+    gdImageLine(img, offset_x_left - 2, offset_y_top + y_labels->pos, img_cfg.width - offset_x_right, offset_y_top + y_labels->pos, diag_grid_x_c);
     y_label_d = calc_text_dim(y_labels->text, 7, 0);
-    gdImageStringFT(img, &brect[0], label_c, IMG_FONT, 7, 0, (offset_x_left - 5 - y_label_max_width) + (y_label_max_width - y_label_d.width), offset_y_top + y_labels->pos + (y_label_d.height / 2), y_labels->text);
+    gdImageStringFT(img, &brect[0], label_y_c, IMG_FONT, 7, 0, (offset_x_left - 5 - y_label_max_width) + (y_label_max_width - y_label_d.width), offset_y_top + y_labels->pos + (y_label_d.height / 2), y_labels->text);
   }
 
   /* y-Werte skalieren */
@@ -152,14 +157,14 @@ static gdImagePtr draw_image(gdImagePtr img){
   /* Vertikale linien + x - Labels*/
   x_labels = get_x_label_list(dia_width);
   for(; x_labels; x_labels = x_labels->next){
-    gdImageLine(img, offset_x_left + x_labels->pos, offset_y_top, offset_x_left + x_labels->pos, img_cfg.height - offset_y_bottom + 2, diag_grid_c);
+    gdImageLine(img, offset_x_left + x_labels->pos, offset_y_top, offset_x_left + x_labels->pos, img_cfg.height - offset_y_bottom + 2, diag_grid_y_c);
     x_label_d = calc_text_dim(x_labels->text, 7, 1.0);
-    gdImageStringFT(img, &brect[0], headline_c, IMG_FONT, 7, 1.0, (offset_x_left + x_labels->pos) - ( x_label_d.r_t_x + ((x_label_d.r_b_x - x_label_d.r_t_x) / 2)), (img_cfg.height - offset_y_bottom + 5) - (x_label_d.r_t_y), x_labels->text);
+    gdImageStringFT(img, &brect[0], label_x_c, IMG_FONT, 7, 1.0, (offset_x_left + x_labels->pos) - ( x_label_d.r_t_x + ((x_label_d.r_b_x - x_label_d.r_t_x) / 2)), (img_cfg.height - offset_y_bottom + 5) - (x_label_d.r_t_y), x_labels->text);
   }
   x_label_d = calc_text_dim(get_min_time(), 8, 1.0);
-  gdImageStringFT(img, &brect[0], headline_c, IMG_FONT, 8, 1.0, (offset_x_left ) - ( x_label_d.r_t_x + ((x_label_d.r_b_x - x_label_d.r_t_x) / 2)), (img_cfg.height - offset_y_bottom + 5) - (x_label_d.r_t_y), get_min_time() );
+  gdImageStringFT(img, &brect[0], label_xl_c, IMG_FONT, 8, 1.0, (offset_x_left ) - ( x_label_d.r_t_x + ((x_label_d.r_b_x - x_label_d.r_t_x) / 2)), (img_cfg.height - offset_y_bottom + 5) - (x_label_d.r_t_y), get_min_time() );
   x_label_d = calc_text_dim(get_max_time(), 8, 1.0);
-  gdImageStringFT(img, &brect[0], headline_c, IMG_FONT, 8, 1.0, (offset_x_left + dia_width) - ( x_label_d.r_t_x + ((x_label_d.r_b_x - x_label_d.r_t_x) / 2)), (img_cfg.height - offset_y_bottom + 5) - (x_label_d.r_t_y), get_max_time() );
+  gdImageStringFT(img, &brect[0], label_xl_c, IMG_FONT, 8, 1.0, (offset_x_left + dia_width) - ( x_label_d.r_t_x + ((x_label_d.r_b_x - x_label_d.r_t_x) / 2)), (img_cfg.height - offset_y_bottom + 5) - (x_label_d.r_t_y), get_max_time() );
 
   /* Nullinie */
   if (zero_line != -1)

@@ -133,7 +133,7 @@ label_list_ptr get_x_label_list(int c_width){
  
   for ( i = 1; i < num; i++ ) {
     timestamp = base_time + (i * img_cfg.label_interval);
-    strftime(buff, BUFFSIZE, "%d.%m.%y", localtime(&timestamp) );
+    strftime(buff, BUFFSIZE, img_cfg.x_fmt, localtime(&timestamp) );
 
     new_ptr            = malloc(sizeof(label_list_t));
     new_ptr->pos       = floor( ((double)i) * factor);
@@ -177,7 +177,6 @@ int scale_y_coords(pix_list_ptr ptr, int c_height){
 
     DEBUGOUT2(" Nullinie bei: %d\n", zero_line);
 
-//printf("%f -- %f -- %d\n", range, pix_per_scale, zero_line);
   if ((real_max - real_min + 1) >= real_max){
     return zero_line;
   } else {
@@ -199,7 +198,7 @@ char *get_max_time(){
   char *buff = malloc(sizeof(char)*BUFFSIZE);
   time_t timestamp = base_time + img_cfg.show_interval;
 
-  strftime(buff, BUFFSIZE, "%d.%m.%y\r\n  %H:%M", localtime(&timestamp) );
+  strftime(buff, BUFFSIZE, img_cfg.x_fmt_extra, localtime(&timestamp) );
 
   return buff;
 }
@@ -208,7 +207,7 @@ char *get_min_time(){
   char *buff = malloc(sizeof(char)*BUFFSIZE);
   time_t timestamp = base_time ;
 
-  strftime(buff, BUFFSIZE, "%d.%m.%y\r\n  %H:%M", localtime(&timestamp) );
+  strftime(buff, BUFFSIZE, img_cfg.x_fmt_extra, localtime(&timestamp) );
 
   return buff;
 }
