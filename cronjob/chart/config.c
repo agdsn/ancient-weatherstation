@@ -41,17 +41,18 @@ static int add_image_cfg(const char *, void *);
 /* Zuordnung zwischen Schlüsselwörtern in der Config, Der Funktion, die diese auswertet 
  * und dem eld in der Options-Struktur */
 static const config_keyword dflt_keywords[] = {
-  /* keyword		handler  	 	variable address			default */
-  {"fork", 		read_yn,                &(global_opts.fork),         		""},
-  {"image_cfg",    	add_image_cfg,          &(global_opts.image_cfg),         	""},
-  {"image_cfg_location",read_str,               &(global_opts.image_cfg_location),    	DEFAULT_PG_HOST},
+  /* keyword			handler  	 	variable address			default */
+  {"fork", 			read_yn,                &(global_opts.fork),         		""},
+  {"image_cfg",    		add_image_cfg,          &(global_opts.image_cfg),         	""},
+  {"image_cfg_location",	read_str,               &(global_opts.image_cfg_location),    	DEFAULT_PG_HOST},
+  {"dflt_image_location",	read_str,               &(global_opts.dflt_image_location),    	DEFAULT_PG_HOST},
   
-  {"pg_host",           read_str,               &(global_opts.pg_host),         	DEFAULT_PG_HOST},
-  {"pg_user",           read_str,               &(global_opts.pg_user),         	DEFAULT_PG_USER},
-  {"pg_pass",           read_str,               &(global_opts.pg_pass),         	DEFAULT_PG_PASS},
-  {"pg_database",       read_str,               &(global_opts.pg_database),     	DEFAULT_PG_DATABASE},
-  {"pg_timeout", 	read_str, 		&(global_opts.pg_timeout),	DEFAULT_PG_TIMEOUT},
-  {"",			NULL, 	  		NULL,					""}
+  {"pg_host",           	read_str,               &(global_opts.pg_host),         	DEFAULT_PG_HOST},
+  {"pg_user",           	read_str,               &(global_opts.pg_user),         	DEFAULT_PG_USER},
+  {"pg_pass",           	read_str,               &(global_opts.pg_pass),         	DEFAULT_PG_PASS},
+  {"pg_database",       	read_str,               &(global_opts.pg_database),     	DEFAULT_PG_DATABASE},
+  {"pg_timeout", 		read_str, 		&(global_opts.pg_timeout),		DEFAULT_PG_TIMEOUT},
+  {"",				NULL, 	  		NULL,					""}
 };
 
 

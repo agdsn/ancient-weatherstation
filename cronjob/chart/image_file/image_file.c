@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include <time.h>
 #include <sys/stat.h>
 #include "../definitions.h"
@@ -30,6 +31,8 @@
 #include "image_file.h"
 #include "image_config.h"
 #include "image_draw.h"
+
+#define BUFFSIZE 512
 
 
 /* Optionen des Bildes */
@@ -43,6 +46,8 @@ static int check_file_interval();
 
 /* Handelt ein Bild */
 void process_image_cfg(char *image_cfg_file){
+  char *buff;
+  int i;
 
   get_image_cfg(image_cfg_file);
 
@@ -60,6 +65,15 @@ void process_image_cfg(char *image_cfg_file){
     DEBUGOUT2("ManualTabelle = %d\n", img_cfg.manual_table);
     DEBUGOUT2("TabellenName  = %s\n", img_cfg.table_name);
     DEBUGOUT1("\n");
+
+    if(img_cfg.dflt_dir){
+      buff = malloc(sizeof(char)*BUFFSIZE);
+      buff = strncpy(buff, global_opts.dflt_image_location, BUFFSIZE - 1);
+      i = strlen(buff);
+      buff = strncat(buff, img_cfg.file_name, BUFFSIZE - i - 1);
+      img_cfg.file_name = strdup(buff);
+      free(buff);
+    }
   } else {
     return;
   }

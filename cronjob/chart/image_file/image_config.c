@@ -41,6 +41,7 @@ static int read_fmt_str(const char *, void *);
 static const config_keyword keywords[] = {
   /* keyword			handler  	 	variable address			default */
   {"filename", 			read_str,               &(img_cfg.file_name),         		""},
+  {"use_dflt_img_dir", 		read_yn,          	&(img_cfg.dflt_dir),	        	DEFAULT_LABEL_SUM},
   {"headline", 			read_str,               &(img_cfg.headline),         		DEFAULT_HEADLINE},
   {"table_field", 		read_str,               &(img_cfg.table_field),        		DEFAULT_TABLE_FIELD},
   {"manual_table",   		read_yn,          	&(img_cfg.manual_table),        	DEFAULT_MANUAL_TABLE},

@@ -35,6 +35,7 @@ typedef struct config_t {
   char 			*pg_user;
   char 			*pg_pass;
   char 			*image_cfg_location;
+  char 			*dflt_image_location;
   image_cfg_list_ptr 	image_cfg;
   int 			fork;
 } config;
