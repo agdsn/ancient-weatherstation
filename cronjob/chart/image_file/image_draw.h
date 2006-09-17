@@ -1,6 +1,6 @@
 /*
 
-   image_config.c        -- Part of Chart-generator for the weatherstation
+   image_draw.c        -- Part of Chart-generator for the weatherstation
 
    Copyright (C) 2006 Jan Losinski
 

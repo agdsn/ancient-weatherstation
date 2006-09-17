@@ -1,6 +1,6 @@
 /*
 
-   chart.c        -- Part of Chart-generator for the weatherstation
+   image_common.c  -- Part of Chart-generator for the weatherstation
 
    Copyright (C) 2006 Jan Losinski
 

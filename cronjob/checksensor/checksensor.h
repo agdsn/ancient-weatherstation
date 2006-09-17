@@ -1,6 +1,6 @@
 /*
 
-   main.h        -- Part of checksensor
+   checksensor.h        -- Part of checksensor
 
    Copyright (C) 2006 Jan Losinski
 
