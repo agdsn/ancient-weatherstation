@@ -35,6 +35,6 @@ typedef struct config_keyword_t {
 int read_config(char *, int , const config_keyword *);
 
 /* Config-Zeilen auswerten */
-int read_str(const char *, void *);
-int read_int(const char *, void *);
-int read_yn(const char *, void *);
+int read_str(const char *, void *);	/* Einen String lesen */
+int read_int(const char *, void *);	/* Einen int lesen */
+int read_yn(const char *, void *);	/* Ein yes/no in 1/0 umwandeln */

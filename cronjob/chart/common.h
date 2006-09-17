@@ -22,12 +22,14 @@
 
 #include "definitions.h"
 
+/* Liste der Bilder - Configs */
 typedef struct image_cfg_list_t *image_cfg_list_ptr;
 typedef struct image_cfg_list_t {
   char 		 	*image_cfg_file;
   image_cfg_list_ptr  	next;
 } image_cfg_list;
 
+/* Globale Config */
 typedef struct config_t {
   char 			*pg_host;
   char 			*pg_database;
@@ -40,8 +42,11 @@ typedef struct config_t {
   int 			fork;
 } config;
 
+/* Prototyp einer Finktion, die addclean() uebergeben 
+ * wird. */
 typedef void (*clean_func_t)(void *data);
 
+/* Clean - Liste */
 typedef struct clean_struct *clean_struct_ptr;
 typedef struct clean_struct {
   void 		   *data;
@@ -50,7 +55,7 @@ typedef struct clean_struct {
 } clean_data;
 
 
-
+/* Globale Optionen */
 extern config global_opts;
 
 /* Funktionen -------------------------------------------------------------*/
@@ -65,7 +70,7 @@ void exit_sig_handler(int);
 /* Eine (neuste) Clean-Funktion entfernen */
 void remove_clean();
 
-/* Eine Clean-Funktion hinzufügen */
+/* Eine Clean-Funktion hinzufuegen */
 void add_clean(clean_func_t , void *);
 
 /* Alle clean-Funktionen entfernen */

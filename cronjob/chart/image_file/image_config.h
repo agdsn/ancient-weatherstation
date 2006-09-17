@@ -1,6 +1,6 @@
 /*
 
-   chart.c        -- Part of Chart-generator for the weatherstation
+   image_config.h        -- Part of Chart-generator for the weatherstation
 
    Copyright (C) 2006 Jan Losinski
 
@@ -20,4 +20,7 @@
 
 */
 
+/* Bild - Config holen. 
+ * Argument: Dateiname des Config - Files 
+ * Rueckgabe: 1 bei Erfolg */
 int get_image_cfg(char *);

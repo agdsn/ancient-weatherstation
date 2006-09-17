@@ -1,6 +1,6 @@
 /*
 
-   chart.c        -- Part of Chart-generator for the weatherstation
+   image_config.c        -- Part of Chart-generator for the weatherstation
 
    Copyright (C) 2006 Jan Losinski
 
@@ -29,6 +29,8 @@
 
 #define BUFFSIZE 512
 
+
+/* Funktionsdefinitionen */
 static int read_time(const char *, void *);
 static int read_color(const char *, void *);
 static int read_double(const char *, void *);
@@ -36,7 +38,7 @@ static int read_fmt_str(const char *, void *);
 
 
 
-/* Zuordnung zwischen Schlüsselwörtern in der Config, Der Funktion, die diese auswertet 
+/* Zuordnung zwischen Schluesselwoertern in der Config, Der Funktion, die diese auswertet 
  * und dem eld in der Options-Struktur */
 static const config_keyword keywords[] = {
   /* keyword			handler  	 	variable address			default */
@@ -54,8 +56,8 @@ static const config_keyword keywords[] = {
   {"height",			read_int,               &(img_cfg.height),    			DEFAULT_HEIGHT},
   {"unit",			read_str,               &(img_cfg.unit),    			DEFAULT_UNIT},
   {"sensor_id",			read_int,               &(img_cfg.sens_id),    			DEFAULT_SENS_ID},
-  {"zero_min",			read_yn,               &(img_cfg.zero_min),    		DEFAULT_ZERO_MIN},
-  {"as_bars",			read_yn,               &(img_cfg.bars),	    		DEFAULT_AS_BARS},
+  {"zero_min",			read_yn,                &(img_cfg.zero_min),    		DEFAULT_ZERO_MIN},
+  {"as_bars",			read_yn,                &(img_cfg.bars),	    		DEFAULT_AS_BARS},
   {"x_axis_desc",		read_str,               &(img_cfg.x_desc),    			DEFAULT_X_AX_DESC},
   {"y_axis_desc",		read_str,               &(img_cfg.y_desc),    			DEFAULT_Y_AX_DESC},
   {"x_format",			read_fmt_str,           &(img_cfg.x_fmt),    			DEFAULT_X_FORMAT},
@@ -80,6 +82,8 @@ static const config_keyword keywords[] = {
   {"",				NULL, 	  		NULL,					""}
 };
 
+
+/* Einen Zeit - Format - String lesen */
 static int read_fmt_str(const char *line, void *arg){
   char **dest = arg;
   char *new_line = NULL;
@@ -89,14 +93,14 @@ static int read_fmt_str(const char *line, void *arg){
   read_str(line, &new_line);
 
   if(new_line != NULL){
-    p = strchr(new_line, '|');
-    if(p != NULL){
-      strcpy(p, "\0");
-      strcpy(temp, new_line);
-      strcat(temp, "\r\n");
-      strcat(temp, p+1);
+    p = strchr(new_line, '|'); 
+    if(p != NULL){				/* Wenn ein | gefunden wurde */	
+      strcpy(p, "\0");				/* dann diesen durch ein Stringende ersetzen */
+      strcpy(temp, new_line);			/* Das Srueck vor dem | in einen Puffer schreiben */
+      strcat(temp, "\r\n");			/* ein zeilenumbruch mit Wagenruecklauf einfuegen */
+      strcat(temp, p+1);			/* das stueck hinter dem | anfuegen */
     } else {
-      strcpy(temp, new_line);
+      strcpy(temp, new_line);			/* Wenn kein | gefunden, dann den ganzen String in den Puffer */
     }
 
     if (*dest) free(*dest);
@@ -110,24 +114,28 @@ static int read_fmt_str(const char *line, void *arg){
 }
 
 
+/* Liest ein double ein */
 static int read_double(const char *line, void *arg){
   double *dest = arg;
   *dest = atof(line);
   return 1;
 }
 
+
+/* Liest eine Farbe ein 
+ * Format: rr:gg:bb:aa */
 static int read_color(const char *line, void *arg){
   img_color_ptr *col = arg;
   img_color_ptr tmp = NULL;
   char *buff = malloc(sizeof(char)*3);
 
-  if(strlen(line) == 11){
-    if (strchr(line, ':') != NULL){
-      tmp        = malloc(sizeof(img_color_t));
-      tmp->r     = strtol(strncpy(buff, line, 2), NULL, 16);
-      tmp->b     = strtol(strncpy(buff, line+3, 2), NULL, 16);
-      tmp->g     = strtol(strncpy(buff, line+6, 2), NULL, 16);
-      tmp->alpha = strtol(strncpy(buff, line+9, 2), NULL, 16);
+  if(strlen(line) == 11){						/* Wenn String auch wirkle 11 Zeichen lang */
+    if (strchr(line, ':') != NULL){					/* und min. 1 : vorkommt */  
+      tmp        = malloc(sizeof(img_color_t));				/* Neues Farbelement allocieren */
+      tmp->r     = strtol(strncpy(buff, line,   2), NULL, 16);		/* r */
+      tmp->b     = strtol(strncpy(buff, line+3, 2), NULL, 16);		/* b */
+      tmp->g     = strtol(strncpy(buff, line+6, 2), NULL, 16);		/* g */
+      tmp->alpha = strtol(strncpy(buff, line+9, 2), NULL, 16);		/* alpha */
 
       DEBUGOUT5(" Farbe gelesen: rot:%2x gelb:%2x gruen:%2x mit alpha:%2x\n", tmp->r, tmp->b, tmp->g, tmp->alpha) ;
     }
@@ -150,22 +158,22 @@ static int read_time(const char *line, void *arg){
   char *p    = NULL;
   char *tmp  = strdup(line);
   
-  p = strchr(tmp, '\0');
+  p = strchr(tmp, '\0');	/* P auf das ende des Strings setzen */
   if(p != NULL){
-    switch( *(p - 1) ){
-      case 's':
+    switch( *(p - 1) ){		/* Letztes Zeichen pruefen */
+      case 's':			/* Sekunden */
         mult = 1;
 	break;
-      case 'm':
+      case 'm':			/* Minuten */
 	mult = 60;
 	break;
-      case 'h':
+      case 'h':			/* Stunden */
 	mult = 3600;
 	break;
-      case 'd':
+      case 'd':			/* Tage */
 	mult = 86400;
 	break;
-      case 'y':
+      case 'y':			/* Jahre */
 	mult = 31536000;
 	break;
       default:
@@ -189,12 +197,15 @@ int get_image_cfg(char *file){
   int ret_var; 
   char *buff; 
 
+  /* Config - URL zusammenbauen */
   buff = malloc(sizeof(char)*(strlen(file)+strlen(global_opts.image_cfg_location)+1));
   buff = strcpy(buff, global_opts.image_cfg_location);
   buff = strcat(buff, file);
 
   DEBUGOUT2("\nLese Config-File: '%s' \n", buff);
-
+  
+  /* File einlesen */
   ret_var = read_config(buff, 1, keywords);
+  
   return ret_var;
 }

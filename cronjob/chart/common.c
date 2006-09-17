@@ -56,6 +56,7 @@ void add_clean(clean_func_t func, void *data){
   }
 }
 
+/* Zuletzt angefuegtes Clean - Element entfernen */
 void remove_clean(){
   clean_struct_ptr temp = clean_ptr;
   if (temp != NULL){
@@ -64,6 +65,7 @@ void remove_clean(){
   }
 }
 
+/* Clean - Liste leeren */
 void clear_clean(){
   while(clean_ptr != NULL){
     remove_clean();

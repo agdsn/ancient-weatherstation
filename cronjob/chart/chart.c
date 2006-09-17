@@ -26,46 +26,51 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <signal.h>
-
 #include "definitions.h"
 #include "config.h"
 #include "chart.h"
 #include "common.h"
 #include "image_file/image_file.h"
 
-static int walk_image_cfg_list();
-static void wait_for_childs();
-
-config global_opts;
+static int walk_image_cfg_list();				/* Definition fuer walk_image_cfg_list */
+static void wait_for_childs();					/* Definition fuer wait_for_childs */
 
 
+config global_opts;						/* Globale Optionen */
+
+
+/* Geht die Bilder-Configs durch und startet das 
+ * Generieren der Bilder 
+ * Rueckgabe: Anzahl der Childs die Geforkt wurden */
 static int walk_image_cfg_list(){
-  int has_forked             = 0;
-  pid_t pid                  = 0;
-  image_cfg_list_ptr tmp_ptr = global_opts.image_cfg;
+  int has_forked             = 0;			/* Zaehler der Childs */ 
+  pid_t pid                  = 0;			/* Temporaer abgespeicherte Pid */
+  image_cfg_list_ptr tmp_ptr = global_opts.image_cfg;	/* Hilfszeiger auf das aktuelle element der Config-Liste */
 
-  for(; tmp_ptr; tmp_ptr = tmp_ptr->next){
-    if(global_opts.fork){
-      if((pid = fork()) == 0){
-        clear_clean();
-	process_image_cfg(tmp_ptr->image_cfg_file);
-	exit(EXIT_SUCCESS);
+  for(; tmp_ptr; tmp_ptr = tmp_ptr->next){		/* Configliste durchgehen */
+    if(global_opts.fork){				/* Wenn geforkt werden soll */
+      if((pid = fork()) == 0){				/* Unterscheidung ob im Child oder im Parent */
+        clear_clean();					/* Wenn im Child, dann die Clean-Liste leeren */
+	process_image_cfg(tmp_ptr->image_cfg_file);	/* Bild generieren */
+	exit(EXIT_SUCCESS);				/* und Child beenden */
       } 
-      else if (pid == -1){
+      else if (pid == -1){				/* Probleme beim Fork */
 	exit_error(ERROR_FORK);
       } 
-      if(!has_forked){
+      if(!has_forked){					/* beim ersten durchlauf die warte-funktion an die Clean-Liste anhaengen */
         add_clean(wait_for_childs, NULL);
       }
-      has_forked++;
+      has_forked++;					/* Den fork-zaehler erhoehen */
       DEBUGOUT2("Prozess %d angelegt\n",pid);
-    } else {
-      process_image_cfg(tmp_ptr->image_cfg_file);
+    } else {						/* Wenn nicht geforkt werden soll */
+      process_image_cfg(tmp_ptr->image_cfg_file);	/* dann so das Bild generieren */
     }
   }
   return has_forked;
 }
 
+
+/* Wartet auf gestartete Child-Prozesse */
 static void wait_for_childs(void *dummy){
   int ret_val;
   pid_t pid;
@@ -74,7 +79,10 @@ static void wait_for_childs(void *dummy){
   }
 }
 
+
+/* Main - Funktion */
 int main(int argc, char *argv[]){
+
   DEBUGOUT1("Programm gestartet\n");
 
   if(signal(SIGABRT, exit_sig_handler) == SIG_ERR)
@@ -90,7 +98,8 @@ int main(int argc, char *argv[]){
     exit_error(ERROR_SEIINST);
   DEBUGOUT1("Signalhandler zum beenden per SIGTERM installiert\n");
 
-  read_config(DEFAULT_CONFIG_FILE, 1, NULL);
+  /* Haupt-Config einlesen */
+  read_config(DEFAULT_CONFIG_FILE, 1, NULL);					
 
   /* Debug-Ausgaben, um zu sehen, ob die Optionen richtig gesetzt werden */
   DEBUGOUT1("\nOptionen:\n");
@@ -104,6 +113,7 @@ int main(int argc, char *argv[]){
   DEBUGOUT2("  Datenbank =  %s\n",global_opts.pg_database);
   DEBUGOUT2("  Timeout   =  %s\n",global_opts.pg_database);
 
+  /* Bilder - Configs durchgehen */
   if(walk_image_cfg_list())
     wait_for_childs(NULL);
 

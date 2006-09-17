@@ -38,7 +38,7 @@
 static int add_image_cfg(const char *, void *);
  
 
-/* Zuordnung zwischen Schlüsselwörtern in der Config, Der Funktion, die diese auswertet 
+/* Zuordnung zwischen Schluesselwoertern in der Config, Der Funktion, die diese auswertet 
  * und dem eld in der Options-Struktur */
 static const config_keyword dflt_keywords[] = {
   /* keyword			handler  	 	variable address			default */
@@ -126,7 +126,7 @@ int read_config(char *file, int reset, const config_keyword *keywords){
   if(keywords == NULL)
     keywords = (config_keyword *)dflt_keywords;
 
-  /* Optionen mit default-werten füllen */
+  /* Optionen mit default-werten fuellen */
   if(reset){
     for (i = 0; keywords[i].keyword[0]; i++)
     //printf("keyword: %s \n",keywords[i].keyword);
@@ -134,9 +134,9 @@ int read_config(char *file, int reset, const config_keyword *keywords){
         keywords[i].handler(keywords[i].def, keywords[i].var);
   }
 
-  /* config-file öffnen */
+  /* config-file oeffnen */
   if (!(in = fopen(file, "r"))) {
-    DEBUGOUT2("Kann Config-File: '%s' nicht öffnen!\n", file);
+    DEBUGOUT2("Kann Config-File: '%s' nicht oeffnen!\n", file);
     return 0;
   }
 
@@ -144,10 +144,10 @@ int read_config(char *file, int reset, const config_keyword *keywords){
   while (fgets(buffer, CONFIG_BUFFERSIZE, in)) {
     lm++;
 
-    /* Zeilenvorschübe gegen null-terminierungs-Zeichen ersetzen */
+    /* Zeilenvorschuebe gegen null-terminierungs-Zeichen ersetzen */
     if (strchr(buffer, '\n')) *(strchr(buffer, '\n')) = '\0';
   
-    /* Originlzeile für eventuelle log-, bzw. debug-meldungen */
+    /* Originlzeile fuer eventuelle log-, bzw. debug-meldungen */
     strcpy(orig, buffer);
   
     /* Kommentazeichen gegen null-terminierungs-Zeichen ersetzen und damit alles dahinter ignorieren */

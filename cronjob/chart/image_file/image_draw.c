@@ -1,3 +1,25 @@
+/*
+
+   image_draw.c    -- Part of Chart-generator for the weatherstation
+
+   Copyright (C) 2006 Jan Losinski
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -10,22 +32,27 @@
 
 #define SHORTBUFFSIZE 64
 
+/* der besseren Lesbarkeit wegen einen Farbtyp definiert */
 typedef int color;
+
+/* Datenstruktur, welche die Dimensionen eines Textes enthaelt */
 typedef struct dimension {
-  int width;
-  int height;
-  int l_t_x;
-  int l_t_y;
-  int l_b_x;
-  int l_b_y;
-  int r_b_x;
-  int r_b_y;
-  int r_t_x;
-  int r_t_y;
-  int to_base;
+  int width;		/* Breite */
+  int height;		/* Hoehe */
+  int l_t_x;		/* Links - oben - x */
+  int l_t_y;		/* Links - oben - y */
+  int l_b_x;		/* Links - unten - x */
+  int l_b_y;		/* Links - unten - y */
+  int r_b_x;		/* Rechts - unten - x */
+  int r_b_y;		/* Rechts - unten - y */
+  int r_t_x;		/* Rechts - oben - x */
+  int r_t_y;		/* Rechts - oben - y */
+  int to_base;		/* Abstand von oben zur Grundlinie */
 } dimension_t;
 
 
+
+/* Funktionsdefinitionen */
 static gdImagePtr create_image();
 static gdImagePtr draw_image(gdImagePtr);
 static dimension_t calc_text_dim(char *, double , double );
@@ -33,11 +60,11 @@ static color alloc_alpha_color(gdImagePtr , img_color_ptr );
 static void write_image_png(gdImagePtr, FILE *);
 
 /* Baut ein Bild und schreibt es in die Datei */
-int draw_to_file(FILE *fd){
-  gdImagePtr img = create_image();
-  draw_image(img);
-  write_image_png(img, fd);
-  gdImageDestroy(img);
+void draw_to_file(FILE *fd){
+  gdImagePtr img = create_image();	/* Bild 'erschaffen' */
+  draw_image(img);			/* Bild zeichnen */
+  write_image_png(img, fd);		/* Bild schreiben */
+  gdImageDestroy(img);			/* Bild 'zerstoeren */
 }
 
 /* Erstellt ein Bild mit Hintergrundfarbe */
@@ -81,7 +108,7 @@ static gdImagePtr draw_image(gdImagePtr img){
   char *buff;
   time_t ts;
 
-  /* Größenangaben fuer die einzelnen Texte */
+  /* Groeßenangaben fuer die einzelnen Texte */
   dimension_t head_d;
   dimension_t y_label_d;
   dimension_t x_label_d;
@@ -123,7 +150,7 @@ static gdImagePtr draw_image(gdImagePtr img){
 
 
 
-  /* Diagramhöhe */
+  /* Diagramhoehe */
   buff            = malloc(sizeof(char)*SHORTBUFFSIZE);
   ts              = time(NULL);  
   strftime(buff, SHORTBUFFSIZE, "%d.%m.%y\r\n%H:%M", localtime(&ts) ) ;
@@ -196,11 +223,10 @@ static gdImagePtr draw_image(gdImagePtr img){
 
   /* Rahmen */
   gdImageRectangle(img,  offset_x_left, offset_y_top, img_cfg.width - offset_x_right,  img_cfg.height - offset_y_bottom, dia_border_c);
-
-
-
 }
 
+
+/* Berechnet die Dimensionen eines Textes */
 static dimension_t calc_text_dim(char *text, double size, double angle){
   int brect[8];
   dimension_t dim;
@@ -209,8 +235,10 @@ static dimension_t calc_text_dim(char *text, double size, double angle){
   int y_rt_lb = 0;
   int y_rb_lt = 0;
 
+  /* Dimmensionen holen */
   gdImageStringFT(NULL, &brect[0], 0, IMG_FONT, size, angle, 0,0, text);
 
+  /* Zuweisen */
   dim.l_t_x = brect[6];
   dim.l_t_y = brect[7];
   dim.l_b_x = brect[0];
@@ -220,8 +248,10 @@ static dimension_t calc_text_dim(char *text, double size, double angle){
   dim.r_t_x = brect[4];
   dim.r_t_y = brect[5];
 
+  /* Abstand zur Grundlinie */
   dim.to_base = 0 - dim.r_t_y;
 
+  /* Abstaende berechnen */
   x_rt_lb = dim.r_t_x - dim.l_b_x;
   x_rb_lt = dim.r_b_x - dim.l_t_x;
   y_rt_lb = dim.l_b_y - dim.r_t_y;
@@ -235,13 +265,10 @@ static dimension_t calc_text_dim(char *text, double size, double angle){
 
   if(y_rt_lb < y_rb_lt){
     dim.height = y_rb_lt;
-    //printf("y_rb_lt");
   } else {
     dim.height = y_rt_lb;
-    //printf("y_rt_lb");
   }
 
-  //printf("%d -- %s\n", dim.height, text);
 
   return dim;
 }

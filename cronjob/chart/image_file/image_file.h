@@ -1,6 +1,6 @@
 /*
 
-   process_image.h -- Part of Chart-generator for the weatherstation
+   image_file.h -- Part of Chart-generator for the weatherstation
 
    Copyright (C) 2006 Jan Losinski
 
@@ -20,4 +20,7 @@
 
 */
 
+/* Image bei Bedarf
+ * generieren und in Datei schreiben.
+ * Argument: Filename des Config - Files*/
 void process_image_cfg(char *);

@@ -1,3 +1,25 @@
+/*
+
+   image_data.c        -- Part of Chart-generator for the weatherstation
+
+   Copyright (C) 2006 Jan Losinski
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+*/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -12,14 +34,15 @@
 #define BUFFSIZE 512
 
 
+/* Variablen */
+static pix_list_ptr min = NULL;			/* Pointer auf min - Element */
+static pix_list_ptr max = NULL;			/* Pointer auf Max - Element */
+double real_min = 0;				/* Realer Max - Wert */
+double real_max = 0;				/* Realer Min - Wert */
+static long base_time;				/* Zeit an der 0-Koordinate (lt. Datenbank!) */
 
-static pix_list_ptr min = NULL;
-static pix_list_ptr max = NULL;
-double real_min = 0;
-double real_max = 0;
-static long base_time;									/* Zeit an der 0-Koordinate (lt. Datenbank!) */
 
-
+/* Funktionsdefinitionen */
 static pix_list_ptr add_pix_value(pix_list_ptr , long, int , int );
 static char *get_conn_string();
 static PGconn *pg_check_connect(char *);
@@ -29,12 +52,12 @@ static char *get_type_table_by_id(PGconn *, int );
 
 /* Bibt die Liste mit den y-Labels zurueck */
 label_list_ptr get_y_label_list(int c_hight, int padding){
-  int max_val      = 0;
-  int min_val	   = 0;
-  double factor    = 0;
-  int diff         = 0;
-  double real_diff = 0;
-  double padd_val  = 0;
+  int max_val      = 0;				/* Maximaler Wert */
+  int min_val	   = 0;				/* Minimaler Wert */
+  double factor    = 0;				/* Pixel / Werte */
+  int diff         = 0;				/* Wertebereich */
+  double real_diff = 0;				/* Realer Wertebereich */
+  double padd_val  = 0;				
   int temp         = 0; 
   double koeff     = 1;
   double interval  = 0;
@@ -52,6 +75,7 @@ label_list_ptr get_y_label_list(int c_hight, int padding){
   DEBUGOUT1("\nBaue y-Labels...\n");
   DEBUGOUT4(" Max. Wert: %d, Min. Wert: %d (inkl. Koeffizient: %3.3f)\n", max_val, min_val, img_cfg.val_koeff);
 
+  /* Max und min festlegen */
   if (!img_cfg.label_sum){
     max_val = ceil( ( ((double)max->value_sum) / ((double)max->value_count) ) * img_cfg.val_koeff);
     min_val = floor( ( ((double)min->value_sum) / ((double)min->value_count) ) * img_cfg.val_koeff);
@@ -59,10 +83,12 @@ label_list_ptr get_y_label_list(int c_hight, int padding){
     max_val = ceil( ( ((double)max->value_sum) ) * img_cfg.val_koeff);
     min_val = floor( ( ((double)min->value_sum) ) * img_cfg.val_koeff);
   }
+  /* Min 0 setzen wenn zero_min gesetzt */
   if (img_cfg.zero_min){
     min_val = 0;
   } 
 
+  /* Rechnen ... */
   diff     = max_val - min_val;
   factor   =  ( ((double)c_hight - (2 * padding)) / ((double)diff) );
   padd_val = (1 / factor) * ((double)padding); 
@@ -90,22 +116,30 @@ label_list_ptr get_y_label_list(int c_hight, int padding){
     temp++;
   }
 
+  /* Puffer fuer die Labels */
   buff = malloc(sizeof(char)*BUFFSIZE);
 
+  /* Labels generieren */
   for (i = 0; i < num; i++){
+    
+    /* Momentaner wert */
     new_val = temp + (i * interval);    
+    
+    /* Labels zusammenbauen */
     if(img_cfg.unit != NULL){
       snprintf(buff, BUFFSIZE, "%d%s", new_val, img_cfg.unit);
     } else {
       snprintf(buff, BUFFSIZE, "%d", new_val);
     }
 
+    /* Neues Label - Element */
     new_ptr            = malloc(sizeof(label_list_t));
     new_ptr->pos       = floor( (real_max -  ((double)new_val) ) * factor);
     new_ptr->value     = new_val;
     new_ptr->text      = strdup(buff);
     new_ptr->next      = NULL;
 
+    /* Rueckgabe- und Temp-pointer zuweisen */
     if (ptr != NULL){
       temp_ptr->next = new_ptr;
       temp_ptr       = temp_ptr->next;
@@ -138,16 +172,23 @@ label_list_ptr get_x_label_list(int c_width){
 
   DEBUGOUT1("\nBaue x-Labels...\n");
  
+  /* Labels generieren */
   for ( i = 1; i < num; i++ ) {
+    
+    /* aktueller Timestamp */
     timestamp = base_time + (i * img_cfg.label_interval);
+
+    /* Text fuer das Label bauen */
     strftime(buff, BUFFSIZE, img_cfg.x_fmt, localtime(&timestamp) );
 
+    /* Neues Label - Element */
     new_ptr            = malloc(sizeof(label_list_t));
     new_ptr->pos       = floor( ((double)i) * factor);
     new_ptr->value     = base_time + (i * img_cfg.label_interval);
     new_ptr->text      = strdup(buff);
     new_ptr->next      = NULL;
 
+    /* Rueckgabe- und Temp-pointer zuweisen */
     if (ptr != NULL){
       temp_ptr->next = new_ptr;
       temp_ptr       = temp_ptr->next;
@@ -168,26 +209,31 @@ label_list_ptr get_x_label_list(int c_width){
 
 
 /* Skaliert die X-Koordinaten der Punkte im angegebenem Bereich
- * ausführliche Beschreibung im header-file */
+ * ausfuehrliche Beschreibung im header-file */
 int scale_y_coords(pix_list_ptr ptr, int c_height){
-  double range            = (((real_max - real_min) / img_cfg.val_koeff ) + 1) ;				/* Anzahl von 0,1-Schritten */
-  double pix_per_scale = ((double)c_height) / ((double)range); 				/* Pixel pro 0,1 */
-  pix_list_ptr temp    = ptr;
-  int zero_line        = floor( ((double)((real_max  / img_cfg.val_koeff) + 1)) * pix_per_scale);			/* Nullinie */
+  double range         = (((real_max - real_min) / img_cfg.val_koeff ) + 1) ;				/* Anzahl von 0,1-Schritten */
+  double pix_per_scale = ((double)c_height) / ((double)range); 						/* Pixel pro 0,1 */
+  int zero_line        = floor( ((double)((real_max  / img_cfg.val_koeff) + 1)) * pix_per_scale);	/* Nullinie */
+  pix_list_ptr temp    = ptr;										/* Temporaerer Pointer zum durchgehen der Liste */
   
   DEBUGOUT1("\nBerechne y-Koordinaten:\n");
 
+  /* Liste duchgehen */
   for (; temp; temp = temp->next){
+    
+    /* unterscheidung ob summiert oder gemittelt werden soll */
     if(!img_cfg.label_sum){
       temp->y_pix_coord = (-1 * floor( ( ((double)temp->value_sum) / ((double)temp->value_count) ) * pix_per_scale)) + zero_line;
     } else {
       temp->y_pix_coord = (-1 * floor(  ((double)temp->value_sum) * pix_per_scale)) + zero_line;
     }
+
     DEBUGOUT3("  neue y-Koordinate: %d bei x: %d\n",temp->y_pix_coord, temp->x_pix_coord);
   }
 
-    DEBUGOUT2(" Nullinie bei: %d\n", zero_line);
-
+  DEBUGOUT2(" Nullinie bei: %d\n", zero_line);
+  
+  /* Wenn Nullinie zu sehen, dann die Position zurueckgeben */
   if ((real_max - real_min + 1) >= real_max){
     return zero_line;
   } else {
@@ -195,16 +241,20 @@ int scale_y_coords(pix_list_ptr ptr, int c_height){
   }
 }
 
+
 /* Maximaler wert */
 pix_list_ptr get_max_val(){
   return min;
 }
+
 
 /* Minimaler Wert */
 pix_list_ptr get_min_val(){
   return max;
 }
 
+
+/* Maximale Zeit */
 char *get_max_time(){
   char *buff = malloc(sizeof(char)*BUFFSIZE);
   time_t timestamp = base_time + img_cfg.show_interval;
@@ -214,6 +264,8 @@ char *get_max_time(){
   return buff;
 }
 
+
+/* Minimale Zeit */
 char *get_min_time(){
   char *buff = malloc(sizeof(char)*BUFFSIZE);
   time_t timestamp = base_time ;
@@ -222,6 +274,7 @@ char *get_min_time(){
 
   return buff;
 }
+
 
 /* Holt eine Liste mit den Werten und den jeweiligen x-koordinaten */
 pix_list_ptr get_pix_list(int c_width){
@@ -234,7 +287,7 @@ pix_list_ptr get_pix_list(int c_width){
   int time_field;									/* Id ses Timestamp-Feldes */
   int val_field;									/* Id des Wert - Feldes */
   long time_temp;									/* Hilfsvariable */
-  int pix_coord;									/* x - Koordinate, an die der Wert gehört */
+  int pix_coord;									/* x - Koordinate, an die der Wert gehoert */
   int i, s, t, u;									/* Laufvariable zum durchlaufen des Datenbank-resuls */
   long timestamp;
   pix_list_ptr list_ptr = NULL;								/* Zeiger auf den Anfang der Wertliste */
@@ -243,44 +296,76 @@ pix_list_ptr get_pix_list(int c_width){
   DEBUGOUT1("\nHole Daten...\n");
   DEBUGOUT2("  Ein Pixel entspricht %f sekunden\n", seconds_per_pix);
 
+  /* Tabellenname holen */
   if (img_cfg.manual_table) {
     table = strdup(img_cfg.table_name);
   } else {
     table = get_type_table_by_id(conn, img_cfg.sens_id);
   }
 
-
+  /* Anfrage zusammenbauen */
   snprintf(query, BUFFSIZE, "SELECT round(date_part('epoch', current_timestamp)) AS now, round(date_part('epoch', timestamp)) AS times, %s AS val FROM %s WHERE sens_id=%d AND  timestamp > (current_timestamp - INTERVAL '%d seconds') ORDER BY times ASC", img_cfg.table_field, table, img_cfg.sens_id, img_cfg.show_interval );
 
+  /* Anfrage stellen */
   res = pg_check_exec(conn, query);
 
+  /* ID's der Felder ermitteln */
   time_field = PQfnumber(res, "times");
   val_field  = PQfnumber(res, "val");
 
-  base_time = atol(PQgetvalue(res, 0, PQfnumber(res, "now"))) - img_cfg.show_interval;
+  /* Momentane Zeit */
+  if(PQntuples(res) > 0){
+    base_time = atol(PQgetvalue(res, 0, PQfnumber(res, "now"))) - img_cfg.show_interval;
+  } else {
+    base_time = time(NULL);
+  }
 
+
+  /* Ergebnisse durchlaufen */
   for (i = 0; i < PQntuples(res); i++){
     timestamp = atol(PQgetvalue(res, i, time_field));
     time_temp = timestamp - base_time;
+
+    /* Wenn Balken gezeichnet werden sollen */
     if(img_cfg.bars){
       time_temp --;
       if(time_temp < 1)
         time_temp++;
       time_temp = floor( ((double)time_temp) / ((double)img_cfg.label_interval) ) * img_cfg.label_interval;
     }
+
+    /* Koordinate berechnen */
     pix_coord = floor( ((double)time_temp) * seconds_per_pix) ;
+    
+    /* Listenelement generieren */
     temp_ptr = add_pix_value(temp_ptr, timestamp, pix_coord, atoi( PQgetvalue(res, i, val_field) ) );
 
+    /* Rueckgabe- und Max/Min-pointer zuweisen */
     if (list_ptr == NULL){
       list_ptr = temp_ptr;
       
       /* Globale Variablen neu initialisieren um 
        * mehtete Bilder in einem Thread bauen zu
-       * können */
+       * koennen */
       min = temp_ptr;
       max = temp_ptr;
     }
 
+  }
+
+  /* Wenn keine Daten vorhanden, dann Fake - Element generieren */
+  if(i == 0){
+    timestamp = timestamp - base_time +1;
+    if(img_cfg.bars){
+      time_temp = floor( ((double)timestamp) / ((double)img_cfg.label_interval) ) * img_cfg.label_interval;
+    } else {
+      time_temp = timestamp;
+    }
+    pix_coord = floor( ((double)time_temp) * seconds_per_pix) ;
+    temp_ptr  = add_pix_value(temp_ptr, timestamp, pix_coord, 0 );
+    list_ptr = temp_ptr;
+    min = temp_ptr;
+    max = temp_ptr;
   }
 
   /* Min / Max ermitteln */
@@ -313,6 +398,8 @@ pix_list_ptr get_pix_list(int c_width){
   DEBUGOUT2(" %d Werte geholt \n", i);
   DEBUGOUT3(" Min: x-pos.: %d, Wert: %d\n", min->x_pix_coord, (min->value_sum / min->value_count) );
   DEBUGOUT3(" Max: x-pos.: %d, Wert: %d\n", max->x_pix_coord, (max->value_sum / max->value_count) );
+
+  /* Aufraemen */
   PQclear(res);
   PQfinish(conn);
   free(query);
@@ -325,6 +412,7 @@ pix_list_ptr get_pix_list(int c_width){
 /* Speichert einen geholten Wert ab */
 static pix_list_ptr add_pix_value(pix_list_ptr ptr, long timestamp, int coord, int value){ 
 
+  /* Erstes Element */
   if(ptr == NULL){
     DEBUGOUT1("\nLese Daten ein:\n");
     ptr  		= malloc(sizeof(pix_list_t));
@@ -336,11 +424,13 @@ static pix_list_ptr add_pix_value(pix_list_ptr ptr, long timestamp, int coord, i
     DEBUGOUT3("  Erstes Element generiert...x-pos.: %d Wert: %d\n",ptr->x_pix_coord, ptr->value_sum);
   } else {
 
+    /* Wenn schon ein Wert fuer X - Koordinate vorhanden,
+     * dann aufsummieren, sonst neues Element anfuegen */
     if(coord == ptr->x_pix_coord){
       ptr->value_sum += value;
       ptr->value_count++;
 
-      DEBUGOUT5("  Zu x-pos. %d %d. Wert (%d) hinzugefügt. Durchschn.: %d\n", ptr->x_pix_coord, ptr->value_count, value, (ptr->value_sum/ptr->value_count) );
+      DEBUGOUT5("  Zu x-pos. %d %d. Wert (%d) hinzugefuegt. Durchschn.: %d\n", ptr->x_pix_coord, ptr->value_count, value, (ptr->value_sum/ptr->value_count) );
     } else {
       ptr->next		= malloc(sizeof(pix_list_t));
       ptr 		= ptr->next;
@@ -385,7 +475,7 @@ static PGresult *pg_check_exec(PGconn *conn, char *query){
     DEBUGOUT2("Fehler beim exec: %s\n", query);
     exit_error(ERROR_QUERY);
   } else {
-    DEBUGOUT2("Query: '%s' ausgeführt\n", query);
+    DEBUGOUT2("Query: '%s' ausgefuehrt\n", query);
   }
   return res;
 }

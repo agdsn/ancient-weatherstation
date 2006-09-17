@@ -1,6 +1,6 @@
 /*
 
-   process_image.c -- Part of Chart-generator for the weatherstation
+   image_file.c  -- Part of Chart-generator for the weatherstation
 
    Copyright (C) 2006 Jan Losinski
 
@@ -39,6 +39,7 @@
 image_cfg_t img_cfg;
 
 
+/* Funktionsdefinitionen */
 static void regenerate_image();
 static int check_file_interval();
 
@@ -52,6 +53,8 @@ void process_image_cfg(char *image_cfg_file){
   get_image_cfg(image_cfg_file);
 
   if (img_cfg.file_name != NULL){
+
+    /* Debugausgabe einiger Config - Optionen */
     DEBUGOUT2("File-Name     = %s\n", img_cfg.file_name);
     DEBUGOUT2("Ueberschr.    = %s\n", img_cfg.headline);
     DEBUGOUT2("Gen.Interval  = %d\n", img_cfg.gen_interval);
@@ -66,6 +69,7 @@ void process_image_cfg(char *image_cfg_file){
     DEBUGOUT2("TabellenName  = %s\n", img_cfg.table_name);
     DEBUGOUT1("\n");
 
+    /* Bild - Namen zusammenbauen */
     if(img_cfg.dflt_dir){
       buff = malloc(sizeof(char)*BUFFSIZE);
       buff = strncpy(buff, global_opts.dflt_image_location, BUFFSIZE - 1);
@@ -77,11 +81,12 @@ void process_image_cfg(char *image_cfg_file){
   } else {
     return;
   }
+
+  /* Pruefen ob Generierung noetig */
   if(check_file_interval()){
-    regenerate_image();
+    regenerate_image();		/* generieren */
   }
 
-  //sleep(30);
 }
 
 
@@ -93,11 +98,14 @@ static int check_file_interval(){
   time_t now;
   long diff_sek;
 
+  /* Pruefen ob Bild vorhanden */
   if(access(img_cfg.file_name, F_OK) == -1){
     DEBUGOUT2("Datei '%s' existiert nicht\n", img_cfg.file_name);
     DEBUGOUT1("Sie muss neu generiert werden!\n");
     return 1;
   }
+
+  /* Pruefen ob Bild zu alt */
   if ((stat(img_cfg.file_name, &stat_buff)) != -1){
     
     now = time(NULL);
@@ -118,7 +126,9 @@ static int check_file_interval(){
   return 0;
 }
 
+/* Bild (neu-) generieren */
 static void regenerate_image(){
-  FILE *fd = fopen(img_cfg.file_name, "wb");
-  draw_to_file(fd);
+  FILE *fd = fopen(img_cfg.file_name, "wb");	/* Datei oeffnen */
+  draw_to_file(fd);				/* Bild bauen und in Datei schreiben */
+  fclose(fd);					/* Datei schlieﬂen */
 }

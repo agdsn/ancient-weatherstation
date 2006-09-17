@@ -49,6 +49,7 @@
 #define DEFAULT_X_FORMAT	"%H:%M"
 #define DEFAULT_X_FORMAT_EXTRA	"%d.%m.%y|  %H:%M"
 
+/* Image-Default-Farben ---------------------------------------------- */
 #define DEFAULT_BG_COLOR		"DF:DF:EF:00"
 #define DEFAULT_DIA_BG_COLOR		"F0:A0:D0:D0"
 #define DEFAULT_ZERO_LINE_COLOR		"BF:80:80:40"
@@ -65,20 +66,20 @@
 
 
 
-/*Alle möglichen Definitionen, die in allen code-schnipseln benötigt werden*/
+/*Alle moeglichen Definitionen, die in allen code-schnipseln benoetigt werden*/
 
 
 /* Fehlermeldungen ------------------------------------------------------*/
 #define  ERROR_SEIINST "Signal-Fehler: Kann Signalhandler zum beenden nicht installieren\n"
 #define  ERROR_FORK    "Fork-Fehler: Kann keinen neuen Prozess anlegen\n"
-#define  ERROR_STAT    "Kann Stat nicht ausführen\n"
+#define  ERROR_STAT    "Kann Stat nicht ausfuehren\n"
 #define  ERROR_MAKECONN "PgSQL-Fehler: Kann Datenbankverbindung nicht herstellen\n"
-#define  ERROR_QUERY	"PgSQL-Fehler: Kann query nicht sudführen \n"
+#define  ERROR_QUERY	"PgSQL-Fehler: Kann query nicht ausfuehren \n"
 
 
-/* Puffergrößen -------------------------------------------------------- */
-#define CONFIG_BUFFERSIZE 512	/* Größe des Puffers zum Config-einlesen */
-#define QUERY_BUFFERSIZE  512	/* Größe des Zeichenpuffers für SQL-Anfragen */
+/* Puffergroeßen -------------------------------------------------------- */
+#define CONFIG_BUFFERSIZE 512	/* Groeße des Puffers zum Config-einlesen */
+#define QUERY_BUFFERSIZE  512	/* Groeße des Zeichenpuffers fuer SQL-Anfragen */
 
 
 /* Verschiedenes ------------------------------------------------------- */
