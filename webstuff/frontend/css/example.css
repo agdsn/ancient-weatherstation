@@ -6,7 +6,7 @@ div.module {
 	border-color: #006600; 
 	border-style: solid;
 	border-width: 1px;
-	background: #F0D0A0;
+	background: #FDDDAD;
 	padding: 3px;
 	margin: 2px;
 }
@@ -53,7 +53,7 @@ div.module div.mod_subsec {
   border-color: #D0B080;
   border-style: dotted;
   border-width: 1px;
-  background: #FFDFAF;
+  background: #FFEBBB;
   margin: 2px;
   margin-left: 10px;
   margin-right: 10px;
@@ -67,7 +67,7 @@ div.module p.mod_description {
   border-color: #D0B080;
   border-style: dotted;
   border-width: 1px;
-  background: #FFDFAF;
+  background: #FFEBBB;
   margin-left: 10px;
   margin-right: 10px;
   margin-bottom: 4px;
