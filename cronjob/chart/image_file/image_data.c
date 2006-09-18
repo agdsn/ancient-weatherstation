@@ -120,7 +120,7 @@ label_list_ptr get_y_label_list(int c_hight, int padding){
    * daher den Zaehler um eins erhöhen und wenn dabei ueber 
    * den Bereich hinaus, dann wieder eins runter */
   num++;
-  if (((temp + (num - 1)) * interval) > (real_max - 1))
+  if ((temp + ((num - 1) * interval)) > (real_max - 1))
     num--;
 
   /* Puffer fuer die Labels */
