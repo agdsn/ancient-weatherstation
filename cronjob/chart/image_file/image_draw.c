@@ -175,8 +175,8 @@ static gdImagePtr draw_image(gdImagePtr img){
   y_labels = get_y_label_list(dia_height, dia_y_padding);
   for (; y_labels; y_labels = y_labels->next){
     gdImageLine(img, offset_x_left - 2, offset_y_top + y_labels->pos, img_cfg.width - offset_x_right, offset_y_top + y_labels->pos, diag_grid_x_c);
-    y_label_d = calc_text_dim(y_labels->text, 8, 0);
-    gdImageStringFT(img, &brect[0], label_y_c, IMG_FONT, 8, 0, (offset_x_left - 5 - y_label_max_width) + (y_label_max_width - y_label_d.width), offset_y_top + y_labels->pos + (y_label_d.height / 2), y_labels->text);
+    y_label_d = calc_text_dim(y_labels->text, 7, 0);
+    gdImageStringFT(img, &brect[0], label_y_c, IMG_FONT, 7, 0, (offset_x_left - 5 - y_label_max_width) + (y_label_max_width - y_label_d.width), offset_y_top + y_labels->pos + (y_label_d.height / 2), y_labels->text);
   }
 
   /* y-Werte skalieren */
