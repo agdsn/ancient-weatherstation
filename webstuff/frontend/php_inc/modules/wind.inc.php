@@ -163,7 +163,7 @@ class Wind{
 
   /* --- Funktionen, die aufgerufen werden um die geholeten Werte auszugeben --- */
   function get_now_val(){
-    return $this->nowWind;
+    return round($this->nowWind * 0.1, 1);
   }
 
   function get_now_dir(){
@@ -179,7 +179,7 @@ class Wind{
   }
 
   function get_av_value(){
-    return $this->avVal;
+    return round($this->avVal * 0.1, 1);
   }
 
   function get_av_interval(){
@@ -191,7 +191,7 @@ class Wind{
   }
 
   function get_max_val(){
-    return $this->maxWind;
+    return round($this->maxWind * 0.1, 1);
   }
 
   function get_max_dir(){
