@@ -3,6 +3,7 @@ include_once("php_inc/module.inc.php");
 include_once("php_inc/parser.inc.php");
 include_once("php_inc/connection.inc.php");
 include_once("php_inc/config.inc.php");
+include_once("php_inc/chart.inc.php");
 
 
 /* Klasse, die die ModuleSets Verwaltet */
@@ -14,6 +15,10 @@ class ModuleSet{
   function ModuleSet($setName){
     $parser = & $this->_getParserInstance();					/* Parserinstanz holen */
     $parser->parseContent($this->_getSetFilename($setName), &$this, NULL);	/* Set Parsen */
+
+    if($_REQUEST['chartName'] != ""){
+      $parser->appendContent($this->getBackLink());
+    }
 
     $parser->printContent();
     
@@ -47,6 +52,22 @@ class ModuleSet{
   function addModule($modName){
     $params = explode("_",$modName);				/* Modulname und Sensorid trennen */
     new Module($params[0], $params[1], $this->_getParserInstance(), $this->_getConnInstance());
+  }
+
+  function addChart($template){
+    new Chart($template,  $this->_getParserInstance());
+  }
+
+  function getBackLink(){
+    $buff  = '<div class="back_link_div">';
+    $buff .= '<a class="back_link" href="';
+    $buff .= $_SERVER['HTTP_REFERER'];
+    $buff .= '">';
+    $buff .= 'zur&uuml;ck';
+    $buff .= "</a>";
+    $buff .= "</div>";
+
+    return $buff;
   }
 }
 ?>

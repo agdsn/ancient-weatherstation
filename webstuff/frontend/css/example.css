@@ -1,8 +1,9 @@
 body {
   background: #FFFAF5;
+  padding-bottom: 150px;
 }
 
-div.module {
+div.module, div.chart {
 	border-color: #006600; 
 	border-style: solid;
 	border-width: 1px;
@@ -75,4 +76,68 @@ div.module p.mod_description {
   color: #333333;
   font-weight: 600;
   font-size: 10pt;
+}
+
+div.module div.mod_subsec div.chart_link_div a.chart_link {
+  color: #666666;
+  font-weight: 300;
+  text-decoration: none;
+  position: relative;
+} 
+
+div.module div.mod_subsec div.chart_link_div a.chart_link p.chart_link_desc{
+  visibility: hidden; 
+  position: absolute;
+  top: -100px;
+}
+
+div.module div.mod_subsec div.chart_link_div a.chart_link:hover p.chart_link_desc {
+  top: 5px;
+  left: 5px;
+  visibility: visible; 
+  margin-left: 5px; 
+  background: #fafafa; 
+  border: 1px solid #aa8888; 
+  width: 250px;
+  color: #aa8888; 
+  padding: 10px;
+  line-height:1.2em;
+  text-align: left;
+  font-variant: normal;
+  font-style: normal;
+  text-decoration: none;
+  z-index: 300;
+}
+
+div.module div.mod_subsec div.chart_link_div a.chart_link img.chart_link_prev {
+  margin-top: 5px;
+}
+
+div.back_link_div {
+  background: #fafafa;
+  border: 1px solid #aa8888;
+  position: absolute;
+  /*width: 80px;
+  height: 20px;*/
+  padding: 3px;
+  margin:5px;
+  left: 0px;
+  bottom: 0px:
+}
+
+div.back_link_div a.back_link {
+  color: #aa8888;
+  line-height:1.2em;
+  text-align: left;
+  font-variant: normal;
+  font-style: normal;
+  text-decoration: none;
+}
+
+div.chart {
+overflow:auto;
+  padding:10px;
+  text-align: center;
+  width: 820px;
+
 }

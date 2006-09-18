@@ -1,5 +1,6 @@
 <?
 include_once("php_inc/parser.inc.php");			/* Parser */
+include_once("php_inc/chart.inc.php");			/* Chart */
 include_once("php_inc/modules/sensor.inc.php");		/* Sensor-Klasse */
 include_once("php_inc/modules/temp.inc.php");		/* Temp-Klasse */
 include_once("php_inc/modules/rain.inc.php");		/* Rain-Klasse */
@@ -92,9 +93,17 @@ class Module{
     return $callObject->$funcName($content_split[1]);									/* Methode ausführen (Wert holen) und zurückgeben */
   }
 
+  function addChartLink($chartName){
+    return Chart::generateChartLink($chartName.'_'.$this->sensId);  
+  }
+
   function getModId($type){
     if($type == "css")
       return $this->modName."_".$this->sensId;
+  }
+
+  function addChart($chartName){
+    Chart::insertChart($chartName);
   }
 
 }
