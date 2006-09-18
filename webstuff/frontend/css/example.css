@@ -6,7 +6,7 @@ div.module {
 	border-color: #006600; 
 	border-style: solid;
 	border-width: 1px;
-	background: #;
+	background: #F0D0A0;
 	padding: 3px;
 	margin: 2px;
 }
@@ -50,10 +50,10 @@ div.module h4.mod_subhead {
 }
 
 div.module div.mod_subsec {
-  border-color: #BBEEDD;
+  border-color: #D0B080;
   border-style: dotted;
   border-width: 1px;
-  background: #DDFFFF;
+  background: #FFDFAF;
   margin: 2px;
   margin-left: 10px;
   margin-right: 10px;
@@ -64,10 +64,10 @@ div.module div.mod_subsec {
 }
 
 div.module p.mod_description {
-  border-color: #BBEEDD;
+  border-color: #D0B080;
   border-style: dotted;
   border-width: 1px;
-  background: #DDFFFF;
+  background: #FFDFAF;
   margin-left: 10px;
   margin-right: 10px;
   margin-bottom: 4px;
