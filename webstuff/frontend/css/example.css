@@ -1,12 +1,12 @@
 body {
-  background: #fefefe;
+  background: #FFFAF5;
 }
 
 div.module {
 	border-color: #006600; 
 	border-style: solid;
 	border-width: 1px;
-	background: #CCFFEE;
+	background: #;
 	padding: 3px;
 	margin: 2px;
 }
