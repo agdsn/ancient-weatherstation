@@ -61,12 +61,12 @@ class Press{
     $i = 1;										/* Laufvariable */
     while($avData['count']<5){								/* Schleife prüft, in welchem Interval 5 Werte zusammenkommen */ 
       $i++;										/* Laufvariable erhöhen */
-      $avData = $this->_getAverage($sensId, $table, &$connection, ($i*15)." minutes");	/* Holt Werte mit gegebenem Interval */
+      $avData = $this->_getAverage($sensId, $table, &$connection, ($i*20)." minutes");	/* Holt Werte mit gegebenem Interval */
     }
 
     /* Werte den Klassenvariablen zuordnen */
     $this->avVal   = $avData['average'];
-    $this->avInter = $i*15;
+    $this->avInter = $i*20;
   }
  
   /* Bestimmt die Tendenz */

@@ -48,5 +48,13 @@ class Connection{
     return $returnArray;
   }
 
+  /* Result roh zurueckgeben */
+  function &getRawResult($query){
+    $this->_createConn();
+    $result =  pg_query($this->conn, $query)
+      or die('Abfrage fehlgeschlagen: ' . pg_last_error());
+    return $result;
+  }
+
 }
 ?>

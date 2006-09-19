@@ -97,6 +97,10 @@ class Module{
     return Chart::generateChartLink($chartName.'_'.$this->sensId);  
   }
 
+  function addReportLink($rptName){
+    return Report::getReportLink($rptName.'_'.$this->sensId);
+  }
+
   function getModId($type){
     if($type == "css")
       return $this->modName."_".$this->sensId;

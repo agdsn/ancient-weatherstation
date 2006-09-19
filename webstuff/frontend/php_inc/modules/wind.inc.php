@@ -134,12 +134,12 @@ class Wind{
     $i = 1;										/* Laufvariable */
     while($avData['count']<5){								/* Schleife prüft, in welchem Interval 5 Werte zusammenkommen */ 
       $i++;										/* Laufvariable erhöhen */
-      $avData = $this->_getAverage($sensId, $table, &$connection, ($i*15)." minutes");	/* Holt Werte mit gegebenem Interval */
+      $avData = $this->_getAverage($sensId, $table, &$connection, ($i*20)." minutes");	/* Holt Werte mit gegebenem Interval */
     }
 
     /* Werte den Klassenvariablen zuordnen */
     $this->avVal   = $avData['average'];
-    $this->avInter = $i*15;
+    $this->avInter = $i*20;
   }
  
   /* Bestimmt die Tendenz */
@@ -152,11 +152,11 @@ class Wind{
     }
     $changing = $shortAvData['average'] - $longAvData['average'];			/* Aenderung berechnen */
     if($changing > 0){									/* Wenn Aenderung positiv */
-      $this->changing = "steigend (+ ".abs($changing * 0.1)." hPa)";			/* dann steigende Tendenz ausgeben */
+      $this->changing = "steigend (+ ".abs($changing * 0.1)." <sup>km</sup>/<sub>h</sub>)";			/* dann steigende Tendenz ausgeben */
     } elseif($changing < 0) {								/* wenn Negativ */
-      $this->changing = "fallend (- ".abs($changing * 0.1)." hPa)";			/* Fallende Tendenz ausgeben */
+      $this->changing = "fallend (- ".abs($changing * 0.1)." <sup>km</sup>/<sub>h</sub>)";			/* Fallende Tendenz ausgeben */
     } else {										/* an sonsten */
-      $this->changing = "gleichbleibend (&plusmn; 0 hPa)";				/* sagen, das es gleich geblieben ist */
+      $this->changing = "gleichbleibend (&plusmn; 0 <sup>km</sup>/<sub>h</sub>)";				/* sagen, das es gleich geblieben ist */
     }
     return;
   }
