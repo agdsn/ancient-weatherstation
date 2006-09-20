@@ -259,6 +259,8 @@ div.small_set div.module a.mod_small_link div.mod_body {
   position:absolute;
   bottom:0px;
   top:0px;
+  left:0px;
+  right:0px;
   height:100%;
   width:100%;
 }
@@ -273,6 +275,8 @@ div.small_set div.module a.mod_small_link div.mod_body span.mod_now {
 div.small_set div.module#windsSmall_2 a.mod_small_link div.mod_body span.mod_now, div.small_set div.module#regenSmall_3 a.mod_small_link div.mod_body span.mod_now {
   font-size: 17pt;
   padding-top:20pt;
+  /* IE-Hack*/
+  _padding-top:17pt;
   padding-bottom:0pt;
 }
 div.small_set div.module a.mod_small_link div.mod_body span.mod_now_extra {
@@ -291,6 +295,8 @@ div.small_set div.module a.mod_small_link div.mod_body span.mod_av {
   width:100%;
   text-align:center;
   bottom:19px;
+  left:0px;
+  right:0px;
 }
 
 div.small_set div.module#windsSmall_2 a.mod_small_link div.mod_body span.mod_av, div.small_set div.module#regenSmall_3 a.mod_small_link div.mod_body span.mod_av {
@@ -304,6 +310,8 @@ div.small_set div.module a.mod_small_link div.mod_body, div.small_set div.module
 div.small_set div.module a.mod_small_link div.mod_footer {
   position:absolute;  
   bottom:0px;
+  left:0px;
+  right:0px;
   width: 100%;
   background:#F0D0AF;
 }
