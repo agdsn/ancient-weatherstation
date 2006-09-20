@@ -1,0 +1,32 @@
+<h3 class="mod_headline">Sensor {content:fill:sens_id} - {content:fill:sens_location}</h3>
+<ul class="val_list">
+  <li class="val_elm">
+    <a href="{content:addSetLink:full}" class="mod_small_link">
+      <div class="mod_header">
+        <h4 class="mod_subheadline">Temparatur</h4>
+      </div>
+      <div class="mod_body">
+        <span class="mod_now">{content:fill:temp_now_val}&deg;C</span>
+        <span class="mod_av">(&Oslash; {content:fill:temp_av_value}&deg;C)</span>
+      </div>
+      <div class="mod_footer">
+        <nobr><span class="mod_max">max: {content:fill:temp_max_val}&deg;C</span><span class="mod_min">min: {content:fill:temp_min_val}&deg;C</span></nobr>
+      </div>
+    </a>
+  </li>
+  <li class="val_elm">
+    <a href="{content:addSetLink:full}" class="mod_small_link">
+      <div class="mod_header">
+        <h4 class="mod_subheadline">Luftfeuchte</h4>
+      </div>
+      <div class="mod_body">
+        <span class="mod_now">{content:fill:hum_now_val}%</span>
+        <span class="mod_av">(&Oslash; {content:fill:hum_av_value}%)</span>
+      </div>
+      <div class="mod_footer">
+        <nobr><span class="mod_max">max: {content:fill:hum_max_val}%</span><span class="mod_min">min: {content:fill:temp_min_val}%</span></nobr>
+      </div>
+    </a>
+  </li>
+</ul>
+

@@ -1,6 +1,7 @@
 <?
 include_once("php_inc/parser.inc.php");			/* Parser */
 include_once("php_inc/chart.inc.php");			/* Chart */
+include_once("php_inc/module_set.inc.php");
 include_once("php_inc/modules/sensor.inc.php");		/* Sensor-Klasse */
 include_once("php_inc/modules/temp.inc.php");		/* Temp-Klasse */
 include_once("php_inc/modules/rain.inc.php");		/* Rain-Klasse */
@@ -108,6 +109,10 @@ class Module{
 
   function addChart($chartName){
     Chart::insertChart($chartName);
+  }
+
+  function addSetLink($setName){
+    return $_SERVER['PHP_SELF'].'?setType='.$setName;
   }
 
 }

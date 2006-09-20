@@ -15,7 +15,7 @@ class ModuleSet{
   /* Konstruktor */
   function ModuleSet($setName){
     $parser = & $this->_getParserInstance();					/* Parserinstanz holen */
-    $parser->parseContent($this->_getSetFilename($setName), &$this, NULL);	/* Set Parsen */
+    $parser->parseContent($this->_getSetFilename($setName), &$this, NULL, true);	/* Set Parsen */
 
     if($_REQUEST['chartName'] != "" || $_REQUEST['rptName'] != ""){
       $parser->appendContent($this->getBackLink());

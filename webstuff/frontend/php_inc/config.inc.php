@@ -6,7 +6,7 @@
   $pg_pass 	= "";
 
 /* Default-Werte */
-  $default_set	     = "test";
+  $default_set	     = "small";
   $default_chart_dir = "images/chart/";
 
 
@@ -14,33 +14,33 @@
 /* Graphen - Bilder */
 $cImg = array(
 /* Bild - Id				Dateiname		Link - Name		Link - Beschreibung								Vorschaubild	Set */
-  'temp_10_1'		=> array(	"temp_ex.png", 		"Liniendiagram",	"Zeigt den Temparaturverlauf der letzten 10 Tage in einem Diagram", 		null,		"chart"),
-  'temp_30_1'		=> array(	"temp_ex.png", 		"Liniendiagram",	"Zeigt den Temparaturverlauf der letzten 30 Tage in einem Diagram", 		null,		"chart"),
-  'temp_365_1'		=> array(	"temp_ex.png", 		"Liniendiagram",	"Zeigt den Temparaturverlauf des letzten Jahres in einem Diagram", 		null,		"chart"),
+  'temp_10_1'		=> array(	"temp_ex.png", 		"Liniendiagramm",	"Zeigt den Temparaturverlauf der letzten 10 Tage in einem Diagramm", 		null,		"chart"),
+  'temp_30_1'		=> array(	"temp_ex.png", 		"Liniendiagramm",	"Zeigt den Temparaturverlauf der letzten 30 Tage in einem Diagramm", 		null,		"chart"),
+  'temp_365_1'		=> array(	"temp_ex.png", 		"Liniendiagramm",	"Zeigt den Temparaturverlauf des letzten Jahres in einem Diagramm", 		null,		"chart"),
 
-  'hum_10_1'		=> array(	"hum_ex.png", 		"Liniendiagram",	"Zeigt den Verlauf der Luftfeuchtigkeit in den letzten 10 Tagen als Diagram",	null, 		"chart"),
-  'hum_30_1'		=> array(	"hum_ex.png", 		"Liniendiagram",	"Zeigt den Verlauf der Luftfeuchtigkeit in den letzten 30 Tagen als Diagram",	null, 		"chart"),
-  'hum_365_1'		=> array(	"hum_ex.png", 		"Liniendiagram",	"Zeigt den Verlauf der Luftfeuchtigkeit im letztem Jahr als Diagram",		null, 		"chart"),
+  'hum_10_1'		=> array(	"hum_ex.png", 		"Liniendiagramm",	"Zeigt den Verlauf der Luftfeuchtigkeit in den letzten 10 Tagen als Diagramm",	null, 		"chart"),
+  'hum_30_1'		=> array(	"hum_ex.png", 		"Liniendiagramm",	"Zeigt den Verlauf der Luftfeuchtigkeit in den letzten 30 Tagen als Diagramm",	null, 		"chart"),
+  'hum_365_1'		=> array(	"hum_ex.png", 		"Liniendiagramm",	"Zeigt den Verlauf der Luftfeuchtigkeit im letztem Jahr als Diagramm",		null, 		"chart"),
 
-  'press_10_1'		=> array(	"press_ex.png", 	"Liniendiagram",	"Zeigt den Verlauf des Luftdrucks in den letzten 10 Tagen als Diagram",		null, 		"chart"),
-  'press_30_1'		=> array(	"press_ex.png", 	"Liniendiagram",	"Zeigt den Verlauf des Luftdrucks in den letzten 30 Tagen als Diagram", 	null, 		"chart"),
-  'press_365_1'		=> array(	"press_ex.png", 	"Liniendiagram",	"Zeigt den Verlauf des Luftdrucks im letztem Jahr als Diagram", 		null, 		"chart"),
+  'press_10_1'		=> array(	"press_ex.png", 	"Liniendiagramm",	"Zeigt den Verlauf des Luftdrucks in den letzten 10 Tagen als Diagramm",		null, 		"chart"),
+  'press_30_1'		=> array(	"press_ex.png", 	"Liniendiagramm",	"Zeigt den Verlauf des Luftdrucks in den letzten 30 Tagen als Diagramm", 	null, 		"chart"),
+  'press_365_1'		=> array(	"press_ex.png", 	"Liniendiagramm",	"Zeigt den Verlauf des Luftdrucks im letztem Jahr als Diagramm", 		null, 		"chart"),
 
-  'rain_10_3'		=> array(	"rain_ex.png", 		"Balkendiagram",	"Zeigt die Niederschlagsmengen der letzten 10 Tage als Diagram",		null, 		"chart"),
-  'rain_30_3'		=> array(	"rain_ex.png", 		"Balkendiagram",	"Zeigt die Niederschlagsmengen der letzten 30 Tage als Diagram", 		null, 		"chart"),
-  'rain_365_3'		=> array(	"rain_ex.png", 		"Balkendiagram",	"Zeigt die Niederschlagsmengen des letzten Jahres als Diagram", 		null, 		"chart"),
+  'rain_10_3'		=> array(	"rain_ex.png", 		"Balkendiagramm",	"Zeigt die Niederschlagsmengen der letzten 10 Tage als Diagramm",		null, 		"chart"),
+  'rain_30_3'		=> array(	"rain_ex.png", 		"Balkendiagramm",	"Zeigt die Niederschlagsmengen der letzten 30 Tage als Diagramm", 		null, 		"chart"),
+  'rain_365_3'		=> array(	"rain_ex.png", 		"Balkendiagramm",	"Zeigt die Niederschlagsmengen des letzten Jahres als Diagramm", 		null, 		"chart"),
 
-  'wind_10_2'		=> array(	"wind_ex.png", 		"Liniendiagram",	"Zeigt den Verlauf der Windgeschwindigkeit in den letzten 10 Tagen als Diagram",null, 		"chart"),
-  'wind_30_2'		=> array(	"wind_ex.png", 		"Liniendiagram",	"Zeigt den Verlauf der Windgeschwindigkeit in den letzten 30 Tagen als Diagram",null, 		"chart"),
-  'wind_365_2'		=> array(	"wind_ex.png", 		"Liniendiagram",	"Zeigt den Verlauf der Windgeschwindigkeit im letzten Jahr als Diagram",	null, 		"chart"),
+  'wind_10_2'		=> array(	"wind_ex.png", 		"Liniendiagramm",	"Zeigt den Verlauf der Windgeschwindigkeit in den letzten 10 Tagen als Diagramm",null, 		"chart"),
+  'wind_30_2'		=> array(	"wind_ex.png", 		"Liniendiagramm",	"Zeigt den Verlauf der Windgeschwindigkeit in den letzten 30 Tagen als Diagramm",null, 		"chart"),
+  'wind_365_2'		=> array(	"wind_ex.png", 		"Liniendiagramm",	"Zeigt den Verlauf der Windgeschwindigkeit im letzten Jahr als Diagramm",	null, 		"chart"),
 
-  'temp_10_4'		=> array(	"temp_ex.png", 		"Liniendiagram",	"Zeigt den Temparaturverlauf der letzten 10 Tage in einem Diagram", 		null,		"chart"),
-  'temp_30_4'		=> array(	"temp_ex.png", 		"Liniendiagram",	"Zeigt den Temparaturverlauf der letzten 30 Tage in einem Diagram", 		null,		"chart"),
-  'temp_365_4'		=> array(	"temp_ex.png", 		"Liniendiagram",	"Zeigt den Temparaturverlauf des letzten Jahres in einem Diagram", 		null,		"chart"),
+  'temp_10_4'		=> array(	"temp_ex.png", 		"Liniendiagramm",	"Zeigt den Temparaturverlauf der letzten 10 Tage in einem Diagramm", 		null,		"chart"),
+  'temp_30_4'		=> array(	"temp_ex.png", 		"Liniendiagramm",	"Zeigt den Temparaturverlauf der letzten 30 Tage in einem Diagramm", 		null,		"chart"),
+  'temp_365_4'		=> array(	"temp_ex.png", 		"Liniendiagramm",	"Zeigt den Temparaturverlauf des letzten Jahres in einem Diagramm", 		null,		"chart"),
 
-  'hum_10_4'		=> array(	"hum_ex.png", 		"Liniendiagram",	"Zeigt den Verlauf der Luftfeuchtigkeit in den letzten 10 Tagen als Diagram",	null, 		"chart"),
-  'hum_30_4'		=> array(	"hum_ex.png", 		"Liniendiagram",	"Zeigt den Verlauf der Luftfeuchtigkeit in den letzten 30 Tagen als Diagram",	null, 		"chart"),
-  'hum_365_4'		=> array(	"hum_ex.png", 		"Liniendiagram",	"Zeigt den Verlauf der Luftfeuchtigkeit im letztem Jahr als Diagram",		null, 		"chart"),
+  'hum_10_4'		=> array(	"hum_ex.png", 		"Liniendiagramm",	"Zeigt den Verlauf der Luftfeuchtigkeit in den letzten 10 Tagen als Diagramm",	null, 		"chart"),
+  'hum_30_4'		=> array(	"hum_ex.png", 		"Liniendiagramm",	"Zeigt den Verlauf der Luftfeuchtigkeit in den letzten 30 Tagen als Diagramm",	null, 		"chart"),
+  'hum_365_4'		=> array(	"hum_ex.png", 		"Liniendiagramm",	"Zeigt den Verlauf der Luftfeuchtigkeit im letztem Jahr als Diagramm",		null, 		"chart"),
   '' 			=> array(	"", 			"", 			"",										null, 		"chart")
 );
 

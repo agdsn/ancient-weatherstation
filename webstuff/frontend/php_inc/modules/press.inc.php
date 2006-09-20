@@ -118,7 +118,7 @@ class Press{
   }
 
   function get_min_val(){
-    return $this->minPress * 0.1;
+    return $this->minPress;
   }
 
   function get_min_date(){

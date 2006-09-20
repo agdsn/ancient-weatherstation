@@ -15,9 +15,11 @@ class Parser{
     if(is_array($newContent)){
       for($i = 0; $i < count($newContent); $i++){
         array_push($this->contentArray, $newContent[$i]);
+	//echo $newContent[$i]."\n";
       }
     } else {
       array_push($this->contentArray, $newContent);
+      //echo $newContent."\n";
     }
   }
 
@@ -31,7 +33,7 @@ class Parser{
 
 
   /* File Parsen */
-  function parseContent($fileName, & $callingObject, $filePart=null){
+  function parseContent($fileName, & $callingObject, $filePart=null, $lineWise = false){
     $fileArray = file($fileName);													/* File als Array einlesen */
     if($filePart != null){
       $fileArray = $this->_fetchFilePart(&$fileArray, $filePart);									/* Wenn File aus mehreren Template-Teilen besteht, dann wird hir der relevante Zeil geholt */
@@ -44,8 +46,13 @@ class Parser{
 	  $fileArray[$i] = preg_replace("/\{content:".$results[1][$j].":".$results[2][$j]."\}/i", $insert, $fileArray[$i]);
         }
       }
+      if ($lineWise){
+        $this->appendContent($fileArray[$i]);
+      }
     }
-    $this->appendContent($fileArray);
+    if (!$lineWise){
+      $this->appendContent($fileArray);
+    }
   }
 
 

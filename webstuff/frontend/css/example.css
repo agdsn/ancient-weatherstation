@@ -122,8 +122,6 @@ div.back_link_div {
   background: #fafafa;
   border: 1px solid #aa8888;
   position: absolute;
-  /*width: 80px;
-  height: 20px;*/
   padding: 3px;
   margin:5px;
   left: 0px;
@@ -140,7 +138,7 @@ div.back_link_div a.back_link {
 }
 
 div.chart {
-overflow:auto;
+  overflow:auto;
   padding:10px;
   text-align: center;
   width: 820px;
@@ -148,7 +146,7 @@ overflow:auto;
 }
 
 div.report {
-  width:400px;
+/*  width:400px;*/
 }
 
 div.report div.rpt_subsec {
@@ -181,5 +179,148 @@ div.report div.rpt_subsec table.report_table tr.report_line:hover {
   background: #FFb696;
 }
 
+div.small_set {
+  border-color: #D0B080;
+  border-style: dotted;
+  border-width: 1px; 
+  padding: 8px;
+  position:relative;
+  width:660px;  
+}
 
+div.small_set div.module {
+  margin:2px;
+  background: #FFEBBB;
+  position:relative;
+  height:135px;
+  overflow:hidden;
+  text-align:center;
+}
+
+div.small_set div.module {
+  height:155px;
+}
+
+div.small_set div.module h3.mod_headline{
+  font-size: 11pt;
+}
+
+div.small_set div.module ul.val_list{
+  margin:0;
+  margin-left:9px;
+  padding:0;
+}
+
+div.small_set div.module li.val_elm{
+  float:left;
+  list-style:none;
+  padding:0;
+  margin:0;
+}
+
+
+div.small_set div.module a.mod_small_link {
+  text-decoration: none;  
+  background: #F8DDAD;
+  display: block;
+  position: relative;
+  width: 305px;
+  height: 100px;
+  border: 1px solid #aa8888;
+  margin: 3px;
+}
+
+div.small_set div.module#windsSmall_2 a.mod_small_link, div.small_set div.module#regenSmall_3 a.mod_small_link {
+  width: 618px;
+  height: 120px;
+}
+
+div.small_set div.module#innenSmall_1 a.mod_small_link {
+  width: 200px;
+}
+
+div.small_set div.module a.mod_small_link:hover {
+  background: #FFeebb;
+}
+
+div.small_set div.module a.mod_small_link div.mod_header{
+  background: #F0D0AF;
+}
+
+div.small_set div.module a.mod_small_link div.mod_header h4{
+  margin:0px;
+  padding:2px;
+  font-size:10pt;
+  font-weight:900;
+  color: #222255;
+}
+
+div.small_set div.module a.mod_small_link div.mod_body {
+  position:absolute;
+  bottom:0px;
+  top:0px;
+  height:100%;
+  width:100%;
+}
+div.small_set div.module a.mod_small_link div.mod_body span.mod_now {
+  font-size: 17pt;
+  font-weight: 600;
+  color: #225522;
+  display:block;
+  padding-bottom:3pt;
+  padding-top:26pt;
+}
+div.small_set div.module#windsSmall_2 a.mod_small_link div.mod_body span.mod_now, div.small_set div.module#regenSmall_3 a.mod_small_link div.mod_body span.mod_now {
+  font-size: 17pt;
+  padding-top:20pt;
+  padding-bottom:0pt;
+}
+div.small_set div.module a.mod_small_link div.mod_body span.mod_now_extra {
+  font-size: 8pt;
+  padding-top:0pt;
+  padding-bottom:3pt;
+  color: #446644;
+  display:block;
+  margin:0px;
+}
+div.small_set div.module a.mod_small_link div.mod_body span.mod_av {
+  font-size: 11pt;
+  color: #446644;
+  position:absolute;
+  display:block;
+  width:100%;
+  text-align:center;
+  bottom:19px;
+}
+
+div.small_set div.module#windsSmall_2 a.mod_small_link div.mod_body span.mod_av, div.small_set div.module#regenSmall_3 a.mod_small_link div.mod_body span.mod_av {
+  bottom:21px;
+}
+
+div.small_set div.module a.mod_small_link div.mod_body, div.small_set div.module a.mod_small_link div.mod_footer{
+  text-align: center;
+}
+
+div.small_set div.module a.mod_small_link div.mod_footer {
+  position:absolute;  
+  bottom:0px;
+  width: 100%;
+  background:#F0D0AF;
+}
+
+div.small_set div.module a.mod_small_link div.mod_footer span{
+  font-size:9pt;
+}
+
+div.small_set div.module a.mod_small_link div.mod_footer span.mod_max {
+  color: #AA3333;
+  margin-right:6px;
+}
+div.small_set div.module a.mod_small_link div.mod_footer span.mod_min {
+  color: #33AA33;
+  margin-left:6px;
+}
+div.small_set div.module#windsSmall_2 a.mod_small_link div.mod_footer span.mod_min, div.small_set div.module#regenSmall_3 a.mod_small_link div.mod_footer span.mod_min {
+  color: #AA3333;
+}
 
