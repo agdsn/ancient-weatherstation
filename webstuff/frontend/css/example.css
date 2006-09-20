@@ -273,9 +273,11 @@ div.small_set div.module a.mod_small_link div.mod_body span.mod_now {
   padding-top:26pt;
 }
 div.small_set div.module#windsSmall_2 a.mod_small_link div.mod_body span.mod_now, div.small_set div.module#regenSmall_3 a.mod_small_link div.mod_body span.mod_now {
-  font-size: 17pt;
-  padding-top:20pt;
+  font-size: 20px;
+  padding-top:27px;
+  line-height:15px;
   /* IE-Hack*/
+  _line-height:32px;
   _padding-top:17pt;
   padding-bottom:0pt;
 }
