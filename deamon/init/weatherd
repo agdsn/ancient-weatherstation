@@ -1,0 +1,22 @@
+#!/bin/sh
+
+binary='/home/jan/testwetter/sammeln/weatherdeamon';
+
+return=$rc_done
+case "$1" in
+  start)
+    /sbin/start-stop-daemon --start -v --exec $binary
+    ;;
+  stop)
+    /sbin/start-stop-daemon --stop -v --exec $binary
+    ;;
+  restart)
+    $0 stop && $0 start || return=$rc_failed
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+esac
+
+test "$return" = "$rc_done" || exit 1
+exit 0
