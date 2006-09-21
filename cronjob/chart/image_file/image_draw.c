@@ -202,7 +202,9 @@ static gdImagePtr draw_image(gdImagePtr img){
   /* Werte Zeichnen */
   if(!img_cfg.bars){
     for (; pix_list->next; pix_list = pix_list->next){
-      gdImageLine(img, (offset_x_left + pix_list->x_pix_coord), (offset_y_top + pix_list->y_pix_coord), (offset_x_left + pix_list->next->x_pix_coord), (offset_y_top + pix_list->next->y_pix_coord), val_line_c);
+      if(!pix_list->next->no_line){
+        gdImageLine(img, (offset_x_left + pix_list->x_pix_coord), (offset_y_top + pix_list->y_pix_coord), (offset_x_left + pix_list->next->x_pix_coord), (offset_y_top + pix_list->next->y_pix_coord), val_line_c);
+      }
     }
   } else {
     if (zero_line != -1){
@@ -211,13 +213,18 @@ static gdImagePtr draw_image(gdImagePtr img){
       temp_y1 = img_cfg.height - offset_y_bottom;
     }
     for (; pix_list; pix_list = pix_list->next){
+      i = 1;
       temp_x1 = pix_list->x_pix_coord + offset_x_left;
       if (pix_list->next != NULL){
 	temp_x2 = pix_list->next->x_pix_coord + offset_x_left;
+	if(pix_list->next->no_line){
+	  i = 0;
+	}
       } else {
 	temp_x2 = offset_x_left + dia_width;
       }
-      gdImageFilledRectangle(img, temp_x1 + 3, (offset_y_top + pix_list->y_pix_coord), temp_x2 - 3 ,  temp_y1 , val_line_c);
+      if(i)
+	gdImageFilledRectangle(img, temp_x1 + 3, (offset_y_top + pix_list->y_pix_coord), temp_x2 - 3 ,  temp_y1 , val_line_c);
     }
   }
 

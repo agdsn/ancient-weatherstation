@@ -43,7 +43,7 @@ static long base_time;				/* Zeit an der 0-Koordinate (lt. Datenbank!) */
 
 
 /* Funktionsdefinitionen */
-static pix_list_ptr add_pix_value(pix_list_ptr , long, int , int );
+static pix_list_ptr add_pix_value(pix_list_ptr , long, int , int, int );
 static char *get_conn_string();
 static PGconn *pg_check_connect(char *);
 static PGresult *pg_check_exec(PGconn *, char *);
@@ -297,6 +297,7 @@ pix_list_ptr get_pix_list(int c_width){
   int pix_coord;									/* x - Koordinate, an die der Wert gehoert */
   int i, s, t, u;									/* Laufvariable zum durchlaufen des Datenbank-resuls */
   long timestamp;
+  int max_diff;
   pix_list_ptr list_ptr = NULL;								/* Zeiger auf den Anfang der Wertliste */
   pix_list_ptr temp_ptr = NULL;								/* Zeiger zum durchlaufen der Wertliste */
 
@@ -327,6 +328,7 @@ pix_list_ptr get_pix_list(int c_width){
     base_time = time(NULL);
   }
 
+  max_diff = ceil(img_cfg.label_interval * seconds_per_pix);
 
   /* Ergebnisse durchlaufen */
   for (i = 0; i < PQntuples(res); i++){
@@ -345,7 +347,7 @@ pix_list_ptr get_pix_list(int c_width){
     pix_coord = floor( ((double)time_temp) * seconds_per_pix) ;
     
     /* Listenelement generieren */
-    temp_ptr = add_pix_value(temp_ptr, timestamp, pix_coord, atoi( PQgetvalue(res, i, val_field) ) );
+    temp_ptr = add_pix_value(temp_ptr, timestamp, pix_coord, atoi( PQgetvalue(res, i, val_field) ) , max_diff);
 
     /* Rueckgabe- und Max/Min-pointer zuweisen */
     if (list_ptr == NULL){
@@ -369,7 +371,7 @@ pix_list_ptr get_pix_list(int c_width){
       time_temp = timestamp;
     }
     pix_coord = floor( ((double)time_temp) * seconds_per_pix) ;
-    temp_ptr  = add_pix_value(temp_ptr, timestamp, pix_coord, 0 );
+    temp_ptr  = add_pix_value(temp_ptr, timestamp, pix_coord, 0 , max_diff);
     list_ptr = temp_ptr;
     min = temp_ptr;
     max = temp_ptr;
@@ -417,7 +419,8 @@ pix_list_ptr get_pix_list(int c_width){
 }
 
 /* Speichert einen geholten Wert ab */
-static pix_list_ptr add_pix_value(pix_list_ptr ptr, long timestamp, int coord, int value){ 
+static pix_list_ptr add_pix_value(pix_list_ptr ptr, long timestamp, int coord, int value, int max_diff){ 
+  int old_coord;
 
   /* Erstes Element */
   if(ptr == NULL){
@@ -439,6 +442,7 @@ static pix_list_ptr add_pix_value(pix_list_ptr ptr, long timestamp, int coord, i
 
       DEBUGOUT5("  Zu x-pos. %d %d. Wert (%d) hinzugefuegt. Durchschn.: %d\n", ptr->x_pix_coord, ptr->value_count, value, (ptr->value_sum/ptr->value_count) );
     } else {
+      old_coord		= ptr->x_pix_coord;
       ptr->next		= malloc(sizeof(pix_list_t));
       ptr 		= ptr->next;
       ptr->x_pix_coord	= coord;
@@ -446,6 +450,12 @@ static pix_list_ptr add_pix_value(pix_list_ptr ptr, long timestamp, int coord, i
       ptr->value_sum 	= value;
       ptr->value_count 	= 1;
       ptr->next           = NULL;
+
+      if ((coord - old_coord) > max_diff){
+        ptr->no_line = 1;
+      } else {
+        ptr->no_line = 0;
+      }
 
       DEBUGOUT3("  An x-pos. %d Wert %d eingefuegt\n", ptr->x_pix_coord, ptr->value_sum);
     }

@@ -29,6 +29,7 @@ typedef struct pix_list {
   int 		y_pix_coord;	/* Y - Koordinate */
   int 		value_count;	/* Anzahl der Werte */
   int 		value_sum;	/* Summe der Werte */
+  int 		no_line;
 } pix_list_t;
 
 
