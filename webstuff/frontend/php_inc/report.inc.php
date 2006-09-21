@@ -1,5 +1,6 @@
 <?
 include_once("php_inc/config.inc.php");
+include_once("php_inc/module_set.inc.php");
 
 class Report{
 
@@ -120,7 +121,7 @@ class Report{
     $buff  = '<div class="report_link_div">';
     
     $buff .=  '<a href="';
-    $buff .=  $_SERVER['PHP_SELF'].'?setType='.$rptArray[12]."&rptName=".$rptName;
+    $buff .=  ModuleSet::buildArgLink(array("setType"=>$rptArray[12], "rptName"=>$rptName));
     $buff .=  '" class="report_link">';
 
     $buff .=  $rptArray[0];

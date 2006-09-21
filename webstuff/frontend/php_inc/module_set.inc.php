@@ -65,13 +65,39 @@ class ModuleSet{
   }
 
   function getBackLink(){
-    $buff  = '<div class="back_link_div">';
+    $buff  = '<center>';
+    $buff .= '<div class="back_link_div">';
     $buff .= '<a class="back_link" href="';
     $buff .= $_SERVER['HTTP_REFERER'];
     $buff .= '">';
     $buff .= 'zur&uuml;ck';
     $buff .= "</a>";
     $buff .= "</div>";
+    $buff .= '</center>';
+
+    return $buff;
+  }
+
+  function addSetLink($setName){
+    return ModuleSet::buildArgLink(array("setType"=>$setName));
+  }
+
+  function buildArgLink($optArray){
+    $tempArg = $_GET;
+    foreach ($optArray as $key => $value){
+      $tempArg[$key] = $value;
+    }
+
+    $buff = $_SERVER['PHP_SELF'];
+    $i = 1;
+    foreach ($tempArg as $key => $value){
+      if($i){
+        $i--;
+        $buff .= '?'.$key.'='.$value;
+      } else {
+        $buff .= '&'.$key.'='.$value;
+      }
+    }
 
     return $buff;
   }

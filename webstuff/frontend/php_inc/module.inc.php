@@ -112,7 +112,7 @@ class Module{
   }
 
   function addSetLink($setName){
-    return $_SERVER['PHP_SELF'].'?setType='.$setName;
+    return ModuleSet::buildArgLink(array("setType"=>$setName));
   }
 
 }

@@ -4,12 +4,27 @@ body {
 }
 
 div.module, div.chart, div.report {
-	border-color: #006600; 
-	border-style: solid;
-	border-width: 1px;
-	background: #FDDDAD;
-	padding: 3px;
-	margin: 2px;
+  border-color: #006600; 
+  border-style: solid;
+  border-width: 1px;
+  background: #FDDDAD;
+  padding: 3px;
+  margin: 2px;
+  position:relative;
+}
+
+div.module {
+  width:643px;
+  text-align:left;
+}
+
+div.report {
+  width:443px;
+}
+
+div.report {
+  text-align:center;
+  overflow:hidden;
 }
 
 div.module table tr td {
@@ -39,6 +54,17 @@ div.module h3.mod_headline, div.report h3.report_head, div.chart h3.chart_headli
   font-weight: 600;
   font-size: 15pt;
   color: #222222;
+}
+
+div.report h3.report_head {
+  width:100%;
+  text-align:left;
+}
+
+div.chart h3.chart_headline {
+  width:100%;
+  text-align:left;
+
 }
 
 div.module h4.mod_subhead {
@@ -121,11 +147,13 @@ div.module div.mod_subsec div.chart_link_div a.chart_link img.chart_link_prev {
 div.back_link_div {
   background: #fafafa;
   border: 1px solid #aa8888;
-  position: absolute;
+  position: relative;
+  display:block;
   padding: 3px;
   margin:5px;
-  left: 0px;
-  bottom: 0px:
+  height:20px;
+  width:80px;
+  margin-top:20px;
 }
 
 div.back_link_div a.back_link {
@@ -138,19 +166,15 @@ div.back_link_div a.back_link {
 }
 
 div.chart {
-  overflow:auto;
+  overflow:hidden;
   padding:10px;
   text-align: center;
-  width: 820px;
+  width:816px;
 
-}
-
-div.report {
-/*  width:400px;*/
 }
 
 div.report div.rpt_subsec {
-  width:350px;
+  width:400px;
   padding: 10px
 }
 
@@ -179,25 +203,29 @@ div.report div.rpt_subsec table.report_table tr.report_line:hover {
   background: #FFb696;
 }
 
-div.small_set {
+div.small_set, div.set {
   border-color: #D0B080;
   border-style: dotted;
   border-width: 1px; 
-  padding: 8px;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 8px;
+  padding-bottom: 8px;
   position:relative;
-  width:660px;  
+  width:659px;  
+}
+
+div.set#chart {
+  width: 845px; 
 }
 
 div.small_set div.module {
   margin:2px;
   background: #FFEBBB;
   position:relative;
-  height:135px;
   overflow:hidden;
   text-align:center;
-}
-
-div.small_set div.module {
+  width: 643px;
   height:155px;
 }
 

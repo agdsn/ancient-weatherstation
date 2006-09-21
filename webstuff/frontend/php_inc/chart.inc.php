@@ -1,5 +1,6 @@
 <?
 include_once("php_inc/config.inc.php");
+include_once("php_inc/module_set.inc.php");
 
 class Chart{
 
@@ -19,7 +20,7 @@ class Chart{
     $buff  =  '<div class="chart_link_div">';
     
     $buff .=  '<a href="';
-    $buff .=  $_SERVER['PHP_SELF'].'?setType='.$chartArray[4]."&chartName=".$chartName;
+    $buff .=  ModuleSet::buildArgLink(array("setType"=>$chartArray[4], "chartName"=>$chartName));
     $buff .=  '" class="chart_link">';
     
     $buff .=  $chartArray[1];
