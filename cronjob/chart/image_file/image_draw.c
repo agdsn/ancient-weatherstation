@@ -213,18 +213,13 @@ static gdImagePtr draw_image(gdImagePtr img){
       temp_y1 = img_cfg.height - offset_y_bottom;
     }
     for (; pix_list; pix_list = pix_list->next){
-      i = 1;
       temp_x1 = pix_list->x_pix_coord + offset_x_left;
       if (pix_list->next != NULL){
 	temp_x2 = pix_list->next->x_pix_coord + offset_x_left;
-	if(pix_list->next->no_line){
-	  i = 0;
-	}
       } else {
 	temp_x2 = offset_x_left + dia_width;
       }
-      if(i)
-	gdImageFilledRectangle(img, temp_x1 + 3, (offset_y_top + pix_list->y_pix_coord), temp_x2 - 3 ,  temp_y1 , val_line_c);
+      gdImageFilledRectangle(img, temp_x1 + 3, (offset_y_top + pix_list->y_pix_coord), temp_x2 - 3 ,  temp_y1 , val_line_c);
     }
   }
 
