@@ -1,6 +1,14 @@
 body {
   background: #FFFAF5;
   padding-bottom: 150px;
+  font-family: serif;
+}
+
+h2.set_head {
+  margin-bottom: 20px;
+  font-weight: 600;
+  font-size: 17pt;
+  color: #444422;
 }
 
 div.module, div.chart, div.report {
@@ -52,7 +60,7 @@ div.module h3.mod_headline, div.report h3.report_head, div.chart h3.chart_headli
   margin-left:2px;
   margin-bottom: 5px;
   font-weight: 600;
-  font-size: 15pt;
+  font-size: 14pt;
   color: #222222;
 }
 
@@ -204,7 +212,7 @@ div.report div.rpt_subsec table.report_table tr.report_line:hover {
 }
 
 div.small_set, div.set {
-  border-color: #D0B080;
+  border-color: #C0A070;
   border-style: dotted;
   border-width: 1px; 
   padding-left: 8px;
@@ -213,6 +221,19 @@ div.small_set, div.set {
   padding-bottom: 8px;
   position:relative;
   width:659px;  
+}
+
+div.set#desc {
+  margin-bottom:20px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+div.set#desc p{
+  font-size: 11pt;
+  color:#666666;
+  font-weight:600;
+  margin:0px;
 }
 
 div.set#chart {
@@ -278,7 +299,7 @@ div.small_set div.module a.mod_small_link div.mod_header{
 div.small_set div.module a.mod_small_link div.mod_header h4{
   margin:0px;
   padding:2px;
-  font-size:10pt;
+  font-size:12px;
   font-weight:900;
   color: #222255;
 }
@@ -293,12 +314,12 @@ div.small_set div.module a.mod_small_link div.mod_body {
   width:100%;
 }
 div.small_set div.module a.mod_small_link div.mod_body span.mod_now {
-  font-size: 17pt;
+  font-size: 21px;
   font-weight: 600;
   color: #225522;
   display:block;
-  padding-bottom:3pt;
-  padding-top:26pt;
+  padding-bottom:4px;
+  padding-top:30px;
 }
 div.small_set div.module#windsSmall_2 a.mod_small_link div.mod_body span.mod_now, div.small_set div.module#regenSmall_3 a.mod_small_link div.mod_body span.mod_now {
   font-size: 20px;
@@ -310,15 +331,15 @@ div.small_set div.module#windsSmall_2 a.mod_small_link div.mod_body span.mod_now
   padding-bottom:0pt;
 }
 div.small_set div.module a.mod_small_link div.mod_body span.mod_now_extra {
-  font-size: 8pt;
+  font-size: 10px;
   padding-top:0pt;
-  padding-bottom:3pt;
+  padding-bottom:4px;
   color: #446644;
   display:block;
   margin:0px;
 }
 div.small_set div.module a.mod_small_link div.mod_body span.mod_av {
-  font-size: 11pt;
+  font-size: 14px;
   color: #446644;
   position:absolute;
   display:block;
@@ -347,7 +368,7 @@ div.small_set div.module a.mod_small_link div.mod_footer {
 }
 
 div.small_set div.module a.mod_small_link div.mod_footer span{
-  font-size:9pt;
+  font-size:11px;
 }
 
 div.small_set div.module a.mod_small_link div.mod_footer span.mod_max {
