@@ -82,25 +82,16 @@ debug:
 # Installieren
 install:
 	@ echo "kopiere $(BIN_NAME) nach $(DESTDIR)$(INSTDIR)"
-	@ mkdir -p $(DESTDIR)$(INSTDIR); \
-	  cp $(BIN_NAME) $(DESTDIR)$(INSTDIR)
-#	@ echo "setze Rechte auf $(BIN_NAME)"
-#	@ cd $(DESTDIR)$(INSTDIR); \
-#	  chmod 755 $(BIN_NAME); \
-#	  chgrp $(INSTGRP) $(BIN_NAME); \
-#	  chown $(INSTUSR) $(BIN_NAME)
+	@ install -d $(DESTDIR)$(INSTDIR); 
+	@ install $(BIN_NAME) $(DESTDIR)$(INSTDIR)
 	@ echo "kopiere $(CONF_NAME) nach $(DESTDIR)$(CONFDIR)"
-	@ mkdir -p $(DESTDIR)$(CONFDIR); \
-	  cp $(CONF_NAME) $(DESTDIR)$(CONFDIR)
+	@ install -d $(DESTDIR)$(CONFDIR); 
+	@ install -m644 $(CONF_NAME) $(DESTDIR)$(CONFDIR)
 	@ echo "Lege Verzeichnis fuer Subconfigs an und kopiere Beispiel-Configs"
-	@ cp -r image_conf $(DESTDIR)$(CONFDIR)
-#	@ echo "setze Rechte auf $(CONF_NAME)"
-#	@ cd $(DESTDIR)$(CONFDIR); \
-#	  chmod 755 $(CONF_NAME); \
-#	  chgrp $(CONFGRP) $(CONF_NAME); \
-#	  chown $(CONFUSR) $(CONF_NAME)
-	@ mkdir -p $(DESTDIR)$(DOCDIR)  
-	@ cp COPYING $(DESTDIR)$(DOCDIR)
+	@ install -d $(DESTDIR)$(CONFDIR)/image_conf; 
+	@ install -m644 image_conf/* $(DESTDIR)$(CONFDIR)/image_conf
+	@ install -d $(DESTDIR)$(DOCDIR)  
+	@ install COPYING $(DESTDIR)$(DOCDIR)
 
 
 # Aufräumnen (alle Object-Files löschen)

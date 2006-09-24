@@ -3,5 +3,5 @@ Dir  = /etc/init.d/
 
 install:
 	@ echo "kopiere init-Script"
-	@ mkdir -p $(DESTDIR)$(Dir)
-	@ cp $(File) $(DESTDIR)$(Dir)
+	@ install -d $(DESTDIR)$(Dir)
+	@ install -m744 $(File) $(DESTDIR)$(Dir)
