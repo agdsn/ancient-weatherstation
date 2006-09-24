@@ -11,7 +11,7 @@ OBJS	 = main.o config.o input.o process.o write.o
 CONF_NAME = weatherd.conf
 
 INSTDIR  = /usr/bin/
-CONFDIR  = /etc/
+CONFDIR  = /etc/weatherstation/
 INSTGRP  = losinski
 INSTUSR  = losinski
 
@@ -55,19 +55,19 @@ install:
 	@ echo "kopiere $(BIN_NAME) nach $(DESTDIR)$(INSTDIR)"
 	@ mkdir -p $(DESTDIR)$(INSTDIR); \
 	  cp $(BIN_NAME) $(DESTDIR)$(INSTDIR)
-	@ echo "setze Rechte auf $(BIN_NAME)"
-	@ cd $(DESTDIR)$(INSTDIR); \
-	  chmod 755 $(BIN_NAME); \
-	  chgrp $(INSTGRP) $(BIN_NAME); \
-	  chown $(INSTUSR) $(BIN_NAME)
+#	@ echo "setze Rechte auf $(BIN_NAME)"
+#	@ cd $(DESTDIR)$(INSTDIR); \
+#	  chmod 755 $(BIN_NAME); \
+#	  chgrp $(INSTGRP) $(BIN_NAME); \
+#	  chown $(INSTUSR) $(BIN_NAME)
 	@ echo "kopiere $(CONF_NAME) nach $(DESTDIR)$(CONFDIR)"
 	@ mkdir -p $(DESTDIR)$(CONFDIR); \
 	  cp $(CONF_NAME) $(DESTDIR)$(CONFDIR)
-	@ echo "setze Rechte auf $(CONF_NAME)"
-	@ cd $(DESTDIR)$(CONFDIR); \
-	  chmod 755 $(CONF_NAME); \
-	  chgrp $(CONFGRP) $(CONF_NAME); \
-	  chown $(CONFUSR) $(CONF_NAME)
+#	@ echo "setze Rechte auf $(CONF_NAME)"
+#	@ cd $(DESTDIR)$(CONFDIR); \
+#	  chmod 755 $(CONF_NAME); \
+#	  chgrp $(CONFGRP) $(CONF_NAME); \
+#	  chown $(CONFUSR) $(CONF_NAME)
 
 
 # Aufräumnen (alle Object-Files löschen)
