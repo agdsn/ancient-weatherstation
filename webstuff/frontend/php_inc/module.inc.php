@@ -1,13 +1,13 @@
 <?
-include_once("php_inc/parser.inc.php");			/* Parser */
-include_once("php_inc/chart.inc.php");			/* Chart */
-include_once("php_inc/module_set.inc.php");
-include_once("php_inc/modules/sensor.inc.php");		/* Sensor-Klasse */
-include_once("php_inc/modules/temp.inc.php");		/* Temp-Klasse */
-include_once("php_inc/modules/rain.inc.php");		/* Rain-Klasse */
-include_once("php_inc/modules/hum.inc.php");		/* Hum-Klasse */
-include_once("php_inc/modules/press.inc.php");		/* Press-Klasse */
-include_once("php_inc/modules/wind.inc.php");		/* Wind-Klasse */
+include_once($path."php_inc/parser.inc.php");			/* Parser */
+include_once($path."php_inc/chart.inc.php");			/* Chart */
+include_once($path."php_inc/module_set.inc.php");
+include_once($path."php_inc/modules/sensor.inc.php");		/* Sensor-Klasse */
+include_once($path."php_inc/modules/temp.inc.php");		/* Temp-Klasse */
+include_once($path."php_inc/modules/rain.inc.php");		/* Rain-Klasse */
+include_once($path."php_inc/modules/hum.inc.php");		/* Hum-Klasse */
+include_once($path."php_inc/modules/press.inc.php");		/* Press-Klasse */
+include_once($path."php_inc/modules/wind.inc.php");		/* Wind-Klasse */
 
 /* Representiert ein Modul */
 class Module{
@@ -40,7 +40,8 @@ class Module{
 
   /* Dateinamen des Modul-Files zusammenbauen */
   function _getModuleFilename($modName){
-    return "content/modules/mod_".$modName.".html";
+    global $path;
+    return $path."content/modules/mod_".$modName.".html";
   }
 
   /* Instanz der Sensorklasse holen */

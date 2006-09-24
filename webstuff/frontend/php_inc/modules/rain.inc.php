@@ -1,6 +1,6 @@
 <?
 
-include_once("php_inc/connection.inc.php");
+include_once($path."php_inc/connection.inc.php");
 
 /* Rain-Klasse für das Rain-Modul */
 class Rain{

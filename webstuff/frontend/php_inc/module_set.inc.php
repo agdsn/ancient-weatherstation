@@ -1,10 +1,10 @@
 <?
-include_once("php_inc/module.inc.php");
-include_once("php_inc/parser.inc.php");
-include_once("php_inc/connection.inc.php");
-include_once("php_inc/config.inc.php");
-include_once("php_inc/chart.inc.php");
-include_once("php_inc/report.inc.php");
+include_once($path."php_inc/module.inc.php");
+include_once($path."php_inc/parser.inc.php");
+include_once($path."php_inc/connection.inc.php");
+include_once($path."php_inc/config.inc.php");
+include_once($path."php_inc/chart.inc.php");
+include_once($path."php_inc/report.inc.php");
 
 
 /* Klasse, die die ModuleSets Verwaltet */
@@ -30,9 +30,10 @@ class ModuleSet{
 
   /* Dateinamen eines Setz aus dessen Namen zusammenbauen */
   function _getSetFilename($setName){
+    global $path;
     if($setName == "")
       $setName = Config::getDefaultSet();
-    return "content/module_sets/set_".$setName.".html";
+    return $path."content/module_sets/set_".$setName.".html";
   }
   
   /* Parser Instanzieren (wenn noch nicht ist) und zurückgeben */

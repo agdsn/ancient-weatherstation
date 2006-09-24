@@ -1,6 +1,6 @@
 <?
-include_once("php_inc/config.inc.php");
-include_once("php_inc/module_set.inc.php");
+include_once($path."php_inc/config.inc.php");
+include_once($path."php_inc/module_set.inc.php");
 
 class Chart{
 
@@ -11,7 +11,8 @@ class Chart{
   }
 
   function _getTemplateFileName($template_name){
-    return "content/charts/chart_".$template_name.".html";
+    global $path;
+    return $path."content/charts/chart_".$template_name.".html";
   }
 
   function generateChartLink($chartName){

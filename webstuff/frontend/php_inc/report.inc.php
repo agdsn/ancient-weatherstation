@@ -1,6 +1,6 @@
 <?
-include_once("php_inc/config.inc.php");
-include_once("php_inc/module_set.inc.php");
+include_once($path."php_inc/config.inc.php");
+include_once($path."php_inc/module_set.inc.php");
 
 class Report{
 
@@ -29,7 +29,8 @@ class Report{
 
   /* Dateinamen des Modul-Files zusammenbauen */
   function _getRptFilename($modName){
-    return "content/reports/rpt_".$modName.".html";
+    global $path;
+    return $path."content/reports/rpt_".$modName.".html";
   }
 
   

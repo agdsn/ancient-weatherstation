@@ -1,5 +1,5 @@
 <?
-include_once("php_inc/config.inc.php");
+include_once($path."php_inc/config.inc.php");
 
 /* Connection-Klasse..ist für die Datenbankverbindung zuständig */
 class Connection{

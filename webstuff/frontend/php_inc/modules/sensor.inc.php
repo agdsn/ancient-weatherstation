@@ -1,6 +1,6 @@
 <?
 
-include_once("php_inc/connection.inc.php");
+include_once($path."php_inc/connection.inc.php");
 
 
 /* Klasse, Die Daten üben die Einzelnen Sensoren bereitstellt */
