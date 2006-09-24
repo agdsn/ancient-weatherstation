@@ -1,5 +1,5 @@
 MakeDirs    = cronjob deamon
-InstallDirs = cronjob deamon #webstuff database
+InstallDirs = cronjob deamon database #webstuff
 
 binary:
 	for i in $(MakeDirs); do $(MAKE) -C $$i ; done

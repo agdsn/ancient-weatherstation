@@ -29,7 +29,7 @@ REVOKE ALL ON SCHEMA public FROM PUBLIC;
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
-SET SESSION AUTHORIZATION 'losinshi';
+SET SESSION AUTHORIZATION 'postgres';
 
 SET search_path = public, pg_catalog;
 
@@ -369,7 +369,7 @@ SET SESSION AUTHORIZATION 'postgres';
 COMMENT ON SCHEMA public IS 'Standard public schema';
 
 
-SET SESSION AUTHORIZATION 'losinshi';
+SET SESSION AUTHORIZATION 'postgres';
 
 --
 -- TOC entry 29 (OID 18433947)
