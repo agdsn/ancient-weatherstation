@@ -12,7 +12,7 @@ CONF_NAME = weatherd.conf
 
 INSTDIR  = /usr/bin/
 CONFDIR  = /etc/weatherstation/
-DOCDIR   = /usr/share/doc/weatherstation-seriell/
+DOCDIR   = /usr/share/doc/weatherstation-weatherd/
 INSTGRP  = losinski
 INSTUSR  = losinski
 
@@ -68,6 +68,7 @@ install:
 #	  chmod 755 $(CONF_NAME); \
 #	  chgrp $(CONFGRP) $(CONF_NAME); \
 #	  chown $(CONFUSR) $(CONF_NAME)
+	@ mkdir -p $(DESTDIR)$(DOCDIR)  
 	@ cp COPYING $(DESTDIR)$(DOCDIR)
 
 

@@ -61,6 +61,7 @@ install:
 #	  chmod 755 $(CONF_NAME); \
 #	  chgrp $(CONFGRP) $(CONF_NAME); \
 #	  chown $(CONFUSR) $(CONF_NAME)
+	@ mkdir -p $(DESTDIR)$(DOCDIR)  
 	@ cp COPYING $(DESTDIR)$(DOCDIR)
 
 
