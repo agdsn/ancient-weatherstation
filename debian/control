@@ -1,0 +1,49 @@
+Source: weatherstation
+Section: sensors
+Priority: optional
+Maintainer: Jan Losinski <losinski@wh2.tu-dresden.de>
+Build-Depends: debhelper (>= 5)
+Standards-Version: 3.7.2
+
+Package: weatherstation-serial
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Deamon to recive serial Signals fron the ELV-Station
+ This Deamon recives, convert and store the Values from the 
+ Weatherstation-Reciver - "Bausatz" from ELV
+
+Package: weatherstation-chart
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Generate Charts from the Data of the ELV-Station
+ This Program is designed to run as Cronjob.
+ It gnerates Charts from the Data of the ELV-Weatherstation
+
+Package: weatherstation-checksensor
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Checks if the ELV-Sensors are OK
+ This Program is designed to run as Cronjob.
+ It checks if a special Sensor of the ELV-Station is ok
+ (transmit Data).
+ If not, it send's a Mail.
+
+Package: weatherstation-database
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Database-Structure for the ELV-Station
+ Contains a Dump for the ELV-Weatherstation.
+ The Dump will be copied to
+ /usr/share/doc/weatherstation-database/
+ You must import it to your Postgres-Server
+
+Package: weatherstation-frontend
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Webfrontend for the ELV-Station
+ A Webfrontend to show the Data from the ELV-Station
+
+Package: weatherstation-doc
+Architecture: all
+Description: Documentation for weatherstation
+ <insert long description, indented with spaces>

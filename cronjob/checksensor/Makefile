@@ -12,10 +12,10 @@ CONF_NAME = checksensor.conf
 
 INSTDIR  = /usr/bin/
 CONFDIR  = /etc/weatherstation/
+DOCDIR   = /usr/share/doc/weatherstation-checksensor/
 INSTGRP  = losinski
 INSTUSR  = losinski
 
-DESTDIR  = /home/losinski
 
 # Alles bauen
 all: $(BIN_NAME)
@@ -61,6 +61,7 @@ install:
 #	  chmod 755 $(CONF_NAME); \
 #	  chgrp $(CONFGRP) $(CONF_NAME); \
 #	  chown $(CONFUSR) $(CONF_NAME)
+	@ cp COPYING $(DESTDIR)$(DOCDIR)
 
 
 # Aufräumnen (alle Object-Files löschen)

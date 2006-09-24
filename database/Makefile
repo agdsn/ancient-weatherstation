@@ -1,4 +1,4 @@
-Files = structure.sql reademe
+Files = structure.sql reademe COPYING
 Dest  = /usr/share/doc/weatherstation-database/
 
 install:
