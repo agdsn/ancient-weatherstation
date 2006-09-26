@@ -1,0 +1,14 @@
+#!/bin/sh
+# weatherstation-database postinst
+
+echo ""
+echo "####################################################"
+echo "#  Achtung:                                        #"
+echo "#  Bitte lesen Sie die Anleitung zur weiteren      #"
+echo "#  Installation unter:                             #"
+echo "#  /usr/share/doc/weatherstation-database/reademe  #"
+echo "#  nach!                                           #"
+echo "####################################################"
+echo ""
+
+#DEBHELPER#

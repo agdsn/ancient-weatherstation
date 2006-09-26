@@ -63,16 +63,16 @@ clean:
 
 install: install-indep install-arch
 install-indep:
-	dh_testdir
-	dh_testroot
-	dh_clean -k -i 
-	dh_installdirs -i
+	#dh_testdir
+	#dh_testroot
+	#dh_clean -k -i 
+	#dh_installdirs -i
 
 	# Add here commands to install the indep part of the package into
 	# debian/<package>-doc.
 	#INSTALLDOC#
 
-	dh_install -i
+	##dh_install -i
 
 install-arch:
 	dh_testdir
@@ -84,16 +84,16 @@ install-arch:
 	# debian/tmp.
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/weatherstation
 
-	dh_install -s
+	dh_install -s --sourcedir debian/weatherstation/
 # Must not depend on anything. This is to be called by
 # binary-arch/binary-indep
 # in another 'make' thread.
 binary-common:
-	dh_testdir
-	dh_testroot
-	dh_installchangelogs 
-	dh_installdocs
-	dh_installexamples
+	dh_testdir $(PACKS)
+	dh_testroot $(PACKS)
+	dh_installchangelogs $(PACKS)
+	dh_installdocs $(PACKS)
+#	dh_installexamples $(PACKS)
 #	dh_installmenu
 #	dh_installdebconf	
 #	dh_installlogrotate	
@@ -101,28 +101,29 @@ binary-common:
 #	dh_installpam
 #	dh_installmime
 #	dh_python
-#	dh_installinit
+	cp $(CURDIR)/debian/weatherstation/etc/init.d/weatherd $(CURDIR)/debian/weatherstation-weatherd.init
+	dh_installinit --no-start -pweatherstation-weatherd
 #	dh_installcron
 #	dh_installinfo
-	dh_installman
-	dh_link
-	dh_strip
-	dh_compress 
-	dh_fixperms
+#	dh_installman
+	dh_link $(PACKS)
+	dh_strip $(PACKS)
+	dh_compress $(PACKS)
+	dh_fixperms $(PACKS)
 #	dh_perl
-	dh_makeshlibs
-	dh_installdeb
-	dh_shlibdeps
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
+	dh_makeshlibs -pweatherstation-weatherd -pweatherstation-checksensor -pweatherstation-chart -pweatherstation-database -pweatherstation-frontend
+	dh_installdeb -pweatherstation-weatherd -pweatherstation-checksensor -pweatherstation-chart -pweatherstation-database -pweatherstation-frontend
+	dh_shlibdeps -pweatherstation-weatherd -pweatherstation-checksensor -pweatherstation-chart -pweatherstation-database -pweatherstation-frontend
+	dh_gencontrol $(PACKS)
+	dh_md5sums $(PACKS)
+	dh_builddeb $(PACKS)
 # Build architecture independant packages using the common target.
 binary-indep: build-indep install-indep
-	$(MAKE) -f debian/rules DH_OPTIONS=-i binary-common
+	#$(MAKE) -f debian/rules DH_OPTIONS=-i binary-common
 
 # Build architecture dependant packages using the common target.
 binary-arch: build-arch install-arch
-	$(MAKE) -f debian/rules DH_OPTIONS=-s binary-common
+	$(MAKE) -f debian/rules DH_OPTIONS=-s PACKS="-pweatherstation-weatherd -pweatherstation-checksensor -pweatherstation-chart -pweatherstation-database -pweatherstation-frontend" binary-common
 
 binary: binary-arch binary-indep
 .PHONY: build clean binary-indep binary-arch binary install install-indep install-arch configure

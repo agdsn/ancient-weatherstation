@@ -1,0 +1,10 @@
+usr/bin/weather_chart
+etc/weatherstation/chart.conf
+etc/weatherstation/image_conf/example.conf
+etc/weatherstation/image_conf/press_ex.conf
+etc/weatherstation/image_conf/temp_ex.conf
+etc/weatherstation/image_conf/wind_ex.conf
+etc/weatherstation/image_conf/hum_ex.conf
+etc/weatherstation/image_conf/rain_ex.conf
+etc/weatherstation/image_conf/testimage.conf
+

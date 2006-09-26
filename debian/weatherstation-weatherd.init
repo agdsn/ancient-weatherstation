@@ -1,0 +1,40 @@
+#!/bin/sh
+
+binary='/home/jan/testwetter/sammeln/weatherdeamon';
+user='jan'
+group='jan'
+
+check_status() 
+{
+  if [ $? = 0 ]
+  then
+    echo "OK"
+  else
+    echo "FAILED"
+    return=$rc_failed
+  fi
+}
+
+
+return=$rc_done
+case "$1" in
+  start)
+    echo -n "Starting Weather - daemon..." 
+    /sbin/start-stop-daemon --start -q --chuid $user --group $group --exec $binary
+    check_status
+    ;;
+  stop)
+    echo -n "Stopping Weather - daemon..."
+    /sbin/start-stop-daemon --stop -q  --exec $binary
+    check_status
+    ;;
+  restart)
+    $0 stop && $0 start || return=$rc_failed
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+esac
+
+test "$return" = "$rc_done" || exit 1
+exit 0

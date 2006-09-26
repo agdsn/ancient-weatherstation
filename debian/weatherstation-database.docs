@@ -1,0 +1,4 @@
+debian/weatherstation/usr/share/doc/weatherstation-database/COPYING
+debian/weatherstation/usr/share/doc/weatherstation-database/structure.dump.sql
+debian/weatherstation/usr/share/doc/weatherstation-database/reademe
+
