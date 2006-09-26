@@ -6,7 +6,7 @@ LDFLAS  = -o
 LD_LIBS = -lm -lpq -lgd -lpng -lz -lfreetype
 #INCL	= -I$$(pg_config --includedir)
 
-BIN_NAME = chart
+BIN_NAME = weather_chart
 OBJS	 = chart.o config.o common.o image_file/image_file.o image_file/image_config.o image_file/image_draw.o image_file/image_common.o image_file/image_data.o
 
 CONF_NAME = chart.conf

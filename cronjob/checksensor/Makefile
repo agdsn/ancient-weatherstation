@@ -5,7 +5,7 @@ CFLAGS  = -c
 LDFLAS  = -o
 INCL	= -I$$(pg_config --includedir)
 
-BIN_NAME = checksensor
+BIN_NAME = weather_checksensor
 OBJS	 = checksensor.o config.o mailer.o
 
 CONF_NAME = checksensor.conf
