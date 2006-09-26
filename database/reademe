@@ -1,0 +1,9 @@
+Hello,
+
+This is the Database-Package for the ELV-Weatherstation - Software.
+
+To install the Database you only have to import the structure.sql in your Postgres-Database.
+
+If You don't know how, please ask google.
+
+Jan
