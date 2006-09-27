@@ -7,4 +7,4 @@ etc/weatherstation/image_conf/wind_ex.conf
 etc/weatherstation/image_conf/hum_ex.conf
 etc/weatherstation/image_conf/rain_ex.conf
 etc/weatherstation/image_conf/testimage.conf
-
+var/cache/weatherstation-chart
