@@ -42,5 +42,5 @@ usr/share/weatherstation-frontend/php_inc/report.inc.php
 usr/share/weatherstation-frontend/php_inc
 usr/share/weatherstation-frontend
 etc/weatherstation/frontend.conf
-usr/share/doc/COPYING
-usr/share/doc/reademe
+usr/share/doc/weatherstation-frontend/COPYING
+usr/share/doc/weatherstation-frontend/reademe
