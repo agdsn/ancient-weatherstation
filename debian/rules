@@ -63,16 +63,16 @@ clean:
 
 install: install-indep install-arch
 install-indep:
-	#dh_testdir
-	#dh_testroot
-	#dh_clean -k -i 
-	#dh_installdirs -i
+	dh_testdir
+	dh_testroot
+	dh_clean -k -i 
+	dh_installdirs -i
 
 	# Add here commands to install the indep part of the package into
 	# debian/<package>-doc.
 	#INSTALLDOC#
 
-	##dh_install -i
+	dh_install -i --sourcedir debian/weatherstation/
 
 install-arch:
 	dh_testdir
@@ -103,7 +103,7 @@ binary-common:
 #	dh_python
 	cp $(CURDIR)/debian/weatherstation/etc/init.d/weatherd $(CURDIR)/debian/weatherstation-weatherd.init
 	dh_installinit --no-start -pweatherstation-weatherd
-#	dh_installcron
+	dh_installcron -pweatherstation-checksensor -pweatherstation-chart
 #	dh_installinfo
 #	dh_installman
 	dh_link $(PACKS)
@@ -111,19 +111,19 @@ binary-common:
 	dh_compress $(PACKS)
 	dh_fixperms $(PACKS)
 #	dh_perl
-	dh_makeshlibs -pweatherstation-weatherd -pweatherstation-checksensor -pweatherstation-chart -pweatherstation-database -pweatherstation-frontend
-	dh_installdeb -pweatherstation-weatherd -pweatherstation-checksensor -pweatherstation-chart -pweatherstation-database -pweatherstation-frontend
-	dh_shlibdeps -pweatherstation-weatherd -pweatherstation-checksensor -pweatherstation-chart -pweatherstation-database -pweatherstation-frontend
+	dh_makeshlibs $(PACKS)
+	dh_installdeb $(PACKS)
+	dh_shlibdeps $(PACKS)
 	dh_gencontrol $(PACKS)
 	dh_md5sums $(PACKS)
 	dh_builddeb $(PACKS)
 # Build architecture independant packages using the common target.
 binary-indep: build-indep install-indep
-	#$(MAKE) -f debian/rules DH_OPTIONS=-i binary-common
+	$(MAKE) -f debian/rules DH_OPTIONS=-i PACKS="-pweatherstation-database -pweatherstation-frontend" binary-common
 
 # Build architecture dependant packages using the common target.
 binary-arch: build-arch install-arch
-	$(MAKE) -f debian/rules DH_OPTIONS=-s PACKS="-pweatherstation-weatherd -pweatherstation-checksensor -pweatherstation-chart -pweatherstation-database -pweatherstation-frontend" binary-common
+	$(MAKE) -f debian/rules DH_OPTIONS=-s PACKS="-pweatherstation-weatherd -pweatherstation-checksensor -pweatherstation-chart" binary-common
 
 binary: binary-arch binary-indep
 .PHONY: build clean binary-indep binary-arch binary install install-indep install-arch configure
