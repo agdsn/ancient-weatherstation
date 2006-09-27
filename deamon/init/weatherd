@@ -1,8 +1,8 @@
 #!/bin/sh
 
-binary='/home/jan/testwetter/sammeln/weatherdeamon';
-user='jan'
-group='jan'
+binary='/usr/bin/weatherdeamon';
+user= 'weatherstation'
+group='weatherstation'
 
 check_status() 
 {
