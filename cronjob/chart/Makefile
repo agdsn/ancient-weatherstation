@@ -13,7 +13,7 @@ CONF_NAME = chart.conf
 
 INSTDIR  = /usr/bin/
 CONFDIR  = /etc/weatherstation/
-IMGDIR	 = /var/cache/weatherstation-char/
+IMGDIR	 = /var/cache/weatherstation-chart/
 DOCDIR   = /usr/share/doc/weatherstation-chart/
 INSTGRP  = losinski
 INSTUSR  = losinski
