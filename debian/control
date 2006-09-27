@@ -2,7 +2,7 @@ Source: weatherstation
 Section: sensors
 Priority: optional
 Maintainer: Jan Losinski <losinski@wh2.tu-dresden.de>
-Build-Depends: debhelper (>= 5), postgresql-dev, libesmtp-dev, libgd2-xpm-dev, libfreetype6-dev, libpng12-dev
+Build-Depends: debhelper (>= 4), postgresql-dev, libesmtp-dev, libgd2-xpm-dev, libfreetype6-dev, libpng12-dev
 Standards-Version: 3.7.2
 
 Package: weatherstation-weatherd
