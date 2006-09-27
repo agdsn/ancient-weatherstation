@@ -1,7 +1,7 @@
 #!/bin/sh
 
 binary='/usr/bin/weatherdeamon';
-user= 'weatherstation'
+user='weatherstation'
 group='weatherstation'
 
 check_status() 
