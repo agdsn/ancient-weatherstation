@@ -29,7 +29,7 @@ class Config{
  
   function getDefaultChartDir(){
     global $default_chart_dir;
-    return $default_chart_dir;
+    return $default_chart_dir."/";
   }
   
   function getRptArray($rptId){
