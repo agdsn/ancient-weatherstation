@@ -15,17 +15,17 @@ install:
 	      $(MAKE) DIR=$$i/; \
 	    else \
 	      echo "installiere $$i nach $(PROGDIR)/$$i"; \
-	      install $$i $(PROGDIR)/$(DIR)/; \
+	      install -m444 $$i $(PROGDIR)/$(DIR)/; \
 	    fi; \
 	  done; \
 	fi
 	@ rm -f $(PROGDIR)/Makefile
 	@ rm -rf $(PROGDIR)/images/chart
 	@ install -d $(CONFDIR)
-	@ install frontend.conf $(CONFDIR)
+	@ install -m444 frontend.conf $(CONFDIR)
 	@ install -d $(DOCDIR)
-	@ install COPYING $(DOCDIR)
-	@ install readme $(DOCDIR)
+	@ install -m444 COPYING $(DOCDIR)
+	@ install -m444 readme $(DOCDIR)
 	@ echo "done"
 
 clean:
