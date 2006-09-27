@@ -20,10 +20,20 @@ if [ -e /etc/weatherstation/chart.conf ]; then
 			echo -n "Lege Link zu den Bildern an ... "
 			/bin/ln -s -f $LINKTARGET $LINKNAME
 			echo "done"
+			/bin/chown weatherstation:www-data $LINKTARGET
+			/bin/chmod 750 $LINKTARGET
 		fi
 	fi
 fi
 
+if ! getent passwd weatherstation >/dev/null 2>&1; then
+        echo -n "Creating user/group 'weatherstation'" >&2
+        adduser --quiet --system --group --no-create-home \
+        --disabled-password --disabled-login \
+        --shell /bin/false \
+	weatherstation 
+        echo "."
+fi
 
 # Fixperms:
 /bin/chown weatherstation:www-data  /etc/weatherstation/frontend.conf

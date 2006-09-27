@@ -4,6 +4,7 @@
 
 if getent passwd weatherstation >/dev/null 2>&1; then
 	echo -n "delete user weatherstation ... "
+	deluser --quiet weatherstation dailout 2>/dev/null || true
         deluser --quiet weatherstation  2>/dev/null || true
 	echo "done"
 fi

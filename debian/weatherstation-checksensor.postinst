@@ -6,7 +6,7 @@ if ! getent passwd weatherstation >/dev/null 2>&1; then
         echo -n "Creating user/group 'weatherstation'" >&2
         adduser --quiet --system --group --no-create-home \
         --disabled-password --disabled-login \
-        --shell /bin/false --ingroup dailout 
+        --shell /bin/false \
 	weatherstation 
         echo "."
 fi
