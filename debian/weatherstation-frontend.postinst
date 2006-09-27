@@ -11,4 +11,17 @@ echo "#  nach!                                           #"
 echo "####################################################"
 echo ""
 
+
+if [ -e /etc/weatherstation/chart.conf ]; then
+	LINKNAME="/usr/share/weatherstation-frontend/$(grep default_chart_dir /etc/weatherstation/frontend.conf | cut -f 2 -d "'" | cut -f 2 -d '"')"
+	if [ ! -e $LINKNAME ]; then
+		LINKTARGET=$(grep dflt_image_location /etc/weatherstation/chart.conf | cut -f2)
+		if [ -e $LINKTARGET ]; then
+			echo -n "Lege Link zu den Bildern an ... "
+			/bin/ln -s -f $LINKTARGET $LINKNAME
+			echo "done"
+		fi
+	fi
+fi
+
 #DEBHELPER#

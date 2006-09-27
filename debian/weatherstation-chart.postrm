@@ -1,0 +1,18 @@
+#!/bin/sh
+
+#DEBHELPER#
+
+if getent passwd weatherstation >/dev/null 2>&1; then
+	echo -n "delete user weatherstation ... "
+        deluser --quiet weatherstation  2>/dev/null || true
+	echo "done"
+fi
+
+if [ -e /etc/weatherstation/frontend.conf ]; then
+	LINKNAME="/usr/share/weatherstation-frontend/$(grep default_chart_dir /etc/weatherstation/frontend.conf | cut -f 2 -d "'" | cut -f 2 -d '"')"
+	if [ -e $LINKNAME ]; then
+		echo -n "Lösche Bilderlink ... "
+		/bin/rm -f $LINKNAME
+		echo "done"
+	fi
+fi

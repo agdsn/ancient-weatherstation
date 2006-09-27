@@ -1,0 +1,26 @@
+#!/bin/sh
+
+#DEBHELPER#
+
+if ! getent passwd weatherstation >/dev/null 2>&1; then
+        echo -n "Creating user/group 'weatherstation'" >&2
+        adduser --quiet --system --group --no-create-home \
+        --disabled-password --disabled-login \
+        --shell /bin/false weatherstation
+        echo "."
+fi
+
+
+if [ -e /etc/weatherstation/frontend.conf ]; then
+	LINKNAME="/usr/share/weatherstation-frontend/$(grep default_chart_dir /etc/weatherstation/frontend.conf | cut -f 2 -d "'" | cut -f 2 -d '"')"
+	if [ ! -e $LINKNAME ]; then
+		LINKTARGET=$(grep dflt_image_location /etc/weatherstation/chart.conf | cut -f2)
+		if [ -e $LINKTARGET ]; then
+			echo -n "Lege Link zu den Bildern an ... "
+			/bin/ln -s -f $LINKTARGET $LINKNAME
+			echo "done"
+		fi
+	fi
+fi
+
+
