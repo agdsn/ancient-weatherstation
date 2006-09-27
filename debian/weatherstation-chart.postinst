@@ -28,5 +28,5 @@ fi
 /bin/chown weatherstation:weatherstation  /etc/weatherstation/chart.conf
 /bin/chmod 440 /etc/weatherstation/chart.conf
 
-/bin/chown weatherstation:weatherstation $LINKTARGET
-/bin/chmod 644 $LINKTARGET
+/bin/chown weatherstation:www-data $LINKTARGET
+/bin/chmod 750 $LINKTARGET
