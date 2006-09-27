@@ -25,7 +25,7 @@ install:
 	@ install frontend.conf $(CONFDIR)
 	@ install -d $(DOCDIR)
 	@ install COPYING $(DOCDIR)
-	@ install reademe $(DOCDIR)
+	@ install readme $(DOCDIR)
 	@ echo "done"
 
 clean:
