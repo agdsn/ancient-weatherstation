@@ -2,7 +2,7 @@
 if(file_exists("/etc/weatherstation/frontend.conf")){
   include_once("/etc/weatherstation/frontend.conf");
 } else {
- include_once($path."frontend.conf"); 
+  include_once($path."frontend.conf"); 
 }
 
 
