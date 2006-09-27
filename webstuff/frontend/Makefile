@@ -20,6 +20,7 @@ install:
 	  done; \
 	fi
 	@ rm -f $(PROGDIR)/Makefile
+	@ rm -rf $(PROGDIR)/images/chart
 	@ install -d $(CONFDIR)
 	@ install frontend.conf $(CONFDIR)
 	@ install -d $(DOCDIR)

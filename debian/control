@@ -30,6 +30,7 @@ Description: Checks if the ELV-Sensors are OK
 
 Package: weatherstation-database
 Architecture: all
+Suggests: postgresql
 Depends: ${shlibs:Depends}
 Description: Database-Structure for the ELV-Station
  Contains a Dump for the ELV-Weatherstation.
@@ -39,6 +40,7 @@ Description: Database-Structure for the ELV-Station
 
 Package: weatherstation-frontend
 Architecture: all
-Depends: ${shlibs:Depends}, apache | apache2, php4 | php5
+Suggests: apache | apache2, php4 | php5
+Depends: ${shlibs:Depends}
 Description: Webfrontend for the ELV-Station
  A Webfrontend to show the Data from the ELV-Station
