@@ -13,6 +13,7 @@ CONF_NAME = chart.conf
 
 INSTDIR  = /usr/bin/
 CONFDIR  = /etc/weatherstation/
+IMGDIR	 = /var/cache/weatherstation-char/
 DOCDIR   = /usr/share/doc/weatherstation-chart/
 INSTGRP  = losinski
 INSTUSR  = losinski
@@ -90,6 +91,8 @@ install:
 	@ echo "Lege Verzeichnis fuer Subconfigs an und kopiere Beispiel-Configs"
 	@ install -d $(DESTDIR)$(CONFDIR)/image_conf; 
 	@ install -m644 image_conf/* $(DESTDIR)$(CONFDIR)/image_conf
+	@ echo "lege $(IMGDIR) an"
+	@ install -d $(DESTDIR)$(IMGDIR)
 	@ install -d $(DESTDIR)$(DOCDIR)  
 	@ install COPYING $(DESTDIR)$(DOCDIR)
 
