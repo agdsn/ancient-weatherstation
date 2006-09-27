@@ -1,5 +1,6 @@
-PROGDIR = $(DESTDIR)/usr/share/weather-frontend
+PROGDIR = $(DESTDIR)/usr/share/weatherstation-frontend/
 CONFDIR = $(DESTDIR)/etc/weatherstation/
+DOCDIR  = $(DESTDIR)/usr/share/doc/weatherstation-frontend/
 
 DIR=./
 
@@ -21,6 +22,9 @@ install:
 	@ rm -f $(PROGDIR)/Makefile
 	@ install -d $(CONFDIR)
 	@ install frontend.conf $(CONFDIR)
+	@ install -d $(DOCDIR)
+	@ install COPYING $(DOCDIR)
+	@ install reademe $(DOCDIR)
 	@ echo "done"
 
 clean:

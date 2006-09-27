@@ -1,0 +1,9 @@
+This is the Webfrontend for my Weatherstation.
+
+To make it Work you must generate a new alias-line 
+in your apache-configuration.
+For example:
+Alias /wetter /usr/share/weatherstation-frontend
+
+
+Thanks
