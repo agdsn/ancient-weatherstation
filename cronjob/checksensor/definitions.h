@@ -26,7 +26,7 @@
 #define DEFAULT_PG_PASS 	""			/* Postgres-Passwort */
 #define DEFAULT_PG_DATABASE 	"localbase"		/* Postgres-Datenbank */
 #define DEFAULT_PG_TIMEOUT 	"20"			/* Postgres-Timeout */
-#define DEFAULT_CONFIG_FILE	"./checksensor.conf"	/* Standart-Configdatei */
+#define DEFAULT_CONFIG_FILE	"/etc/weatherstation/checksensor.conf"	/* Standart-Configdatei */
 #define DEFAULT_CHECK_INTERVAL	"24"			/* Standart-Interval, indem der Sensor das letzte mal hätte senden sollen (in h) */
 #define DEFAULT_MIN_SENDINGS	"24"			/* Standart-Wert, wieviele Daten der Sensor in den letzten x stunden hätte senden sollen */
 
