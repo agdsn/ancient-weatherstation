@@ -40,7 +40,7 @@ Description: Database-Structure for the ELV-Station
 
 Package: weatherstation-frontend
 Architecture: all
-Suggests: apache | apache2, php4 | php5, weatherstation-chart
-Depends: ${shlibs:Depends}
+Suggests: weatherstation-chart
+Depends: apache | apache2, php4 | php5, ${shlibs:Depends}
 Description: Webfrontend for the ELV-Station
  A Webfrontend to show the Data from the ELV-Station
