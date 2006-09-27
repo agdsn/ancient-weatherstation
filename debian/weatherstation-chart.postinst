@@ -24,4 +24,9 @@ if [ -e /etc/weatherstation/frontend.conf ]; then
 	fi
 fi
 
+# Fixperms:
+/bin/chown weatherstation:weatherstation  /etc/weatherstation/chart.conf
+/bin/chmod 440 /etc/weatherstation/chart.conf
 
+/bin/chown weatherstation:weatherstation $LINKTARGET
+/bin/chmod 644 $LINKTARGET

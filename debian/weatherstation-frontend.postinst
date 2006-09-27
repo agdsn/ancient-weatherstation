@@ -24,4 +24,9 @@ if [ -e /etc/weatherstation/chart.conf ]; then
 	fi
 fi
 
+
+# Fixperms:
+/bin/chown weatherstation:www-data  /etc/weatherstation/frontend.conf
+/bin/chmod 440 /etc/weatherstation/frontend.conf
+
 #DEBHELPER#

@@ -10,3 +10,7 @@ if ! getent passwd weatherstation >/dev/null 2>&1; then
 	weatherstation 
         echo "."
 fi
+
+# Fixperms:
+/bin/chown weatherstation:weatherstation  /etc/weatherstation/checksensor.conf
+/bin/chmod 440 /etc/weatherstation/checksensor.conf
