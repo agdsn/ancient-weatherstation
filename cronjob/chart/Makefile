@@ -15,6 +15,7 @@ INSTDIR  = /usr/bin/
 CONFDIR  = /etc/weatherstation/
 IMGDIR	 = /var/cache/weatherstation-chart/
 DOCDIR   = /usr/share/doc/weatherstation-chart/
+FONTDIR  = /usr/share/fonts/truetype/freefont/
 INSTGRP  = losinski
 INSTUSR  = losinski
 
@@ -93,8 +94,10 @@ install:
 	@ install -m644 image_conf/* $(DESTDIR)$(CONFDIR)/image_conf
 	@ echo "lege $(IMGDIR) an"
 	@ install -d $(DESTDIR)$(IMGDIR)
+	@ install -d $(DESTDIR)$(FONTDIR)
+	@ install -m444 FreeSans.ttf $(DESTDIR)$(FONTDIR)
 	@ install -d $(DESTDIR)$(DOCDIR)  
-	@ install COPYING $(DESTDIR)$(DOCDIR)
+	@ install -m444 COPYING $(DESTDIR)$(DOCDIR)
 
 
 # Aufräumnen (alle Object-Files löschen)

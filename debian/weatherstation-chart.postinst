@@ -30,3 +30,5 @@ fi
 /bin/chown weatherstation:weatherstation  /etc/weatherstation/chart.conf
 /bin/chmod 440 /etc/weatherstation/chart.conf
 
+
+/usr/bin/fc-cache
