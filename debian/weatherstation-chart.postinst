@@ -20,8 +20,6 @@ if [ -e /etc/weatherstation/frontend.conf ]; then
 			echo -n "Lege Link zu den Bildern an ... "
 			/bin/ln -s -f $LINKTARGET $LINKNAME
 			echo "done"
-			/bin/chown weatherstation:www-data $LINKTARGET
-			/bin/chmod 750 $LINKTARGET
 		fi
 	fi
 fi
@@ -30,5 +28,7 @@ fi
 /bin/chown weatherstation:weatherstation  /etc/weatherstation/chart.conf
 /bin/chmod 440 /etc/weatherstation/chart.conf
 
+/bin/chown weatherstation:www-data /var/cache/weatherstation-chart
+/bin/chmod 750 /var/cache/weatherstation-chart
 
 /usr/bin/fc-cache
