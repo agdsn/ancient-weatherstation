@@ -289,7 +289,7 @@ static void mail_failtures(){
   addresses.bcc   = NULL;
   
   mail_err_nr = mail_message(& addresses, "Wetterstation", 0, get_message, & failed_sensors, servo);
-  printf("%s\n",get_mail_status_text(mail_err_nr));
+  DEBUGOUT2("%s\n",get_mail_status_text(mail_err_nr));
 }
 
 /* Mainfkt. und diverse andere Funktionen zum beenden des Programmes ---*/
