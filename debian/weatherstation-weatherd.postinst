@@ -8,9 +8,9 @@ if ! getent passwd weatherstation >/dev/null 2>&1; then
         --disabled-password --disabled-login \
         --shell /bin/false \
 	weatherstation
-	adduser weatherstation dialout
         echo "."
 fi
+adduser weatherstation dialout
 
 # Fixperms:
 /bin/chown weatherstation:weatherstation  /etc/weatherstation/weatherd.conf
