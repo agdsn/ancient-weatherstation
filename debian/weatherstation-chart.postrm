@@ -1,11 +1,12 @@
 #!/bin/sh
 
 #DEBHELPER#
-
-if getent passwd weatherstation >/dev/null 2>&1; then
-	echo -n "delete user weatherstation ... "
-        deluser --quiet weatherstation  2>/dev/null || true
-	echo "done"
+if ( [ ! -e /etc/weatherstation/checksensor.conf ] && [ ! -e /etc/weatherstation/weatherd.conf ] && [ ! -e /etc/weatherstation/frontend.conf ] ); then
+	if getent passwd weatherstation >/dev/null 2>&1; then
+		echo -n "delete user weatherstation ... "
+        	deluser --quiet weatherstation  2>/dev/null || true
+		echo "done"
+	fi
 fi
 
 if [ -e /etc/weatherstation/frontend.conf ]; then
