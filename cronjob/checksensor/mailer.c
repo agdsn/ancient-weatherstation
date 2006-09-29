@@ -37,6 +37,10 @@
 
 #define BUFFSIZE 2048
 
+#ifndef DEFAULT_MAIL_USER
+  #define DEFAULT_MAIL_USER "mailer.c"
+#endif
+
 #define TO_LINE "To: "
 #define CC_LINE "Cc: "
 #define BCC_LINE "Bcc: "
@@ -218,6 +222,9 @@ static char * gen_from_mailbox(){
 
   host = malloc(sizeof(char)*MAXHOSTNAMELEN);				/* Speicher fuer den Hostnamen holen */
   user = getlogin();							/* den Usernamen holen */
+  if(user == NULL)
+    user = DEFAULT_MAIL_USER;
+  
   gethostname(host, MAXHOSTNAMELEN);					/* den Hostnamen holen */
 
   new_from = malloc(sizeof(char)*(MAXHOSTNAMELEN + strlen(user) + 10));		/* Speicher fuer die gesammtaddresse belegen */

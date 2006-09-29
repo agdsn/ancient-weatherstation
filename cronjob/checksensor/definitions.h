@@ -29,7 +29,7 @@
 #define DEFAULT_CONFIG_FILE	"/etc/weatherstation/checksensor.conf"	/* Standart-Configdatei */
 #define DEFAULT_CHECK_INTERVAL	"24"			/* Standart-Interval, indem der Sensor das letzte mal hätte senden sollen (in h) */
 #define DEFAULT_MIN_SENDINGS	"24"			/* Standart-Wert, wieviele Daten der Sensor in den letzten x stunden hätte senden sollen */
-
+#define DEFAULT_MAIL_USER	"weatherstation"
 
 
 /*Alle möglichen Definitionen, die in allen code-schnipseln benötigt werden*/
