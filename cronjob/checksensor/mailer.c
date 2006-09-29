@@ -38,7 +38,7 @@
 #define BUFFSIZE 2048
 
 #ifndef DEFAULT_MAIL_USER
-  #define DEFAULT_MAIL_USER "mailer.c"
+//  #define DEFAULT_MAIL_USER "mailer.c"
 #endif
 
 #define TO_LINE "To: "
