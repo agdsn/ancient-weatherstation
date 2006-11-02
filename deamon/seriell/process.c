@@ -288,7 +288,7 @@ static pyano_data process_pyano(time_t timestamp, u_char address, u_char *buffer
 static int convert_signed_int(u_char hi_byte, u_char lo_byte){
   int val;  
   val = convert_unsigned_int(hi_byte,lo_byte);
-  if (get_bit(val,14)){
+  if (get_bit(val,13)){
     val |= ~(0x3FFF);
   }
   return val;
