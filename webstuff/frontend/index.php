@@ -18,6 +18,6 @@
     <h1 align="center"><? echo Config::getAllTitle(); ?></h1>
 	<? new ModuleSet($_REQUEST['setType']);?>
 
-	<p>(c) 2006 by Jan Losinski</p>
+	<p id="copyright">(c) 2006 by Jan Losinski</p>
   </body>
 </html>

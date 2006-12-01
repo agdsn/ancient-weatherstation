@@ -383,3 +383,8 @@ div.small_set div.module#windsSmall_2 a.mod_small_link div.mod_footer span.mod_m
   color: #AA3333;
 }
 
+p.set#copyright {
+  font-size:8px;
+  color:#666666;
+  font-weight:600;
+}
