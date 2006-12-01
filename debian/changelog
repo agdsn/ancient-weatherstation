@@ -1,3 +1,10 @@
+weatherstation (1.0.3-1) stable; urgency=low
+
+  * Some license-changes in the frontend
+  * Some CSS-Changes
+
+ -- Jan Losinski <losinski@wh2.tu-dresden.de>  Thu,  2 Nov 2006 09:38:14 +0100
+
 weatherstation (1.0.2-1) stable; urgency=low
 
   * A litle bug with the min-humidity in the summary-module-set fixed
