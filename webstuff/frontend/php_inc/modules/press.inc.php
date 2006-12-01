@@ -1,4 +1,11 @@
 <?
+
+  /* copyright: Jan Losinski, 2006
+     
+     at the Moment this is no free software, look at the
+     COPYING-File in the Main-Directory for License-Terms
+  */
+
 class Press{
 
   var $nowPress;		/* Momentaner Luftdruck */

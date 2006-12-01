@@ -1,4 +1,11 @@
 <?
+
+  /* copyright: Jan Losinski, 2006
+     
+     at the Moment this is no free software, look at the
+     COPYING-File in the Main-Directory for License-Terms
+  */
+
 if(file_exists("/etc/weatherstation/frontend.conf")){
   include_once("/etc/weatherstation/frontend.conf");
 } else {
@@ -35,6 +42,11 @@ class Config{
   function getRptArray($rptId){
     global $report;
     return $report[$rptId];
+  }
+
+  function getAllTitle(){
+    global $allTitle;
+    return $allTitle;
   }
 }
 ?>
