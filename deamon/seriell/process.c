@@ -36,7 +36,7 @@
 #include "write.h"
 
 /* Funktionsdefinitionen */
-static u_char get_bit(u_char, u_char);
+static u_char get_bit(unsigned int, u_char);
 static u_char get_2bits(u_char, u_char);
 static u_char get_hi_nibble(u_char);
 static u_char get_lo_nibble(u_char);
@@ -301,8 +301,8 @@ static unsigned int convert_unsigned_int(u_char hi_byte, u_char lo_byte){
 
 
 /* Ein Bit vom Byte */
-static u_char get_bit(u_char byte, u_char bit){       
-  return byte >> bit & 0x01;
+static u_char get_bit(unsigned int byte, u_char bit){       
+  return (byte >> bit) & 0x01;
 }
                 
 /* 2 Bit vom Byte */
