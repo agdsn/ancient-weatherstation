@@ -1,7 +1,7 @@
 /*
 
    weatherdeamon -- Weather Data Capture Program for the 
-                    'ELV-PC-Wettersensor-Empfänger'
+                    'ELV-PC-Wettersensor-Empfaenger'
    config.c      -- Part of the weatherdeamon
 
    Copyright (C) 2006 Jan Losinski
@@ -42,7 +42,7 @@ static read_verbose_flag(const char *, void *);
 static int flag_handler(int *, int , const char *);
 
 
-/* Zuordnung zwischen Schlüsselwörtern in der Config, Der Funktion, die diese auswertet 
+/* Zuordnung zwischen Schluesselwoertern in der Config, Der Funktion, die diese auswertet 
  * und dem eld in der Options-Struktur */
 static const struct config_keyword keywords[] = {
   /* keyword		handler  	 	variable address		default */
@@ -119,22 +119,22 @@ int read_config(const char *file, int reset){
   int lm = 0; 						/* Zeilen-Nummer */
 
 
-  /* Optionen mit default-werten füllen */
+  /* Optionen mit default-werten fuellen */
   if(reset){
     for (i = 0; keywords[i].keyword[0]; i++)
       if (keywords[i].def[0])
         keywords[i].handler(keywords[i].def, keywords[i].var);
   }
 
-  /* config-file öffnen */
+  /* config-file oeffnen */
   if (!(in = fopen(file, "r"))) {
     #ifndef NO_LOGING
     if(get_flag(LOG_ERROR_FLAG)){
-      sprintf(get_error_buffer(), "Kann Config-File: %s nicht öffnen!",file);
+      sprintf(get_error_buffer(), "Kann Config-File: %s nicht oeffnen!",file);
       log_error(get_error_buffer());
     }
     #endif
-    DEBUGOUT2("Kann Config-File: %s nicht öffnen!\n", file);
+    DEBUGOUT2("Kann Config-File: %s nicht oeffnen!\n", file);
     return 0;
   }
 
@@ -142,10 +142,10 @@ int read_config(const char *file, int reset){
   while (fgets(buffer, CONFIG_BUFFERSIZE, in)) {
     lm++;
 
-    /* Zeilenvorschübe gegen null-terminierungs-Zeichen ersetzen */
+    /* Zeilenvorschuebe gegen null-terminierungs-Zeichen ersetzen */
     if (strchr(buffer, '\n')) *(strchr(buffer, '\n')) = '\0';
   
-    /* Originlzeile für eventuelle log-, bzw. debug-meldungen */
+    /* Originlzeile fuer eventuelle log-, bzw. debug-meldungen */
     strcpy(orig, buffer);
   
     /* Kommentazeichen gegen null-terminierungs-Zeichen ersetzen und damit alles dahinter ignorieren */

@@ -8,7 +8,7 @@
 
 include_once($path."php_inc/config.inc.php");
 
-/* Connection-Klasse..ist für die Datenbankverbindung zuständig */
+/* Connection-Klasse..ist fuer die Datenbankverbindung zustaendig */
 class Connection{
 
   var $conn = NULL;	/* Verbindung */

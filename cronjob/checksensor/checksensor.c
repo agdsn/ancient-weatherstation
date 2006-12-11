@@ -92,7 +92,7 @@ static PGresult *pg_check_exec(PGconn *conn, char *query){
     DEBUGOUT2("Fehler beim exec: %s\n", query);
     exit_error(ERROR_QUERY);
   } else {
-    DEBUGOUT2("Query: '%s' ausgeführt\n", query);
+    DEBUGOUT2("Query: '%s' ausgefuehrt\n", query);
   }
   return res;
 }
@@ -152,7 +152,7 @@ static char *get_type_table_by_id(PGconn *connection, int sens_id){
   return table;
 }
 
-/* Datensätze im gegebenem Interval zaehlen */
+/* Datensaetze im gegebenem Interval zaehlen */
 static int count_data_by_sensor_id(PGconn *connection, int sens_id){
   int count_field;
   char *table;
@@ -160,7 +160,7 @@ static int count_data_by_sensor_id(PGconn *connection, int sens_id){
   int count;
   PGresult *count_res;
 
-  DEBUGOUT2("\nPrüfe Sensor mit ID: %d ... \n",sens_id);
+  DEBUGOUT2("\nPruefe Sensor mit ID: %d ... \n",sens_id);
 
   table = get_type_table_by_id(connection, sens_id);
 
@@ -249,7 +249,7 @@ static int check_sensors(){
   return fail_count;
 }
 
-/* Callback-Funktion für das Versenden der Mail,
+/* Callback-Funktion fuer das Versenden der Mail,
  * baut die nachicht zusammen */
 static char *get_message(int line, void *arg){
   sens_info_list_ptr info = *((sens_info_list_ptr*) arg);

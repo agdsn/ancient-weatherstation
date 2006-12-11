@@ -9,7 +9,7 @@
 
 include_once($path."php_inc/connection.inc.php");
 
-/* Rain-Klasse für das Rain-Modul */
+/* Rain-Klasse fuer das Rain-Modul */
 class Rain{
 
   var $nowHour;		/* Regen in der momentanen Stunde */
@@ -22,7 +22,7 @@ class Rain{
   var $maxMonthData;	/* Monat mit dem meistem Regen */
   var $maxYearData;	/* Jahr mit dem meistem Regen */
 
-  /* Konstruktor, Holt die Werte aus der Datenbank und füllt die Variablen damit */
+  /* Konstruktor, Holt die Werte aus der Datenbank und fuellt die Variablen damit */
   function Rain($sensId, & $connection){
 
     /* Tabelle des Sensors bestimmen */
@@ -56,7 +56,7 @@ class Rain{
   }
 
 
-  /* --- Funktionen, die die Werte für die Ausgabe zurückgeben --- */
+  /* --- Funktionen, die die Werte fuer die Ausgabe zurueckgeben --- */
   function get_now_hour(){
     return round($this->nowHour * 0.001,3);
   }

@@ -43,7 +43,7 @@ class ModuleSet{
     return $path."content/module_sets/set_".$setName.".html";
   }
   
-  /* Parser Instanzieren (wenn noch nicht ist) und zurückgeben */
+  /* Parser Instanzieren (wenn noch nicht ist) und zurueckgeben */
   function &_getParserInstance(){
     if($this->parserInstance==NULL)
       $this->parserInstance = new Parser();
@@ -57,13 +57,13 @@ class ModuleSet{
     return $this->connInstance;
   }
 
-  /* Ein Modul hinzufügen */
+  /* Ein Modul hinzufuegen */
   function addModule($modName){
     $params = explode("_",$modName);				/* Modulname und Sensorid trennen */
     new Module($params[0], $params[1], $this->_getParserInstance(), $this->_getConnInstance());
   }
 
-  /* Ein Report hinzufügen */
+  /* Ein Report hinzufuegen */
   function addReport($rptName){
     new Report($rptName, $this->_getParserInstance(), $this->_getConnInstance());
   }

@@ -44,7 +44,7 @@ static int add_address(const char *, void *);
 static int read_str(const char *, void *);
  
 
-/* Zuordnung zwischen Schlüsselwörtern in der Config, Der Funktion, die diese auswertet 
+/* Zuordnung zwischen Schluesselwoertern in der Config, Der Funktion, die diese auswertet 
  * und dem eld in der Options-Struktur */
 static const struct config_keyword keywords[] = {
   /* keyword		handler  	 	variable address			default */
@@ -161,7 +161,7 @@ int read_config(const char *file, int reset){
   int lm = 0; 						/* Zeilen-Nummer */
 
 
-  /* Optionen mit default-werten füllen */
+  /* Optionen mit default-werten fuellen */
   if(reset){
     for (i = 0; keywords[i].keyword[0]; i++)
     //printf("keyword: %s \n",keywords[i].keyword);
@@ -169,9 +169,9 @@ int read_config(const char *file, int reset){
         keywords[i].handler(keywords[i].def, keywords[i].var);
   }
 
-  /* config-file öffnen */
+  /* config-file oeffnen */
   if (!(in = fopen(file, "r"))) {
-    DEBUGOUT2("Kann Config-File: %s nicht öffnen!\n", file);
+    DEBUGOUT2("Kann Config-File: %s nicht oeffnen!\n", file);
     return 0;
   }
 
@@ -179,10 +179,10 @@ int read_config(const char *file, int reset){
   while (fgets(buffer, CONFIG_BUFFERSIZE, in)) {
     lm++;
 
-    /* Zeilenvorschübe gegen null-terminierungs-Zeichen ersetzen */
+    /* Zeilenvorschuebe gegen null-terminierungs-Zeichen ersetzen */
     if (strchr(buffer, '\n')) *(strchr(buffer, '\n')) = '\0';
   
-    /* Originlzeile für eventuelle log-, bzw. debug-meldungen */
+    /* Originlzeile fuer eventuelle log-, bzw. debug-meldungen */
     strcpy(orig, buffer);
   
     /* Kommentazeichen gegen null-terminierungs-Zeichen ersetzen und damit alles dahinter ignorieren */

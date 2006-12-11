@@ -1,7 +1,7 @@
 /*
 
    weatherdeamon -- Weather Data Capture Program for the 
-                    'ELV-PC-Wettersensor-Empfänger'
+                    'ELV-PC-Wettersensor-Empfaenger'
    definitions.h -- Part of the weatherdeamon
 
    Copyright (C) 2006 Jan Losinski
@@ -36,7 +36,7 @@
 
 
 
-/*Alle möglichen Definitionen, die in allen code-schnipseln benötigt werden*/
+/*Alle moeglichen Definitionen, die in allen code-schnipseln benoetigt werden*/
 
 /* Sensor definitionen ------------------------------------------------- */
 #define FERNB 0x07	/* Funkfernbedienung */
@@ -56,7 +56,7 @@
 #define  ERROR_TIMEOUT "sensor-rs232interface: keine Daten - timeout-Fehler\n"
 #define  ERROR_POLLING "sensor-rs232interface: keine Daten - polling-Fehler\n"
 #define  ERROR_READ    "sensor-rs232interface: Fehler beim Lesen\n"
-#define  ERROR_LOGFILE "Log-Error: Kann Logfile nicht öffnen\n"
+#define  ERROR_LOGFILE "Log-Error: Kann Logfile nicht oeffnen\n"
 #define  ERROR_FORK    "Fork-Fehler: Kann den Prozess nicht in den Hintergrund schieben\n"
 #define  ERROR_SEIINST "Signal-Fehler: Kann Signalhandler zum beenden nicht installieren\n"
 
@@ -70,12 +70,12 @@
 #endif
 
 
-/* Puffergrößen -------------------------------------------------------- */
-#define LOG_BUFFERSIZE    100 	/* Größe für den Log-Puffer in process.c */
-#define ERR_BUFFERSIZE    512 	/* Größe für den error-Puffer in main.c  */
-#define INPUT_BUFFERSIZE  8	/* Größe für den Input-Puffer in input.c */
-#define CONFIG_BUFFERSIZE 512	/* Größe des Puffers zum Config-einlesen */
-#define QUERY_BUFFERSIZE  512	/* Größe des Zeichenpuffers für SQL-Anfragen */
+/* Puffergroeßen -------------------------------------------------------- */
+#define LOG_BUFFERSIZE    100 	/* Groeße fuer den Log-Puffer in process.c */
+#define ERR_BUFFERSIZE    512 	/* Groeße fuer den error-Puffer in main.c  */
+#define INPUT_BUFFERSIZE  8	/* Groeße fuer den Input-Puffer in input.c */
+#define CONFIG_BUFFERSIZE 512	/* Groeße des Puffers zum Config-einlesen */
+#define QUERY_BUFFERSIZE  512	/* Groeße des Zeichenpuffers fuer SQL-Anfragen */
 
 
 /* Timeout-Zeiten ------------------------------------------------------ */

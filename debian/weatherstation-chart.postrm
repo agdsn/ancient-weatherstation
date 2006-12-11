@@ -12,7 +12,7 @@ fi
 if [ -e /etc/weatherstation/frontend.conf ]; then
 	LINKNAME="/usr/share/weatherstation-frontend/$(grep default_chart_dir /etc/weatherstation/frontend.conf | cut -f 2 -d "'" | cut -f 2 -d '"')"
 	if [ -e $LINKNAME ]; then
-		echo -n "Lösche Bilderlink ... "
+		echo -n "Loesche Bilderlink ... "
 		/bin/rm -f $LINKNAME
 		echo "done"
 	fi

@@ -100,10 +100,10 @@ int mail_message(address_all_struct *addresses,  char *subject, int eightbit, ma
     addresses->from->mailbox = gen_from_mailbox();			/* Dann eine Addresse nach dem schema user@host generieren */
   }
 
-  if((fd = tmpfile()) == NULL)						/* Temporäre Datei anlegen */
+  if((fd = tmpfile()) == NULL)						/* Temporaere Datei anlegen */
     return MAILER_STATUS_FAILTURE_TEMPFILE_CREATE;
 
-  if(!build_header(addresses->from, addresses->to, addresses->cc, addresses->bcc, subject, fd))	/* Header in die Temporäre Datei schreiben */
+  if(!build_header(addresses->from, addresses->to, addresses->cc, addresses->bcc, subject, fd))	/* Header in die Temporaere Datei schreiben */
     return MAILER_STATUS_FAILTURE_CREATE_HEADER;  
 
   i = 0;
@@ -120,7 +120,7 @@ int mail_message(address_all_struct *addresses,  char *subject, int eightbit, ma
       smtp_starttls_enable(session, Starttls_ENABLED);			/* SSL soll auf jeden Fall benutzt werden */
       break;
     case SSL_REQUIRED:
-      smtp_starttls_enable(session, Starttls_REQUIRED);			/* SSL soll ren benötigt benutzt werden */
+      smtp_starttls_enable(session, Starttls_REQUIRED);			/* SSL soll ren benoetigt benutzt werden */
       break;
     default:
       smtp_starttls_enable(session, Starttls_DISABLED);			/* SSL soll nicht benutzt werden */
@@ -132,25 +132,25 @@ int mail_message(address_all_struct *addresses,  char *subject, int eightbit, ma
   snprintf(hostportstr, hostportlen, "%s:%d", servopts->host, servopts->port); 	/* host:port zusammenbauen */
   DEBUGOUT2("SMTP: Send Mail over: \"%s\"\n",hostportstr);
 
-  if(!smtp_set_server(session, hostportstr))				/* Den Server fuer die Übertragung setzen */
+  if(!smtp_set_server(session, hostportstr))				/* Den Server fuer die Uebertragung setzen */
     return MAILER_STATUS_FAILTURE_SETSERVER;
 
   if (servopts->auth_use) {						/* Wenn Authentifizierung eingeschaltet */
     if ((authctx = auth_create_context ()) == NULL)			/* Authentifizierungskontext erstellen */
       return MAILER_STATUS_FAILTURE_CREATEAUTHCTX;
-    auth_set_mechanism_flags (authctx, AUTH_PLUGIN_PLAIN, 0);		/* Plain-Text-Plugin auswählen */
+    auth_set_mechanism_flags (authctx, AUTH_PLUGIN_PLAIN, 0);		/* Plain-Text-Plugin auswaehlen */
     if(servopts->auth_cb == NULL){					/* wenn keine Callback-fkt. gesetzt */
       auth_set_interact_cb (authctx, default_auth_cb, servopts);	/* dann die standart-fkt nehmen */
     } else {								/* sonst */
       auth_set_interact_cb (authctx, servopts->auth_cb, servopts);	/* die gegebene verwenden */
     }
-    if (!smtp_auth_set_context (session, authctx))			/* Kontext der session übergeben */
+    if (!smtp_auth_set_context (session, authctx))			/* Kontext der session uebergeben */
       return MAILER_STATUS_FAILTURE_SETAUTHCTX; 
   } 
 
   smtp_set_eventcb(session, event_cb, servopts);			/* Callbackfunktion angeben, welche die Events der Verbindung (falsches Zertifikat, ..) hanhelt */
 
-  if((message = smtp_add_message(session)) == NULL)			/* Eine Nachicht zur Session hinzufügen */
+  if((message = smtp_add_message(session)) == NULL)			/* Eine Nachicht zur Session hinzufuegen */
     return MAILER_STATUS_FAILTURE_ADDMESSAGE; 
 
   if(! smtp_set_reverse_path(message,addresses->from->mailbox))		/* Absenderaddresse setzen */
@@ -162,7 +162,7 @@ int mail_message(address_all_struct *addresses,  char *subject, int eightbit, ma
   if(!smtp_set_messagecb(message, read_mail_tmp_file, fd))		/* Callback - Funktion zum lesen der temp. Datei */
     return MAILER_STATUS_FAILTURE_SETMESSAGECB;
 
-  if(!(add_recipients(message, addresses->to) &&  add_recipients(message, addresses->cc) && add_recipients(message, addresses->bcc) ) )		/* Empfänger setzen */
+  if(!(add_recipients(message, addresses->to) &&  add_recipients(message, addresses->cc) && add_recipients(message, addresses->bcc) ) )		/* Empfaenger setzen */
     return MAILER_STATUS_FAILTURE_ADDRECIPIENTS;
 
   if(!smtp_start_session(session))					/* Session Starten (Mail versenden) */
@@ -175,7 +175,7 @@ int mail_message(address_all_struct *addresses,  char *subject, int eightbit, ma
     return MAILER_STATUS_FAILTURE_SENDING;
   }
   
-  /* aufräumen */
+  /* aufraeumen */
   if(fd != NULL)
     fclose(fd);
   if(hostportstr != NULL)
@@ -197,18 +197,18 @@ int mail_message(address_all_struct *addresses,  char *subject, int eightbit, ma
  * subject ist der Betreff der Mail
  * fd ist der Zeiger auf die temp. Datei */
 static int build_header(address_struct * from,  address_struct *to,  address_struct *cc,  address_struct *bcc, char *subject, FILE *fd){
-  char *buf;								/* Puffer für die Zeilen */
+  char *buf;								/* Puffer fuer die Zeilen */
   if(from == NULL || to == NULL || fd == NULL){				/* wenn absender, Empfaenger oder Dateizeiger NULL */
     return 0;								/* Dann abbrechen */
   }
-  buf = malloc(sizeof(char)*BUFFSIZE);					/* Speicher für Puffer holen */
+  buf = malloc(sizeof(char)*BUFFSIZE);					/* Speicher fuer Puffer holen */
 
   fprintf(fd, "From: <%s>\r\n", from->mailbox);				/* Absender setzen */
   fputs(gen_address_line(buf, TO_LINE, to), fd);			/* To setzen */
   fputs(gen_address_line(buf, CC_LINE, cc), fd);			/* Cc setzen */
   fputs(gen_address_line(buf, BCC_LINE, bcc), fd);			/* Bcc setzen */
   fprintf(fd, "Subject: %s\r\n", subject);				/* Betreff setzen */
-  fputs("Reply-To:\r\n\r\n", fd);					/* Reply-To + Leerzeile anhängen */
+  fputs("Reply-To:\r\n\r\n", fd);					/* Reply-To + Leerzeile anhaengen */
 
   free(buf);								/* Puffer freigeben */
   
@@ -241,7 +241,7 @@ static char * gen_from_mailbox(){
  * line_type ist eine der Konstanten TO_LINE, CC_LINE oder BCC_LINE
  * address sind die Addressen fuer die Zeile */
 static char *  gen_address_line(char *buf, const char *line_type, address_struct *address){
-  address_struct *addr = address;			  		/* Temporärer Zeiger */
+  address_struct *addr = address;			  		/* Temporaerer Zeiger */
   int i = 0			;					/* zum unterscheiden, ob die erste Addresse oder nicht */
 
   strcpy(buf, line_type);						/* Das Keyword ('To: ', 'Cc: ', ...) an den Zeilenanfang setzen */
@@ -254,12 +254,12 @@ static char *  gen_address_line(char *buf, const char *line_type, address_struct
     strcat(buf, ">");							/* '>' dahintersetzen */
     i++;					
   }
-  strcat(buf, "\r\n");							/* Wagenrücklauf + Zeilenvorschub anhängen */
+  strcat(buf, "\r\n");							/* Wagenruecklauf + Zeilenvorschub anhaengen */
   return buf;
 }
 
 
-/* Mail aus temporärer Datei lesen (Callbackfkt.) 
+/* Mail aus temporaerer Datei lesen (Callbackfkt.) 
  * buf ist ein Zeiger auf einen Zeichenpuffer
  * len ist NULL (dann rewind des Files) oder nicht NULL (dann Daten lesen)
  * arg ist der Zeiger auf die temp. Datei */
@@ -280,8 +280,8 @@ static const char *read_mail_tmp_file (void **buf, int *len, void *arg){
     char *p = strchr (*buf, '\0');					/* Das Terminierungszeichen suchen */
 
     if (p[-1] == '\n' && p[-2] != '\r') {				/* Wenn kein Wagenruecklauf */
-      strcpy (p - 1, "\r\n");						/* dann einen ergänzen */
-      p++;								/* und den String ein Zeichen länger machen */
+      strcpy (p - 1, "\r\n");						/* dann einen ergaenzen */
+      p++;								/* und den String ein Zeichen laenger machen */
     }
     octets = p - (char *) *buf;						/* Gelesene Zeichen berechnen */
   }
@@ -291,14 +291,14 @@ static const char *read_mail_tmp_file (void **buf, int *len, void *arg){
 }
 
 
-/* Empfaenger zu einer Mail hinzufügen 
+/* Empfaenger zu einer Mail hinzufuegen 
  * message ist die SMTP - Message 
  * address ist die Liste mit den Empfaengeraddressen */
 static int add_recipients(smtp_message_t message, address_struct *address){
   address_struct *adr = address;					/* Temp. Zeiger auf die Addressen */
   for(; adr; adr = adr->next){						/* Addressen durchgehen */
     if(adr->mailbox){							/* Wenn eine gueltige gefunden */
-      if(!smtp_add_recipient(message, adr->mailbox))			/* Dann hinzufügen */
+      if(!smtp_add_recipient(message, adr->mailbox))			/* Dann hinzufuegen */
 	return 0;
     }
   }
@@ -307,9 +307,9 @@ static int add_recipients(smtp_message_t message, address_struct *address){
 
 
 /* Event-Callback-Funktion.
- * Die wird von der Libsmtp aufgerufen wenn während der Session irgend etwas
- * (unabhöngig ob gut oder nicht gut) passiert. 
- * dadurch hat man die Möglichkeit auf solche Ereignisse zu reagieren */
+ * Die wird von der Libsmtp aufgerufen wenn waehrend der Session irgend etwas
+ * (unabhoengig ob gut oder nicht gut) passiert. 
+ * dadurch hat man die Moeglichkeit auf solche Ereignisse zu reagieren */
 static void event_cb (smtp_session_t session, int event_no, void *arg,...){   
   va_list alist;							/* Argumentliste */
   int *ok;								/* Rueckgabewert an die lib */
@@ -338,7 +338,7 @@ static void event_cb (smtp_session_t session, int event_no, void *arg,...){
       break;
     }
     case SMTP_EV_INVALID_PEER_CERTIFICATE: {				/* Ungueltiges Server-Zertifikat */
-      long vfy_result;            					/* prüfungs-resultat */
+      long vfy_result;            					/* pruefungs-resultat */
       vfy_result = va_arg(alist, long); 
       ok = va_arg(alist, int*);
       DEBUGOUT3("SMTP: Invalid peer certificate! verify-Result: %d continue: %d\n", vfy_result,  servopt->ssl_ctx_peer_invalid);
@@ -391,10 +391,10 @@ static int default_auth_cb (auth_client_request_t request, char **result, int fi
 
   for (i = 0; i < fields; i++) {					/* Felder durchlaufen */
     if (request[i].flags & AUTH_USER) {					/* Wenn username erfragt wird */
-      result[i] = ((server_vars *)arg)->auth_user;			/* dann den übergeben */
+      result[i] = ((server_vars *)arg)->auth_user;			/* dann den uebergeben */
     } 
     else if (request[i].flags & AUTH_PASS) {				/* wenn nach Passwort gefragt wird */
-      result[i] = ((server_vars *)arg)->auth_pass;			/* dann das übergeben */
+      result[i] = ((server_vars *)arg)->auth_pass;			/* dann das uebergeben */
     }
   }
 

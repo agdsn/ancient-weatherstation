@@ -117,7 +117,7 @@ label_list_ptr get_y_label_list(int c_hight, int padding){
   }
 
   /* Bugfix: manchmal wird das obeste Label nicht angezeigt,
-   * daher den Zaehler um eins erhöhen und wenn dabei ueber 
+   * daher den Zaehler um eins erhoehen und wenn dabei ueber 
    * den Bereich hinaus, dann wieder eins runter */
   num++;
   if ((temp + ((num - 1) * interval)) > (real_max - 1))

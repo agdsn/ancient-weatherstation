@@ -1,7 +1,7 @@
 /*
 
    weatherdeamon -- Weather Data Capture Program for the 
-                    'ELV-PC-Wettersensor-Empfänger'
+                    'ELV-PC-Wettersensor-Empfaenger'
    main.h        -- Part of the weatherdeamon
 
    Copyright (C) 2006 Jan Losinski
@@ -41,8 +41,8 @@ typedef struct {
   #endif
 } w_opts;
 
-/* Aufräumfunktionen */
-/* TODO: sollen Funktionen werden, mit denen die eintelnen Teile funktionen registrieren können, die aufräiumen 
+/* Aufraeumfunktionen */
+/* TODO: sollen Funktionen werden, mit denen die eintelnen Teile funktionen registrieren koennen, die aufraeiumen 
  * (Verbindung schließen, file schließen, ...) */
 typedef struct clean_struct *clean_struct_ptr;
 typedef struct clean_struct {
@@ -59,7 +59,7 @@ typedef struct clean_struct {
 void exit_error(char*);
 
 /* Ein Flag bekommen
- * Argument: Maske für das Flag, siehe definitions.h */
+ * Argument: Maske fuer das Flag, siehe definitions.h */
 int get_flag(int);
 
 #ifndef NO_LOGING
@@ -72,18 +72,18 @@ void log_error(char *);
  * 2. Argument: Log-Message */
 void log_data(time_t, char *);
 
-/* Gibt _EINEN_ Puffer für das Zusammensetzen 
- * der Fehler-Zeichenketten zurück. 
+/* Gibt _EINEN_ Puffer fuer das Zusammensetzen 
+ * der Fehler-Zeichenketten zurueck. 
  * Es sollte wirklich bei jedem Aufruf der selbe 
  * Puffer sein */
 char *get_error_buffer();
 #endif
 
-/* Ein neues Clean-Element anfügen. Ein Clean-Element ist eine Datenstruktur, die
+/* Ein neues Clean-Element anfuegen. Ein Clean-Element ist eine Datenstruktur, die
  * einen Pointer auf eine Funktion vom Typ
  * void func(void *data),
- * einen Zeiger auf beliebige Daten und einen Zeiger auf das nächste Element hält.
- * Die Funktionen werden beim regulären beenden des Programmes aufgerufen um zum bsp. 
+ * einen Zeiger auf beliebige Daten und einen Zeiger auf das naechste Element haelt.
+ * Die Funktionen werden beim regulaeren beenden des Programmes aufgerufen um zum bsp. 
  * datenbankverbindungen zu schließen, etc. */
 void add_clean(void (*func)(void *data), void *data);
 

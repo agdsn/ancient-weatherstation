@@ -28,7 +28,7 @@ $(BIN_NAME): $(OBJS)
 	@ $(LD) $(DEBUG) $(NOLOG) -L$$(pg_config --libdir)/pgsql -lesmtp -lssl -lpq $(LDFLAS) $(BIN_NAME) $(OBJS)
 	@ echo Binary $(BIN_NAME) ist fertig!
 
-# Abhängigkeiten
+# Abhaengigkeiten
 checksensor.o: checksensor.c definitions.h config.h checksensor.h mailer.h
 config.o: config.c config.h definitions.h checksensor.h mailer.h
 mailer.o: mailer.c mailer.h
@@ -55,14 +55,14 @@ install:
 	@ install -m644 COPYING $(DESTDIR)$(DOCDIR)
 
 
-# Aufräumnen (alle Object-Files löschen)
+# Aufraeumnen (alle Object-Files loeschen)
 cleanup:
-	@ echo "Räume auf..."
+	@ echo "Raeume auf..."
 	@ echo "...entferne Object-Files:"
 	@ echo "  " $(OBJS)
 	@ $(RM) -f $(OBJS)
 
 clean: cleanup
-	@ echo "...lösche binary:"
+	@ echo "...loesche binary:"
 	@ echo "  " $(BIN_NAME)
 	@ rm -f $(BIN_NAME)

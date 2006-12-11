@@ -1,7 +1,7 @@
 /*
 
    weatherdeamon -- Weather Data Capture Program for the 
-                    'ELV-PC-Wettersensor-Empfänger'
+                    'ELV-PC-Wettersensor-Empfaenger'
    write.h       -- Part of the weatherdeamon
 
    Copyright (C) 2006 Jan Losinski
@@ -25,16 +25,16 @@
 
 #include <time.h>
 
-/* Datenstrukturen für die einzelnen Sensoren ------------------------------- */
+/* Datenstrukturen fuer die einzelnen Sensoren ------------------------------- */
 
-/* Datenstruktur für den 'einfachen' Außensensor */
+/* Datenstruktur fuer den 'einfachen' Außensensor */
 typedef struct {
   time_t        timestamp;	/*Zeitstempel*/
   unsigned char address;	/*Addresse*/
   int           temp;         	/*Temparatur*/
 } auss1_data ;
 
-/* Datenstruktur für den 'besseren' Außensensor */
+/* Datenstruktur fuer den 'besseren' Außensensor */
 typedef struct {
   time_t        timestamp;	/*Zeitstempel*/
   unsigned char address;	/*Addresse*/
@@ -42,14 +42,14 @@ typedef struct {
   unsigned int  hum;     	/*Luftfeuchte*/
 } auss2_data;
 
-/* Datenstruktur für den Regensensor */
+/* Datenstruktur fuer den Regensensor */
 typedef struct {
   time_t        timestamp;	/*Zeitstempel*/
   unsigned char address;	/*Addresse*/
-  unsigned int  counter;	/*Zählerstand*/
+  unsigned int  counter;	/*Zaehlerstand*/
 } regen_data;
 
-/* Datenstruktur für den Windsensor */
+/* Datenstruktur fuer den Windsensor */
 typedef struct {
   time_t        timestamp;	/*Zeitstempel*/
   unsigned char address;	/*Addresse*/
@@ -58,7 +58,7 @@ typedef struct {
   unsigned int  richt;		/*Windrichtung*/
 } winds_data;
 
-/* Datenstruktur für den Innensensor */
+/* Datenstruktur fuer den Innensensor */
 typedef struct {
   time_t        timestamp;	/*Zeitstempel*/
   unsigned char address;	/*Addresse*/
@@ -67,7 +67,7 @@ typedef struct {
   unsigned int  press;		/*Luftdruck*/
 } innen_data;
 
-/* Datenstruktur für den Helligkeitssensor */
+/* Datenstruktur fuer den Helligkeitssensor */
 typedef struct {
   time_t        timestamp;	/*Zeitstempel*/
   unsigned char address;	/*Addresse*/
@@ -76,7 +76,7 @@ typedef struct {
   unsigned int  abslum;		/*Absolute Helligkeit*/
 } helli_data;
 
-/* Datenstruktur für das Pyranometer */
+/* Datenstruktur fuer das Pyranometer */
 typedef struct {
   time_t        timestamp;	/*Zeitstempel*/
   unsigned char address;	/*Addresse*/

@@ -139,8 +139,8 @@ class Wind{
   function _fetchAverage($sensId, $table, &$connection){
     $avData = array('average'=>0, 'count'=>0);						/* Array initialisieren */
     $i = 1;										/* Laufvariable */
-    while($avData['count']<5){								/* Schleife prüft, in welchem Interval 5 Werte zusammenkommen */ 
-      $i++;										/* Laufvariable erhöhen */
+    while($avData['count']<5){								/* Schleife prueft, in welchem Interval 5 Werte zusammenkommen */ 
+      $i++;										/* Laufvariable erhoehen */
       $avData = $this->_getAverage($sensId, $table, &$connection, ($i*20)." minutes");	/* Holt Werte mit gegebenem Interval */
     }
 
@@ -154,7 +154,7 @@ class Wind{
     $shortAvData = $this->_getAverage($sensId, $table, &$connection, "15 minutes");	/* Durchschnitt der letzten 15 minuten */
     $longAvData = $this->_getAverage($sensId, $table, &$connection, "120 minutes");	/* Durchschnitt der letzten 120 Minuten */
     if($shortAvData['count'] < 1 || $longAvData['count'] < 2){				/* Wenn in den letzten 5 minuten kein Wert kam oder in den letzten 120 min weniger als 3 Werte kamen */
-      $this->changing = "Berechnung momentan nicht möglich";				/* Dann ausgeben, dass momentan nichts berechnet werden kann */
+      $this->changing = "Berechnung momentan nicht moeglich";				/* Dann ausgeben, dass momentan nichts berechnet werden kann */
       return;										/* und aus der Funktion huepfen */
     }
     $changing = $shortAvData['average'] - $longAvData['average'];			/* Aenderung berechnen */

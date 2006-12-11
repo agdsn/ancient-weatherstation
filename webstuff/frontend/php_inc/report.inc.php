@@ -88,21 +88,21 @@ class Report{
 
   }
 
-  /* Ein Modul hinzufügen */
+  /* Ein Modul hinzufuegen */
   function addModule($modName){
     new Module($this->rptArray[9], $this->rptArray[2], $this->_getParserInstance(), $this->_getConnInstance());
   }
 
-  /* Callback-Funktion, wird ausgeführt wenn {content:fill:xyz} gefunden wird */
+  /* Callback-Funktion, wird ausgefuehrt wenn {content:fill:xyz} gefunden wird */
   function fill($contentId){
     $content_split = explode("_", $contentId);										/* Modultyp bekommen */
-    $callObject	   = & call_user_method("_get_".$content_split[0], $this);						/* Instanz der zum Modul gehörenden Klasse */
+    $callObject	   = & call_user_method("_get_".$content_split[0], $this);						/* Instanz der zum Modul gehoerenden Klasse */
     $funcName      = "get".substr($contentId, strlen($content_split[0]), strlen($contentId)-strlen($content_split[0])); /* Namen der In der Instanz aufzurufenden Methode zusammenbauen */
     
-    return $callObject->$funcName($content_split[1]);									/* Methode ausführen (Wert holen) und zurückgeben */
+    return $callObject->$funcName($content_split[1]);									/* Methode ausfuehren (Wert holen) und zurueckgeben */
   }
 
-  /* Parser Instanzieren (wenn noch nicht ist) und zurückgeben */
+  /* Parser Instanzieren (wenn noch nicht ist) und zurueckgeben */
   function &_getParserInstance(){
     if($this->parserInstance==NULL)
       $this->parserInstance = new Parser();

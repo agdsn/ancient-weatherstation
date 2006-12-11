@@ -10,7 +10,7 @@
 include_once($path."php_inc/connection.inc.php");
 
 
-/* Klasse, Die Daten üben die Einzelnen Sensoren bereitstellt */
+/* Klasse, Die Daten ueben die Einzelnen Sensoren bereitstellt */
 class Sensor{
   
   var $id;		/* Die ID des Sensors */
@@ -24,7 +24,7 @@ class Sensor{
     $this->_fetchSensorData($sensId, &$connection);
   }
 
-  /* Holt die Daten über den Sensor aus der Datenbank */
+  /* Holt die Daten ueber den Sensor aus der Datenbank */
   function _fetchSensorData($sensId, &$connection){
     $query  = "SELECT * FROM sensoren WHERE id=".$sensId;
     $data   = $connection->fetchQueryResultLine($query);
@@ -36,7 +36,7 @@ class Sensor{
     $this->address  = $data['addresse'];
   }
 
-/* --- Funktionen, die die Einzelnen Eigenschaften des Sensors zurückgeben --- */
+/* --- Funktionen, die die Einzelnen Eigenschaften des Sensors zurueckgeben --- */
   function get_id(){
     return $this->id;
   }

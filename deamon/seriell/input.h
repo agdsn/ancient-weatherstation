@@ -1,7 +1,7 @@
 /*
 
    weatherdeamon -- Weather Data Capture Program for the 
-                    'ELV-PC-Wettersensor-Empfänger'
+                    'ELV-PC-Wettersensor-Empfaenger'
    input.h       -- Part of the weatherdeamon
 
    Copyright (C) 2006 Jan Losinski
@@ -26,5 +26,5 @@
 
 /* Funktionen */
 
-/* Schnittstelle öffnen + lesen */
+/* Schnittstelle oeffnen + lesen */
 int read_port();

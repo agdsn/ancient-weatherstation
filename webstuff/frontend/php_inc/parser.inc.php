@@ -17,7 +17,7 @@ class Parser{
     return $this->contentArray;
   }
 	
-  /* Fügt Inhalt in das Inhalts-Array ein */
+  /* Fuegt Inhalt in das Inhalts-Array ein */
   function appendContent($newContent){
     if(is_array($newContent)){
       for($i = 0; $i < count($newContent); $i++){
@@ -63,7 +63,7 @@ class Parser{
   }
 
 
-  /* Sucht innerhalb eines Template-Files nach dem richtigem Template-stück 
+  /* Sucht innerhalb eines Template-Files nach dem richtigem Template-stueck 
    * und pappt es in ein neues Array */
   function _fetchFilePart($fileArray, $filePart){
     $inPart = false;									/* Flag ob innerhalb des gesuchten Templates Initialisieren */
@@ -74,7 +74,7 @@ class Parser{
           $inPart = false;								/* ...wenn gefunden Flag wieder False setzen */
           break;									/* ...und Schleife abbrechen */
         } else {
-          array_push($newArray, $fileArray[$i]);					/* An sonsten Zeile zum neuem Array hinzufügen */
+          array_push($newArray, $fileArray[$i]);					/* An sonsten Zeile zum neuem Array hinzufuegen */
 	}
       } else {										/* Wenn nich im gesuchtem Template */
         if(preg_match("/\{content:part:".$filePart."\}/i", $fileArray[$i])){		/* Nach dem Anfang des Templates suchen */

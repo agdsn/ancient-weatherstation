@@ -1,7 +1,7 @@
 /*
 
    weatherdeamon -- Weather Data Capture Program for the 
-                    'ELV-PC-Wettersensor-Empfänger'
+                    'ELV-PC-Wettersensor-Empfaenger'
    write.c       -- Part of the weatherdeamon
 
    Copyright (C) 2006 Jan Losinski
@@ -28,7 +28,7 @@
  * 
  * Sollte irgend jemand das Programm weiter verwenden,
  * jedoch die Daten anders oder woandershin wegschreiben
- * wollen, so müssen nur diese Funktionen neu implementiert
+ * wollen, so muessen nur diese Funktionen neu implementiert
  * werden. 
  */
 
@@ -111,7 +111,7 @@ static void check_create_query_buffer(){
 }
 
 /* Guckt ob Verbindung da und versucht aufzubauen. 
- * gibt 1 zurück, wenn erfolgreich, sonst 0 */
+ * gibt 1 zurueck, wenn erfolgreich, sonst 0 */
 static int pg_connect(){
   if(PQstatus(connection) != CONNECTION_OK){
     if (connection == NULL){
@@ -120,7 +120,7 @@ static int pg_connect(){
 	snprintf(conn_string, 512, "host=%s dbname=%s user=%s password=%s connect_timeout=%s", global_opts.pg_host, global_opts.pg_database, global_opts.pg_user, global_opts.pg_pass, global_opts.pg_timeout);
       }
       connection = PQconnectdb(conn_string);			/* Connection aufbauen */
-      add_clean(clean_write, connection);			/* Callbackfunktion zum Aufräumen registrieren */
+      add_clean(clean_write, connection);			/* Callbackfunktion zum Aufraeumen registrieren */
     } else {
       PQreset(connection);					/* Connecion resetten */
     }
@@ -149,13 +149,13 @@ static void pg_insert(char *query){
       log_error(get_error_buffer());
       #endif
     } else {
-      DEBUGOUT2("Query: '%s' ausgeführt\n", query);
+      DEBUGOUT2("Query: '%s' ausgefuehrt\n", query);
     }
     PQclear(res);
   }
 }
 
-/* Callbackfunktion zum Aufräume.
+/* Callbackfunktion zum Aufraeume.
  * Schliesst die Verbindung zur Datenbank */
 static void clean_write(void *data){
   PGconn *conn =  data;

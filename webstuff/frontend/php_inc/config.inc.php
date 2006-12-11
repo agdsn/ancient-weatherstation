@@ -16,7 +16,7 @@ if(file_exists("/etc/weatherstation/frontend.conf")){
 
 
 
-/* Config-Klasse, Bitte nicht ändern! */
+/* Config-Klasse, Bitte nicht aendern! */
 class Config{
 
   function getPgConnString(){

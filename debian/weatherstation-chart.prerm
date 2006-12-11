@@ -7,7 +7,7 @@ IMGDIR=$(grep dflt_image_location /etc/weatherstation/chart.conf | cut -f2)
 FILES=$(ls -Al $IMGDIR | wc -l)
 
 if [ $FILES -gt 1 ]; then
-	echo -n "lösche $[$FILES - 1] generierte Bilder ... "
+	echo -n "loesche $[$FILES - 1] generierte Bilder ... "
 	/bin/rm -f $IMGDIR/*
 	echo "done"
 fi

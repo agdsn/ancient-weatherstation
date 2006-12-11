@@ -55,8 +55,8 @@ typedef struct {
   int 			mail_port;	/* Port des Mailservers */
   char			mail_ssl;	/* Flag ob SSL (TLS) genutzt werden soll */
   char 			mail_auth;	/* Flag ob authentifiziert werden soll */
-  char 			*mail_auth_user;  /* User für die authentifizierung */
-  char 			*mail_auth_pass;  /* Passwort für die Authentifizierung */
+  char 			*mail_auth_user;  /* User fuer die authentifizierung */
+  char 			*mail_auth_pass;  /* Passwort fuer die Authentifizierung */
 } w_opts;
 
 /* Struktur, die Infos ueber den Sensor enthaelt */

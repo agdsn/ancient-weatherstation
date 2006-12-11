@@ -27,15 +27,15 @@
 #define DEFAULT_PG_DATABASE 	"localbase"		/* Postgres-Datenbank */
 #define DEFAULT_PG_TIMEOUT 	"20"			/* Postgres-Timeout */
 #define DEFAULT_CONFIG_FILE	"/etc/weatherstation/checksensor.conf"	/* Standart-Configdatei */
-#define DEFAULT_CHECK_INTERVAL	"24"			/* Standart-Interval, indem der Sensor das letzte mal hätte senden sollen (in h) */
-#define DEFAULT_MIN_SENDINGS	"24"			/* Standart-Wert, wieviele Daten der Sensor in den letzten x stunden hätte senden sollen */
+#define DEFAULT_CHECK_INTERVAL	"24"			/* Standart-Interval, indem der Sensor das letzte mal haette senden sollen (in h) */
+#define DEFAULT_MIN_SENDINGS	"24"			/* Standart-Wert, wieviele Daten der Sensor in den letzten x stunden haette senden sollen */
 
 
-/*Alle möglichen Definitionen, die in allen code-schnipseln benötigt werden*/
+/*Alle moeglichen Definitionen, die in allen code-schnipseln benoetigt werden*/
 
 /* Fehlermeldungen ------------------------------------------------------*/
 #define  ERROR_MAKECONN "PgSQL-Fehler: Kann Datenbankverbindung nicht herstellen\n"
-#define  ERROR_QUERY	"PgSQL-Fehler: Kann query nicht sudführen \n"
+#define  ERROR_QUERY	"PgSQL-Fehler: Kann query nicht sudfuehren \n"
 #define  ERROR_SEIINST "Signal-Fehler: Kann Signalhandler zum beenden nicht installieren\n"
 
 /* Mail - Kopf -----------------------------------------------------------*/

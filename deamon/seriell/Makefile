@@ -28,7 +28,7 @@ $(BIN_NAME): $(OBJS)
 	@ $(LD) $(DEBUG) $(NOLOG) -L$$(pg_config --libdir)/pgsql -lpq $(LDFLAS) $(BIN_NAME) $(OBJS)
 	@ echo Binary $(BIN_NAME) ist fertig!
 
-# Abhängigkeiten
+# Abhaengigkeiten
 main.o: main.c main.h definitions.h config.h input.h
 config.o: config.c config.h definitions.h
 input.o: input.c input.h main.h config.h definitions.h process.h
@@ -62,14 +62,14 @@ install:
 	@ install -m644 COPYING $(DESTDIR)$(DOCDIR)
 
 
-# Aufräumnen (alle Object-Files löschen)
+# Aufraeumnen (alle Object-Files loeschen)
 cleanup:
-	@ echo "Räume auf..."
+	@ echo "Raeume auf..."
 	@ echo "...entferne Object-Files:"
 	@ echo "  " $(OBJS)
 	@ $(RM) -f $(OBJS)
 
 clean: cleanup
-	@ echo "...lösche binary:"
+	@ echo "...loesche binary:"
 	@ echo "  " $(BIN_NAME)
 	@ rm -f $(BIN_NAME)

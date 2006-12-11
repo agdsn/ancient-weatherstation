@@ -1,7 +1,7 @@
 /*
 
    weatherdeamon -- Weather Data Capture Program for the 
-                    'ELV-PC-Wettersensor-Empfänger'
+                    'ELV-PC-Wettersensor-Empfaenger'
    process.c     -- Part of the weatherdeamon
 
    Copyright (C) 2006 Jan Losinski
@@ -54,7 +54,7 @@ static void check_log_buffer();
 static char* prepend_type_address(u_char, u_char);
 
 /* globale Variablen */
-char *log_buffer = NULL;   	/* Puffer für die Log-Ausgabe */
+char *log_buffer = NULL;   	/* Puffer fuer die Log-Ausgabe */
 int last_rain_count = -1;	/* Letzter gemessener Wasserstand */
 
 
@@ -101,7 +101,7 @@ void process_data(time_t timestamp, u_char *buffer){
 
 /* Wertkonvertierungen --------------------------------------------------- */
 
-/* Wertkonvertierungen für den 'einfachen' Außensensor */
+/* Wertkonvertierungen fuer den 'einfachen' Außensensor */
 static auss1_data process_auss1(time_t timestamp, u_char address, u_char *buffer){
   auss1_data data;						/* Datenstruktur */
 
@@ -123,7 +123,7 @@ static auss1_data process_auss1(time_t timestamp, u_char address, u_char *buffer
   return data;
 }
 
-/* Wertkonvertierungen für den 'besseren' Außensensor */
+/* Wertkonvertierungen fuer den 'besseren' Außensensor */
 static auss2_data process_auss2(time_t timestamp, u_char address, u_char *buffer){
   auss2_data data;						/* Datenstruktur */
 
@@ -146,32 +146,32 @@ static auss2_data process_auss2(time_t timestamp, u_char address, u_char *buffer
   return data;
 }
 
-/* Wertkonvertierungen für den Regensensor (ein Zählschritt = 370ml/m^2)*/
+/* Wertkonvertierungen fuer den Regensensor (ein Zaehlschritt = 370ml/m^2)*/
 static regen_data process_regen(time_t timestamp, u_char address, u_char *buffer){
   regen_data data;							/* Datenstruktur */
-  int new_rain_count = 0;						/* Neuer Zählerstand */
-  int now_rain_count = 0;						/* Delta-Zählerstand */
+  int new_rain_count = 0;						/* Neuer Zaehlerstand */
+  int now_rain_count = 0;						/* Delta-Zaehlerstand */
 
   data.timestamp = timestamp;						/* Zeitstempel */
   data.address   = address;						/* Addresse */
-  new_rain_count = ((buffer[2] & 0x1F) << 7) | remove_msb(buffer[3]);	/* Niederschlagszähler */
+  new_rain_count = ((buffer[2] & 0x1F) << 7) | remove_msb(buffer[3]);	/* Niederschlagszaehler */
   
-  if(last_rain_count == -1)						/* Nach Programmstart Zähler initialisieren */
+  if(last_rain_count == -1)						/* Nach Programmstart Zaehler initialisieren */
     last_rain_count = new_rain_count;
 
   now_rain_count = new_rain_count - last_rain_count;			/* neuen Niederschlag berechnen */
   
-  if(now_rain_count < 0){						/* Wenn Integerüberlauf im Sensor */
-    now_rain_count = (0x3FFF - last_rain_count) + new_rain_count;	/* Dann letzten gemessenen Wert vom Max-Integer-Wert abziehen und neuen Zählwert dazurechnen */
-    DEBUGOUT1("Integer-Überlauf\n");
+  if(now_rain_count < 0){						/* Wenn Integerueberlauf im Sensor */
+    now_rain_count = (0x3FFF - last_rain_count) + new_rain_count;	/* Dann letzten gemessenen Wert vom Max-Integer-Wert abziehen und neuen Zaehlwert dazurechnen */
+    DEBUGOUT1("Integer-Ueberlauf\n");
   }
 
-  data.counter = (now_rain_count * 370);				/* Ein Zählschritt entspricht 370ml/m^2, also änderung mit 370 multiplizieren und zuweisen */
+  data.counter = (now_rain_count * 370);				/* Ein Zaehlschritt entspricht 370ml/m^2, also aenderung mit 370 multiplizieren und zuweisen */
 
-  last_rain_count = new_rain_count;					/* Zähler neu setzen */
+  last_rain_count = new_rain_count;					/* Zaehler neu setzen */
 
   DEBUGOUT2("Regensensor an Addresse %i\n", address);
-  DEBUGOUT3("Zähler: %d  Differenz: %d\n", new_rain_count,now_rain_count);
+  DEBUGOUT3("Zaehler: %d  Differenz: %d\n", new_rain_count,now_rain_count);
   DEBUGOUT2("Niederschlag: %dml/m^2\n", data.counter);
 
   #ifndef NO_LOGING 
@@ -185,7 +185,7 @@ static regen_data process_regen(time_t timestamp, u_char address, u_char *buffer
   return data;
 }
 
-/* Wertkonvertierungen für den Windsensor */
+/* Wertkonvertierungen fuer den Windsensor */
 static winds_data process_winds(time_t timestamp, u_char address, u_char *buffer){
   winds_data data;						/* Datenstruktur */
   
@@ -209,7 +209,7 @@ static winds_data process_winds(time_t timestamp, u_char address, u_char *buffer
   return data;
 }
 
-/* Wertkonvertierungen für den Innensensor */
+/* Wertkonvertierungen fuer den Innensensor */
 static innen_data process_innen(time_t timestamp, u_char address, u_char *buffer){
   innen_data data;						/* Datenstruktur */
 
@@ -233,7 +233,7 @@ static innen_data process_innen(time_t timestamp, u_char address, u_char *buffer
   return data;
 }
 
-/* Wertkonvertierungen für den Helligkeitssensor */
+/* Wertkonvertierungen fuer den Helligkeitssensor */
 static helli_data process_helli(time_t timestamp, u_char address, u_char *buffer){
   helli_data data;						/* Datenstruktur */
 
@@ -257,7 +257,7 @@ static helli_data process_helli(time_t timestamp, u_char address, u_char *buffer
   return data;
 }
 
-/* Wertkonvertierungen für das Pyranometer */
+/* Wertkonvertierungen fuer das Pyranometer */
 static pyano_data process_pyano(time_t timestamp, u_char address, u_char *buffer){
   pyano_data data;						/* Datenstruktur */
 
@@ -284,7 +284,7 @@ static pyano_data process_pyano(time_t timestamp, u_char address, u_char *buffer
 
 /* Verschiedenes ----------------------------------------------------------*/
 
-/* einen vorzeichenbehafteten 14-Bit Binärwert in einen Int umwandeln*/
+/* einen vorzeichenbehafteten 14-Bit Binaerwert in einen Int umwandeln*/
 static int convert_signed_int(u_char hi_byte, u_char lo_byte){
   int val  = 0;
   val = convert_unsigned_int(hi_byte,lo_byte);
@@ -294,7 +294,7 @@ static int convert_signed_int(u_char hi_byte, u_char lo_byte){
   return val;
 }
 
-/* einen 14-Bit Binärwert in einen Int umwandeln*/
+/* einen 14-Bit Binaerwert in einen Int umwandeln*/
 static unsigned int convert_unsigned_int(u_char hi_byte, u_char lo_byte){
   return (remove_msb(hi_byte) << 7) | remove_msb(lo_byte);
 }
@@ -332,7 +332,7 @@ int check_msb_set(u_char byte){
 
 #ifndef NO_LOGING
 
-/* Prüfen ob Puffer für Logausgaben angelegt und renn nicht, dann anlegen */
+/* Pruefen ob Puffer fuer Logausgaben angelegt und renn nicht, dann anlegen */
 static void check_log_buffer(){
   if (log_buffer == NULL){
     log_buffer = malloc(sizeof(char)*LOG_BUFFERSIZE);
@@ -340,7 +340,7 @@ static void check_log_buffer(){
 }
 
 /* In der Log-Zeile die Addresse und den Typ des Sensors davorbauen 
- * gibt die Addresse zurück, an der die Werte weitergeschrieben werden können */
+ * gibt die Addresse zurueck, an der die Werte weitergeschrieben werden koennen */
 static char* prepend_type_address(u_char type, u_char address){
   return (log_buffer + sprintf(log_buffer, "Sens: %i:%i - ", type, address));
 }

@@ -1,7 +1,7 @@
 /*
 
    weatherdeamon -- Weather Data Capture Program for the 
-                    'ELV-PC-Wettersensor-Empfänger'
+                    'ELV-PC-Wettersensor-Empfaenger'
    input.c       -- Part of the weatherdeamon
 
    Copyright (C) 2006 Jan Losinski
@@ -59,7 +59,7 @@ static int set_port()
   if ((fd = open(global_opts.device,O_RDONLY | O_NONBLOCK | O_NOCTTY | O_NDELAY)) < 0)
     exit_error(ERROR_OPEN);
 
-  /* Erstmal alles zurücksetzen*/
+  /* Erstmal alles zuruecksetzen*/
   cfmakeraw(&options);
   /* Uebertragungsgeschwindigkeit 19200 Baud */
   cfsetispeed(&options, B19200);
@@ -74,7 +74,7 @@ static int set_port()
   /* Local-Flags brauchmer auch keine*/
   options.c_lflag = 0;
 
-  /* Zeug für die Flusskontrolle */
+  /* Zeug fuer die Flusskontrolle */
   //options.c_cc[VMIN] = 1;
   //options.c_cc[VTIME] = 5;
 
@@ -94,13 +94,13 @@ static int set_port()
 int read_port(){
   fd = set_port();
   int len=0; 				   		/* Anzahl gelesener Daten */
-  int i, readlen =1;					/* Laufvariable, Lesezähler */ 
+  int i, readlen =1;					/* Laufvariable, Lesezaehler */ 
   u_char  buffer[INPUT_BUFFERSIZE], *temp = NULL;       /* Lesepuffer, Temp-Zeiger */
   struct pollfd pfd = {fd, POLLIN, (short)NULL};					/* polling-Optionen */
 
-  temp = buffer;					/* Temporärer Zeiger bekommt die Anfangsaddresse vom Puffer */
+  temp = buffer;					/* Temporaerer Zeiger bekommt die Anfangsaddresse vom Puffer */
 
-  add_clean(clean_port, &fd);				/* Callbackfunktion zum Aufräumen registrieren */
+  add_clean(clean_port, &fd);				/* Callbackfunktion zum Aufraeumen registrieren */
 
 
   DEBUGOUT1("\nWarte auf Daten\n\n");
@@ -108,10 +108,10 @@ int read_port(){
   do {
     if((len = poll(&pfd, 1, INPUT_TIMEOUT)) > 0){ 	/* warten auf Eingabepuffer */
       len = read(fd, temp, 1);				/* Zeichenweise lesen */
-      if(readlen == 1){					/* Solange noch nix verwertbares gelesen wurde auf das Startbyte prüfen */
+      if(readlen == 1){					/* Solange noch nix verwertbares gelesen wurde auf das Startbyte pruefen */
         if(*temp == STX){
 	  temp++;					/* Wenn startbyte gefunden Zeiger auf das 2. Puffer-Element setzen */
-	  readlen++;					/* Und Lese-Zähler erhöhen */
+	  readlen++;					/* Und Lese-Zaehler erhoehen */
 	}
       } else {						/* Wenn schon was relevantes gelesen wurde */
         if(readlen == 8 && *temp == ETX){		/* Wenn schon 8 Byte gelesen wurden und das letzte Byte das Stoppbyte ist */
@@ -120,19 +120,19 @@ int read_port(){
 	    DEBUGOUT2("%x ",buffer[i]);
           DEBUGOUT1("\n");
           
-	  check_data(readlen,buffer);			/* Daten nochmals Prüfen und verarbeiten */
+	  check_data(readlen,buffer);			/* Daten nochmals Pruefen und verarbeiten */
           
 	  DEBUGOUT1("------------------------------------------\n");
           
-	  readlen = 1;					/* Lesezähler zurücksetzen */
+	  readlen = 1;					/* Lesezaehler zuruecksetzen */
 	  temp = buffer;				/* Temp.-Zeiger wieder auf Pufferanfang setzen */
 	} else {					/* Wenn schon was relevantes da war, aber noch keine 8 byte incl. Stoppbyte */
           if(*temp == ETX || readlen >= 8){		/* Wenn das aktuelle byte das Stoppbyte oder das 8. Byte, dann sind die daten nicht ok */
-            readlen = 1;				/* Lesezähler zurücksetzen */
+            readlen = 1;				/* Lesezaehler zuruecksetzen */
 	    temp = buffer;				/* Temp-Zeiger auf Pufferanfang */
 	  } else {					/* Sonst */
-            readlen++;					/* Lesezähler erhöhen */
-	    temp++;					/* Temp.-Zeiger auf das nächste element setzen */
+            readlen++;					/* Lesezaehler erhoehen */
+	    temp++;					/* Temp.-Zeiger auf das naechste element setzen */
 	  }
 	}
       }
@@ -145,12 +145,12 @@ int read_port(){
   return 1;
 }
 
-/* Überprüfung, ob die Struktur der Daten stimmt
+/* Ueberpruefung, ob die Struktur der Daten stimmt
  * es sollten 8 Byte ankommen:
  * <STX><Typ><W1><W2><W3><W4><W5><EXT>
  * wobei <STX> = 02h
  * und   <EXT> = 03h
- * Bei <Typ>,<W1>...<W7> ist bit 7 (MSB) immer gesetzt, gehört also nicht zu den Daten!
+ * Bei <Typ>,<W1>...<W7> ist bit 7 (MSB) immer gesetzt, gehoert also nicht zu den Daten!
  * Im <Typ>-Byte sind die unteren 4 bit die Addresse und die oberen 3 (weil 7. ist ja nicht benutzt)
  * der Typ des Sensors. 
  * Die Typenzuordnung steht in der definitions.h.

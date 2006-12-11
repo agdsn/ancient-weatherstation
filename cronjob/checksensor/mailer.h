@@ -31,7 +31,7 @@
 /* SSL-Benutzung */
 #define SSL_ENABLED   0 			/* auf jeden Fall eingschaltet */ 
 #define SSL_DISABLED  1				/* Ausgeschaltet */
-#define SSL_REQUIRED  2				/* Wenn benötigt */
+#define SSL_REQUIRED  2				/* Wenn benoetigt */
 
 /* Zertifikat akzeptieren */
 #define SSL_ACCEPT    1				/* Ja */
@@ -53,10 +53,10 @@
 #define MAILER_STATUS_FAILTURE_SETSERVER	4	/* Server kann nicht gesetzt werden */
 #define MAILER_STATUS_FAILTURE_CREATEAUTHCTX	5	/* Authentifizierungskontext kann nicht angelegt werden */
 #define MAILER_STATUS_FAILTURE_SETAUTHCTX	6	/* Authentifizierungskontext kann nicht gesetzt werden */
-#define MAILER_STATUS_FAILTURE_ADDMESSAGE	7	/* Message kann nicht hinzugefügt werden */
+#define MAILER_STATUS_FAILTURE_ADDMESSAGE	7	/* Message kann nicht hinzugefuegt werden */
 #define MAILER_STATUS_FAILTURE_SETREVPATH	8	/* Serveraddresse kann nicht gesetzt werden */
 #define MAILER_STATUS_FAILTURE_SETMESSAGECB	9	/* Message-Callback-fkt kann nicht gesetzt werden */
-#define MAILER_STATUS_FAILTURE_ADDRECIPIENTS	10	/* Empfaenger kkoennen nicht hinzugefügt werden */
+#define MAILER_STATUS_FAILTURE_ADDRECIPIENTS	10	/* Empfaenger kkoennen nicht hinzugefuegt werden */
 #define MAILER_STATUS_FAILTURE_STARTSESSION	11	/* Session kann nicht gestartet werden */
 #define MAILER_STATUS_FAILTURE_SENDING		12 	/* Fehler beim senden */
 #define MAILER_STATUS_FAILTURE_CREATE_HEADER	13	/* Header kann nicht gebaut werden */
@@ -67,22 +67,22 @@
  * das 2. Argument ist das Argument, welches der mail_message-fkt. uebergeben wurde */
 typedef char *(*mail_linereader_cb)(int line, void *arg);
 
-/* Datenstruktur für die Addressliste */
+/* Datenstruktur fuer die Addressliste */
 typedef struct address_t {
   char 		   *mailbox;          		/* mail-Addresse */
-  struct address_t *next;			/* Zeiger auf das nächste Element */
+  struct address_t *next;			/* Zeiger auf das naechste Element */
 } address_struct;
 
 /* Zusammenfassung jeglicher Addressen */
 typedef struct address_all_t {
   address_struct *from;				/* Absender */
-  address_struct *to;				/* Empfänger */
+  address_struct *to;				/* Empfaenger */
   address_struct *cc;				/* cc */
   address_struct *bcc;				/* bcc */
 } address_all_struct;			
  
 
-/* Datenstruktur für die Server-Optionen */
+/* Datenstruktur fuer die Server-Optionen */
 typedef struct server_vars_t {
   char  		*host;			/* host */
   int   		port;			/* port */
@@ -103,13 +103,13 @@ typedef struct server_vars_t {
  * 2. Argument: Betreff der Nachicht
  * 3. Argument: eightbit-flag setzen oder nicht 
  * 4. Argument: Callback-Fkt. zum lesen einer Zeile
- * 5. Argument: Argument für die Callback-Fkt.
+ * 5. Argument: Argument fuer die Callback-Fkt.
  * 6. Argument: Server-Einstellungen 
  * gibt einen Statusnummer zurueck */
 int mail_message(address_all_struct *,  char *, int, mail_linereader_cb, void *, server_vars *);
 
 
-/* Gibt ein grundgerüst mit default-servereinstellungen
+/* Gibt ein grundgeruest mit default-servereinstellungen
  * zurueck, damit man nicht immer alles selbst angeben muss */
 server_vars *get_default_servopts();
 
