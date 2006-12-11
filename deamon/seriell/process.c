@@ -286,10 +286,12 @@ static pyano_data process_pyano(time_t timestamp, u_char address, u_char *buffer
 
 /* einen vorzeichenbehafteten 14-Bit Binärwert in einen Int umwandeln*/
 static int convert_signed_int(u_char hi_byte, u_char lo_byte){
-  int val;  
+  unsigned int val  = 0;
+  unsigned int mask = 0;
   val = convert_unsigned_int(hi_byte,lo_byte);
   if (get_bit(val,13)){
-    val |= ~(0x3FFF);
+    mask += (0x3FFF);
+    val  |= ~mask;
   }
   return val;
 }

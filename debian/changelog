@@ -1,3 +1,9 @@
+weatherstation (1.0.4-1) stable; urgency=low
+
+  * second try to fix negative tempatatures
+
+ -- Jan Losinski <losinski@wh2.tu-dresden.de>  Thu,  2 Nov 2006 09:38:14 +0100
+
 weatherstation (1.0.3-1) stable; urgency=low
 
   * Some license-changes in the frontend
