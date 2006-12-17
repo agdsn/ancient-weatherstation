@@ -40,6 +40,8 @@ typedef struct image_cfg {
   long 	 gen_interval;		/* Generierungsinterval */
   long 	 show_interval;		/* Anzeigeinterval */
   long 	 label_interval;	/* Label - Interval */
+  long	 fix_timepoint;		/* Zu festem Zeitpunkt generieren */
+  long 	 timepoint;		/* Startzeitpunkt */
   int 	 label_sum;		/* Sollen Werte aufsummiert statt gemittelt werden */
   int 	 width;			/* Breite */
   int 	 height;		/* Hoehe */

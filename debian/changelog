@@ -1,3 +1,9 @@
+weatherstation (1.0.5-1) stable; urgency=low
+
+  * New feature added in chart-program: building graphs on a 'fixpoint'
+
+ -- Jan Losinski <losinski@wh2.tu-dresden.de>  Thu,  2 Nov 2006 09:38:14 +0100
+
 weatherstation (1.0.4-2) stable; urgency=low
 
   * third try to fix negative tempatatures (seems to be correct!)

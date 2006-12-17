@@ -36,6 +36,7 @@
 #define DEFAULT_GEN_INTERVAL	"15m"
 #define DEFAULT_SHOW_INTERVAL	"2d"
 #define DEFAULT_LABEL_INTERVAL	"2h"
+#define DEFAULT_FIX_TIMEPOINT	"no"
 #define DEFAULT_LABEL_SUM	"no"
 #define DEFAULT_ZERO_MIN	"no"
 #define DEFAULT_AS_BARS		"no"
@@ -86,6 +87,7 @@
 #define FALSE 0
 #define TRUE 1
 #define IMG_FONT "/usr/share/fonts/truetype/freefont/FreeSans.ttf"
+#define CRON_INTERVAL 15  //Minuten
 
 
 /* Debug --------------------------------------------------------------- */

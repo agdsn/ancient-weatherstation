@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 #include "../common.h"
 #include "../config.h"
 #include "image_common.h"
@@ -35,7 +36,7 @@ static int read_time(const char *, void *);
 static int read_color(const char *, void *);
 static int read_double(const char *, void *);
 static int read_fmt_str(const char *, void *);
-
+static int read_date(const char *, void *);
 
 
 /* Zuordnung zwischen Schluesselwoertern in der Config, Der Funktion, die diese auswertet 
@@ -51,6 +52,8 @@ static const config_keyword keywords[] = {
   {"gen_interval",    		read_time,          	&(img_cfg.gen_interval),        	DEFAULT_GEN_INTERVAL},
   {"show_interval",    		read_time,          	&(img_cfg.show_interval),       	DEFAULT_SHOW_INTERVAL},
   {"label_interval",   		read_time,          	&(img_cfg.label_interval),      	DEFAULT_LABEL_INTERVAL},
+  {"fixed_timepoint",  		read_yn,          	&(img_cfg.fix_timepoint),	       	DEFAULT_FIX_TIMEPOINT},
+  {"timepoint",   		read_date,          	&(img_cfg.timepoint),		       	""},
   {"label_sum",   		read_yn,          	&(img_cfg.label_sum),	        	DEFAULT_LABEL_SUM},
   {"width",			read_int,               &(img_cfg.width),    			DEFAULT_WIDTH},
   {"height",			read_int,               &(img_cfg.height),    			DEFAULT_HEIGHT},
@@ -130,7 +133,8 @@ static int read_color(const char *line, void *arg){
   char *buff = malloc(sizeof(char)*3);
 
   if(strlen(line) == 11){						/* Wenn String auch wirkle 11 Zeichen lang */
-    if (strchr(line, ':') != NULL){					/* und min. 1 : vorkommt */  
+    if (strchr(line, ':') != NULL){					/* und min. 1 : vorkommt */ 
+      strcpy(buff, "00\0");
       tmp        = malloc(sizeof(img_color_t));				/* Neues Farbelement allocieren */
       tmp->r     = strtol(strncpy(buff, line,   2), NULL, 16);		/* r */
       tmp->g     = strtol(strncpy(buff, line+3, 2), NULL, 16);		/* g */
@@ -191,6 +195,47 @@ static int read_time(const char *line, void *arg){
   return 1;
 }
 
+/* Liest das Datum, an dem die Bilder-generierung 
+ * 'festgemacht' werden soll.
+ * Format: yyyy-mm-dd-hh-mm */
+static int read_date(const char *line, void *arg){
+  struct tm timestruct;
+  long *dest = arg;
+  char *buff = malloc(sizeof(char)*5);
+  time_t temp = 0;
+
+  if(line == NULL){
+    *dest = 0;
+    free(buff);
+    return 1;
+  }
+
+  if(strlen(line) != 16){
+    DEBUGOUT2(" Invalid Date-String '%s'!\n", line);
+    *dest = 0;
+    free(buff);
+    return 1;
+  } else {
+    timestruct.tm_sec = 0;
+    timestruct.tm_isdst = -1;
+    strcpy(buff, "0000\0");
+    timestruct.tm_year = (atol(strncpy(buff, line,   4)) - 1901);
+    strcpy(buff, "00\0");
+    timestruct.tm_mon  = atol(strncpy(buff, line+5, 2));
+    timestruct.tm_mday = atol(strncpy(buff, line+8, 2));
+    timestruct.tm_hour = atol(strncpy(buff, line+11, 2));
+    timestruct.tm_min  = atol(strncpy(buff, line+14, 2));
+
+    temp = mktime(&timestruct);
+
+    DEBUGOUT2(" Datum gelesen: %s\n", ctime(&temp));
+  }
+ 
+  *dest = temp;
+
+  free(buff);
+  return 1;
+}
 
 /* Liest ein Bild-Configfile */
 int get_image_cfg(char *file){

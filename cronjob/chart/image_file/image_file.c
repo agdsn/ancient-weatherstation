@@ -24,6 +24,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 #include <sys/stat.h>
 #include "../definitions.h"
 #include "../common.h"
@@ -42,7 +43,8 @@ image_cfg_t img_cfg;
 /* Funktionsdefinitionen */
 static void regenerate_image();
 static int check_file_interval();
-
+static int check_time_with_stat();
+static int check_time_with_fixpoint();
 
 
 /* Handelt ein Bild */
@@ -94,16 +96,26 @@ void process_image_cfg(char *image_cfg_file){
  * neu zu erstellen */
 static int check_file_interval(){
 
-  struct stat stat_buff;
-  time_t now;
-  long diff_sek;
-
   /* Pruefen ob Bild vorhanden */
   if(access(img_cfg.file_name, F_OK) == -1){
     DEBUGOUT2("Datei '%s' existiert nicht\n", img_cfg.file_name);
     DEBUGOUT1("Sie muss neu generiert werden!\n");
     return 1;
   }
+
+  if(img_cfg.fix_timepoint){
+    return check_time_with_fixpoint();
+  } else {
+    return check_time_with_stat();
+  }
+
+}
+
+static int check_time_with_stat(){
+
+  struct stat stat_buff;
+  time_t now;
+  long diff_sek;
 
   /* Pruefen ob Bild zu alt */
   if ((stat(img_cfg.file_name, &stat_buff)) != -1){
@@ -124,7 +136,33 @@ static int check_file_interval(){
   }
   DEBUGOUT1("Datei ist aktuell genug!\n");
   return 0;
+
 }
+
+static int check_time_with_fixpoint(){
+  
+  time_t now;
+  int max_diff  =  (CRON_INTERVAL -1) * 60;
+  int exact_val = 0;
+  int diff      = 0;
+
+  now = time(NULL);
+ 
+  exact_val = (floor( ((double)difftime(now, img_cfg.timepoint)) / ((double)img_cfg.gen_interval) ) * img_cfg.gen_interval) + img_cfg.timepoint;
+  diff = difftime(now, exact_val);
+
+  if(diff < max_diff){
+    DEBUGOUT3("Bild wird generiert, denn es ist kurz (%d sec) nach %s\n", diff, ctime(&exact_val));
+    
+    return 1;
+  } else {
+    DEBUGOUT1("Bild ist aktuell genug\n");
+    return 0;
+  }
+
+
+}
+
 
 /* Bild (neu-) generieren */
 static void regenerate_image(){
