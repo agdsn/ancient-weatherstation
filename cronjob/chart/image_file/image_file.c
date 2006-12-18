@@ -152,7 +152,7 @@ static int check_time_with_fixpoint(){
   diff = difftime(now, exact_val);
 
   if(diff < max_diff){
-    DEBUGOUT3("Bild wird generiert, denn es ist kurz (%d sec) nach %s\n", diff, ctime(&exact_val));
+    DEBUGOUT3("Bild wird generiert, denn es ist kurz (%d sec) nach %s\n", diff, ctime( ((time_t*)&exact_val) ));
     
     return 1;
   } else {

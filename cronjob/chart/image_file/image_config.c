@@ -53,7 +53,7 @@ static const config_keyword keywords[] = {
   {"show_interval",    		read_time,          	&(img_cfg.show_interval),       	DEFAULT_SHOW_INTERVAL},
   {"label_interval",   		read_time,          	&(img_cfg.label_interval),      	DEFAULT_LABEL_INTERVAL},
   {"fixed_timepoint",  		read_yn,          	&(img_cfg.fix_timepoint),	       	DEFAULT_FIX_TIMEPOINT},
-  {"timepoint",   		read_date,          	&(img_cfg.timepoint),		       	""},
+  {"timepoint",   		read_date,          	&(img_cfg.timepoint),		       	DEFAULT_TIMEPOINT},
   {"label_sum",   		read_yn,          	&(img_cfg.label_sum),	        	DEFAULT_LABEL_SUM},
   {"width",			read_int,               &(img_cfg.width),    			DEFAULT_WIDTH},
   {"height",			read_int,               &(img_cfg.height),    			DEFAULT_HEIGHT},
