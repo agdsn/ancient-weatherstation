@@ -468,24 +468,27 @@ static pix_list_ptr add_pix_value(pix_list_ptr ptr, int coord, int value, int ma
  * reale Werte, eff. Zeichenbreite */
 pix_list_ptr build_average_line(pix_list_ptr real_list, int c_width){
 
-  int list_count  = 0;
-  int list_offset = 0;
-  int field_size  = c_width;
-  int i,j,m;
-  double sum    = 0;
-  double koeff  = 0;
-  double count  = 0;
+  int list_count  = 0;			/* Anzahl Elemente im Array */
+  int list_offset = 0;			/* Erste koordinate in der Liste (Koordinate an Array-Pos. 0) */
+  int field_size  = c_width + 10;	/* Array-Groeße (sollte nicht groeßer sein als die Breite in Pixel) */
+  int i,j,m;				/* Zaehlvariablen */
+  double sum    = 0;			/* Summe der berechneten Werte */
+  double koeff  = 0;			/* Momentan zu bearbeitener Koeffizient */
+  double count  = 0;			/* Summe der Koeffizienten */
 
-  pix_list_ptr old_temp       = real_list;
-  pix_list_ptr *old_ptr_field = malloc(sizeof(pix_list_ptr) * (field_size));
-  pix_list_ptr new_list       = NULL;
-  pix_list_ptr new_list_temp  = NULL;
+  pix_list_ptr old_temp       = real_list;					/* Liste mit den 'echten' Werten */
+  pix_list_ptr *old_ptr_field = malloc(sizeof(pix_list_ptr) * (field_size));	/* Array, in das die Liste geschrieben wird */
+  pix_list_ptr new_list       = NULL;						/* Neue 'Durchschnittsliste' */
+  pix_list_ptr new_list_temp  = NULL;						/* Temp. Pointer zum 'durchwandern' der Liste */
 
   list_offset = old_temp->x_pix_coord;
-
   DEBUGOUT2("list_offset %d\n", list_offset);
 
+
+  /* Array mit den Werten der 'echten' Liste fuellen */
   for(; old_temp; old_temp = old_temp->next){
+    
+    /* Wenn zu klein (sollte nicht passieren), dann Array vergroeßern */
     if(list_count >= field_size){
       field_size += c_width;
       realloc(old_ptr_field, sizeof(pix_list_ptr) * (field_size));
@@ -494,42 +497,75 @@ pix_list_ptr build_average_line(pix_list_ptr real_list, int c_width){
     DEBUGOUT2("list_count: %d -- ", list_count);
     DEBUGOUT2("old_temp->x_pix_coord: %d -- ",old_temp->x_pix_coord);
 
+    /* Wenn keine Werte vorhanden, dann Array mit NULL fuellen */
     while( (list_count + list_offset) > old_temp->x_pix_coord){
       old_ptr_field[list_count] = NULL;
       list_count++;
       DEBUGOUT1("Fuege Null hinzu\n");
     }
     
+    /* Listenelement in Array schreiben */
     old_ptr_field[list_count] = old_temp;
     DEBUGOUT1("Fuege Wert hinzu\n");
 
     list_count++;
   }
 
+  /* Array durchgehen und neue Werte berechnen.
+   * Es werden immer 30 Werte Link und 30 Werte rechts mit
+   * sich jeweils um 0.03 veringernden koeffizienten 
+   * multipliziert und zur Summe addiert.
+   * Das ganze wird dann durch die Summe der koeffizienten geteilt */
   for(i = 0; i < list_count; i++){
     if(old_ptr_field[i] != NULL){
+
+      /* Aktueller Wert aus der 'realen' Liste */
       sum = ((double)old_ptr_field[i]->value_sum) / ((double)old_ptr_field[i]->value_count);
+      
+      /* Summe der Koeffizienten. 
+       * Aktueller Wert hat die Wichtung 1, 
+       * daher mit 1 initialisiert */
       count = 1;
+
+      /* 30 (29) Links ind rechts durchgehen */
       for(j = 1; j < 30; j++){
+
+        /* aktueller Koeffizient */
         koeff = 0.9 - (0.01 * (3*j));
+
+	/* Anzahl, wie viele Werte mit dem Aktuellem 
+	 * Koeffizienten zur Summe addiert wurden */
 	m = 0;
+
+	/* j Werte 'links' vom aktuellem Wert */
 	if( (i - j) >= 0){
 	  if(old_ptr_field[i-j] != NULL){
 	    sum += (((double)old_ptr_field[i-j]->value_sum) / ((double)old_ptr_field[i-j]->value_count)) * koeff;
 	    m++;
 	  }
 	}
+
+	/* j Werte rechts vom aktuellem Wert */
 	if( (i + j) < list_count){
 	  if(old_ptr_field[i+j] != NULL){
 	    sum += (((double)old_ptr_field[i+j]->value_sum) / ((double)old_ptr_field[i+j]->value_count)) * koeff;
 	    m++;
 	  }
 	}
+
+	/* Hier wir die anzahl der Werte, 
+	 * die zur Summe hinzuaddiert wurden 
+	 * multipliziert mit dem aktuellem 
+	 * koeffizienten und das ganze auf 
+	 * den gesammtkoeffizienten addiert */
 	count += m * koeff;
 	
       }
+
+      /* Neues Element an die Durchschnittsliste anfuegen */
       new_list_temp = add_pix_value(new_list_temp, old_ptr_field[i]->x_pix_coord, floor(sum / count), max_diff);
 
+      /* Beim ersten Durchlauf den Kopf der Liste merken */
       if(new_list == NULL){
         new_list = new_list_temp;
       }
@@ -537,8 +573,10 @@ pix_list_ptr build_average_line(pix_list_ptr real_list, int c_width){
     }
   }
 
+  /* Array freigeben */
   free(old_ptr_field);
 
+  /* Durchschnittsliste zurueckgeen */
   return new_list;
 }
 
