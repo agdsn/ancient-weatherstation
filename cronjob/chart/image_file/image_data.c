@@ -40,10 +40,11 @@ static pix_list_ptr max = NULL;			/* Pointer auf Max - Element */
 double real_min = 0;				/* Realer Max - Wert */
 double real_max = 0;				/* Realer Min - Wert */
 static long base_time;				/* Zeit an der 0-Koordinate (lt. Datenbank!) */
+int max_diff = 0;				/* Maximaler Abstand, den 2 Werte haben duerfen, ohne das die Linie unterbrochen wird */
 
 
 /* Funktionsdefinitionen */
-static pix_list_ptr add_pix_value(pix_list_ptr , long, int , int, int );
+static pix_list_ptr add_pix_value(pix_list_ptr , int , int, int );
 static char *get_conn_string();
 static PGconn *pg_check_connect(char *);
 static PGresult *pg_check_exec(PGconn *, char *);
@@ -297,7 +298,6 @@ pix_list_ptr get_pix_list(int c_width){
   int pix_coord;									/* x - Koordinate, an die der Wert gehoert */
   int i, s, t, u;									/* Laufvariable zum durchlaufen des Datenbank-resuls */
   long timestamp;
-  int max_diff;
   pix_list_ptr list_ptr = NULL;								/* Zeiger auf den Anfang der Wertliste */
   pix_list_ptr temp_ptr = NULL;								/* Zeiger zum durchlaufen der Wertliste */
 
@@ -347,7 +347,7 @@ pix_list_ptr get_pix_list(int c_width){
     pix_coord = floor( ((double)time_temp) * seconds_per_pix) ;
     
     /* Listenelement generieren */
-    temp_ptr = add_pix_value(temp_ptr, timestamp, pix_coord, atoi( PQgetvalue(res, i, val_field) ) , max_diff);
+    temp_ptr = add_pix_value(temp_ptr, pix_coord, atoi( PQgetvalue(res, i, val_field) ) , max_diff);
 
     /* Rueckgabe- und Max/Min-pointer zuweisen */
     if (list_ptr == NULL){
@@ -371,7 +371,7 @@ pix_list_ptr get_pix_list(int c_width){
       time_temp = timestamp;
     }
     pix_coord = floor( ((double)time_temp) * seconds_per_pix) ;
-    temp_ptr  = add_pix_value(temp_ptr, timestamp, pix_coord, 0 , max_diff);
+    temp_ptr  = add_pix_value(temp_ptr, pix_coord, 0 , max_diff);
     list_ptr = temp_ptr;
     min = temp_ptr;
     max = temp_ptr;
@@ -419,7 +419,7 @@ pix_list_ptr get_pix_list(int c_width){
 }
 
 /* Speichert einen geholten Wert ab */
-static pix_list_ptr add_pix_value(pix_list_ptr ptr, long timestamp, int coord, int value, int max_diff){ 
+static pix_list_ptr add_pix_value(pix_list_ptr ptr, int coord, int value, int max_diff){ 
   int old_coord;
 
   /* Erstes Element */
@@ -462,6 +462,84 @@ static pix_list_ptr add_pix_value(pix_list_ptr ptr, long timestamp, int coord, i
   }
   return ptr;
 
+}
+
+/* Durchschnittslinie 
+ * reale Werte, eff. Zeichenbreite */
+pix_list_ptr build_average_line(pix_list_ptr real_list, int c_width){
+
+  int list_count  = 0;
+  int list_offset = 0;
+  int field_size  = c_width;
+  int i,j,m;
+  double sum    = 0;
+  double koeff  = 0;
+  double count  = 0;
+
+  pix_list_ptr old_temp       = real_list;
+  pix_list_ptr *old_ptr_field = malloc(sizeof(pix_list_ptr) * (field_size));
+  pix_list_ptr new_list       = NULL;
+  pix_list_ptr new_list_temp  = NULL;
+
+  list_offset = old_temp->x_pix_coord;
+
+  DEBUGOUT2("list_offset %d\n", list_offset);
+
+  for(; old_temp; old_temp = old_temp->next){
+    if(list_count >= field_size){
+      field_size += c_width;
+      realloc(old_ptr_field, sizeof(pix_list_ptr) * (field_size));
+    }
+
+    DEBUGOUT2("list_count: %d -- ", list_count);
+    DEBUGOUT2("old_temp->x_pix_coord: %d -- ",old_temp->x_pix_coord);
+
+    while( (list_count + list_offset) > old_temp->x_pix_coord){
+      old_ptr_field[list_count] = NULL;
+      list_count++;
+      DEBUGOUT1("Fuege Null hinzu\n");
+    }
+    
+    old_ptr_field[list_count] = old_temp;
+    DEBUGOUT1("Fuege Wert hinzu\n");
+
+    list_count++;
+  }
+
+  for(i = 0; i < list_count; i++){
+    if(old_ptr_field[i] != NULL){
+      sum = ((double)old_ptr_field[i]->value_sum) / ((double)old_ptr_field[i]->value_count);
+      count = 1;
+      for(j = 1; j < 30; j++){
+        koeff = 0.9 - (0.01 * (3*j));
+	m = 0;
+	if( (i - j) >= 0){
+	  if(old_ptr_field[i-j] != NULL){
+	    sum += (((double)old_ptr_field[i-j]->value_sum) / ((double)old_ptr_field[i-j]->value_count)) * koeff;
+	    m++;
+	  }
+	}
+	if( (i + j) < list_count){
+	  if(old_ptr_field[i+j] != NULL){
+	    sum += (((double)old_ptr_field[i+j]->value_sum) / ((double)old_ptr_field[i+j]->value_count)) * koeff;
+	    m++;
+	  }
+	}
+	count += m * koeff;
+	
+      }
+      new_list_temp = add_pix_value(new_list_temp, old_ptr_field[i]->x_pix_coord, floor(sum / count), max_diff);
+
+      if(new_list == NULL){
+        new_list = new_list_temp;
+      }
+
+    }
+  }
+
+  free(old_ptr_field);
+
+  return new_list;
 }
 
 

@@ -86,6 +86,7 @@ static gdImagePtr draw_image(gdImagePtr img){
   
   /* Werte und Labels */
   pix_list_ptr pix_list   = NULL;
+  pix_list_ptr average_pix_list   = NULL;
   label_list_ptr x_labels = NULL;
   label_list_ptr y_labels = NULL;
 
@@ -117,6 +118,7 @@ static gdImagePtr draw_image(gdImagePtr img){
 
   /* Farben */
   color val_line_c 	= alloc_alpha_color(img, img_cfg.dia_line_color);
+  color av_line_c 	= alloc_alpha_color(img, img_cfg.dia_av_line_color);
   color zero_line_c	= alloc_alpha_color(img, img_cfg.zero_line_color);
   color dia_bg_c	= alloc_alpha_color(img, img_cfg.dia_bg_color);
   color diag_grid_x_c	= alloc_alpha_color(img, img_cfg.dia_grid_x_color);
@@ -165,7 +167,10 @@ static gdImagePtr draw_image(gdImagePtr img){
   gdImageStringFT(img, &brect[0], desc_x_c, IMG_FONT, 9, 0 , (offset_x_left + (dia_width / 2)) - (x_desc_d.width / 2), (img_cfg.height - 5) - x_desc_d.l_b_y, img_cfg.x_desc);
 
   /* Werte holen */
-  pix_list = get_pix_list(dia_width);
+  pix_list         = get_pix_list(dia_width);
+  if(!img_cfg.bars && img_cfg.show_average){
+    average_pix_list = build_average_line(pix_list, dia_width);
+  }
 
   /* Diagramhintergrund */
   gdImageFilledRectangle(img, offset_x_left, offset_y_top, img_cfg.width - offset_x_right, img_cfg.height - offset_y_bottom, dia_bg_c);
@@ -181,6 +186,9 @@ static gdImagePtr draw_image(gdImagePtr img){
 
   /* y-Werte skalieren */
   zero_line = scale_y_coords(pix_list, dia_height);  
+  if(!img_cfg.bars && img_cfg.show_average){
+    scale_y_coords(average_pix_list, dia_height);  
+  }
 
   /* Vertikale linien + x - Labels*/
   x_labels = get_x_label_list(dia_width);
@@ -198,6 +206,15 @@ static gdImagePtr draw_image(gdImagePtr img){
   if (zero_line != -1)
     gdImageLine(img, offset_x_left, zero_line + offset_y_top, img_cfg.width - offset_x_right, zero_line + offset_y_top, zero_line_c); 
 
+
+  /* Durchschnitts-Werte Zeichnen */
+  if(!img_cfg.bars && img_cfg.show_average){
+    for (; average_pix_list->next; average_pix_list = average_pix_list->next){
+      if(!average_pix_list->next->no_line){
+        gdImageLine(img, (offset_x_left + average_pix_list->x_pix_coord), (offset_y_top + average_pix_list->y_pix_coord), (offset_x_left + average_pix_list->next->x_pix_coord), (offset_y_top + average_pix_list->next->y_pix_coord), av_line_c);
+      }
+    }
+  } 
 
   /* Werte Zeichnen */
   if(!img_cfg.bars){

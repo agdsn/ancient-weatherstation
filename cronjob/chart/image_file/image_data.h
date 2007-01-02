@@ -50,6 +50,13 @@ typedef struct label_list {
  */
 pix_list_ptr get_pix_list(int );
 
+/* Baut die Durchschnittslinie.
+ * 1. Argument: Die Daten der Linie mit den 'realen' Werten
+ * 2. Argument: die effektive Breite des Bereiches in dem gezeichnet werden soll
+ * Rueckgabe: die liste mit den Werten 
+ */
+pix_list_ptr build_average_line(pix_list_ptr real_list, int c_width);
+
 
 /* Max. Wert */
 pix_list_ptr get_min_val();

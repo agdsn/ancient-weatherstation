@@ -54,12 +54,14 @@ typedef struct image_cfg {
   char   *x_fmt;		/* Formatstring fuer die restlichen Labels */
   int    zero_min;		/* Nullinie auf jeden Fall anzeigen */
   int    bars;			/* Balken malen statt einer Linie */
+  int 	 show_average;		/* Durchschnittslinie zeichnen */
   int 	 dflt_dir;		/* Standart - Verzeichnis fuer die Bilder */
 
   /* Farben */
   img_color_ptr bg_color;
   img_color_ptr dia_bg_color;
   img_color_ptr dia_line_color;
+  img_color_ptr dia_av_line_color;
   img_color_ptr dia_grid_x_color;
   img_color_ptr dia_grid_y_color;
   img_color_ptr dia_border_color;
