@@ -1,8 +1,8 @@
 CC      = gcc
 LD      = gcc
 RM	= rm
-CFLAGS  = -c
-LDFLAS  = -o
+CFLAGS  = $(PackageFlags) -c
+LDFLAS  = $(PackageFlags) -o
 LD_LIBS = -lm -lpq -lgd -lpng -lz -lfreetype
 #INCL	= -I$$(pg_config --includedir)
 

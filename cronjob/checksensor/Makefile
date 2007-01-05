@@ -1,8 +1,8 @@
 CC      = gcc
 LD      = gcc
 RM	= rm
-CFLAGS  = -c
-LDFLAS  = -o
+CFLAGS  = $(PackageFlags) -c
+LDFLAS  = $(PackageFlags) -o
 INCL	= -I$$(pg_config --includedir)
 
 BIN_NAME = weather_checksensor
