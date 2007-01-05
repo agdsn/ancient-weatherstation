@@ -59,12 +59,14 @@ pix_list_ptr build_average_line(pix_list_ptr real_list, int c_width);
 
 
 /* Max. Wert */
-pix_list_ptr get_min_val();
+pix_list_ptr get_min_elem();
+double get_min_val();
 
 
 /* Min. Wert */
-pix_list_ptr get_max_val();
- 
+pix_list_ptr get_max_elem();
+double get_max_val();
+
 
 /* Max. Zeit */ 
 char *get_max_time();

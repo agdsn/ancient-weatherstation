@@ -31,6 +31,8 @@
 #include "image_common.h"
 
 #define SHORTBUFFSIZE 64
+#define MIN_MAX_BUFF 125
+#define MIN_MAX_SIZE 7
 
 /* der besseren Lesbarkeit wegen einen Farbtyp definiert */
 typedef int color;
@@ -105,8 +107,11 @@ static gdImagePtr draw_image(gdImagePtr img){
   int y_label_max_width = 0;
   int i;
   int temp_x2, temp_x1, temp_y1;
+  int min_max_width = 0;
 
   char *buff;
+  char * min_buff ;
+  char * max_buff ;
   time_t ts;
 
   /* Groeßenangaben fuer die einzelnen Texte */
@@ -115,6 +120,9 @@ static gdImagePtr draw_image(gdImagePtr img){
   dimension_t x_label_d;
   dimension_t x_desc_d;
   dimension_t y_desc_d;
+  dimension_t min_val_d;
+  dimension_t max_val_d;
+  dimension_t arrow_d;
 
   /* Farben */
   color val_line_c 	= alloc_alpha_color(img, img_cfg.dia_line_color);
@@ -130,6 +138,10 @@ static gdImagePtr draw_image(gdImagePtr img){
   color label_y_c	= alloc_alpha_color(img, img_cfg.label_y_color);
   color desc_x_c	= alloc_alpha_color(img, img_cfg.desc_x_color);
   color desc_y_c	= alloc_alpha_color(img, img_cfg.desc_y_color);
+  color min_c		= alloc_alpha_color(img, img_cfg.min_color);
+  color max_c		= alloc_alpha_color(img, img_cfg.max_color);
+  color back_c 		= alloc_alpha_color(img, img_cfg.bg_color); 
+  color temp_c;
 
   /* Ueberschrift */
   head_d = calc_text_dim(img_cfg.headline, 16, 0);
@@ -237,6 +249,70 @@ static gdImagePtr draw_image(gdImagePtr img){
 	temp_x2 = offset_x_left + dia_width;
       }
       gdImageFilledRectangle(img, temp_x1 + 3, (offset_y_top + pix_list->y_pix_coord), temp_x2 - 3 ,  temp_y1 , val_line_c);
+    }
+  }
+
+  /*Min / Max */
+  if (img_cfg.show_min || img_cfg.show_max){
+
+    /* Minimal-String zusammenbauen */
+    if(img_cfg.show_min){
+      min_buff      = malloc(sizeof(char)*MIN_MAX_BUFF);
+      if(img_cfg.unit != NULL){
+	snprintf(min_buff, MIN_MAX_BUFF, "%-.1f%s", get_min_val(), img_cfg.unit);
+      } else {
+	snprintf(min_buff, MIN_MAX_BUFF, "%-.1f", get_min_val());
+      }
+      min_val_d = calc_text_dim(min_buff, MIN_MAX_SIZE, 0);
+      min_max_width = min_val_d.width;
+    }
+
+    /* Maximal-String zusammenbauen */
+    if(img_cfg.show_max){
+      max_buff      = malloc(sizeof(char)*MIN_MAX_BUFF);
+      if(img_cfg.unit != NULL){
+	snprintf(max_buff, MIN_MAX_BUFF, "%-.1f%s", (double) get_max_val(), img_cfg.unit);
+      } else {
+	snprintf(max_buff, MIN_MAX_BUFF, "%-.1f", (double) get_max_val());
+      }
+      max_val_d = calc_text_dim(max_buff, MIN_MAX_SIZE, 0);
+      min_max_width = max_val_d.width;
+    }
+
+    /* 'laengeren' String suchen */
+    if(img_cfg.show_min && img_cfg.show_max){
+      if (min_val_d.width < max_val_d.width) {
+	min_max_width = max_val_d.width;
+      } else {
+	min_max_width = min_val_d.width;
+      }
+    }
+
+    /* Dimmensionen des Pfeis berechnen */
+    arrow_d = calc_text_dim(">", MIN_MAX_SIZE - 1, 1.570796327);
+
+    /* Minimalwert zeichnen */
+    if(img_cfg.show_min){
+      temp_c = min_c;
+      if(img_cfg.invert_min){
+        gdImageFilledRectangle(img, (img_cfg.width - offset_x_right - min_max_width - arrow_d.width -8), (6 + min_val_d.height + 4), (img_cfg.width - offset_x_right), ( 6 + (2*min_val_d.height) + 4), min_c);
+        temp_c = back_c;
+      }
+      gdImageStringFT(img, &brect[0], temp_c, IMG_FONT, MIN_MAX_SIZE-1, 1.570796327 , img_cfg.width - offset_x_right - min_max_width - arrow_d.width +1, 11 + min_val_d.height + arrow_d.height, "<");
+      gdImageStringFT(img, &brect[0], temp_c, IMG_FONT, MIN_MAX_SIZE, 0 , img_cfg.width - offset_x_right - min_val_d.width, 6 + (2*min_val_d.height)+3, min_buff);
+      free(min_buff);
+    }
+
+    /* Maximalwert zeichnen */
+    if(img_cfg.show_max){
+      temp_c = max_c;
+      if(img_cfg.invert_max){
+        gdImageFilledRectangle(img, (img_cfg.width - offset_x_right - min_max_width - arrow_d.width -8), (6), (img_cfg.width - offset_x_right), ( 6 + (max_val_d.height) + 1), max_c);
+        temp_c = back_c;
+      }
+      gdImageStringFT(img, &brect[0], temp_c, IMG_FONT, MIN_MAX_SIZE-1, 1.570796327 , img_cfg.width - offset_x_right - min_max_width -  arrow_d.width +1, 7 + arrow_d.height, ">");
+      gdImageStringFT(img, &brect[0], temp_c, IMG_FONT, MIN_MAX_SIZE, 0 , img_cfg.width - offset_x_right - max_val_d.width, 5 + max_val_d.height, max_buff);
+      free(max_buff);
     }
   }
 

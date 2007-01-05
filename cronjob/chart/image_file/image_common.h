@@ -55,6 +55,10 @@ typedef struct image_cfg {
   int    zero_min;		/* Nullinie auf jeden Fall anzeigen */
   int    bars;			/* Balken malen statt einer Linie */
   int 	 show_average;		/* Durchschnittslinie zeichnen */
+  int	 show_min;
+  int	 show_max;
+  int	 invert_min;
+  int	 invert_max;
   int 	 dflt_dir;		/* Standart - Verzeichnis fuer die Bilder */
 
   /* Farben */
@@ -72,6 +76,8 @@ typedef struct image_cfg {
   img_color_ptr label_y_color;
   img_color_ptr desc_x_color;
   img_color_ptr desc_y_color;
+  img_color_ptr max_color;
+  img_color_ptr min_color;
 } image_cfg_t;
 
 /* Entfaelt die aktuelle Bild - Config */

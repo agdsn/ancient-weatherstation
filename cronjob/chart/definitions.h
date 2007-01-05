@@ -42,6 +42,10 @@
 #define DEFAULT_ZERO_MIN	"no"
 #define DEFAULT_AS_BARS		"no"
 #define DEFAULT_SHOW_AVERAGE	"yes"
+#define DEFAULT_SHOW_MIN	"no"
+#define DEFAULT_SHOW_MAX	"no"
+#define DEFAULT_INVERT_MIN	"yes"
+#define DEFAULT_INVERT_MAX	"yes"
 #define DEFAULT_WIDTH		"800"
 #define DEFAULT_HEIGHT		"300"
 #define DEFAULT_SENS_ID		"1"
@@ -67,6 +71,8 @@
 #define DEFAULT_LABEL_Y_COLOR		"20:20:20:20"
 #define DEFAULT_DESCR_X_COLOR		"10:50:10:20"
 #define DEFAULT_DESCR_Y_COLOR		"10:10:50:20"
+#define DEFAULT_MIN_COLOR		"32:93:32:10"
+#define DEFAULT_MAX_COLOR		"be:4a:4a:10"
 
 
 

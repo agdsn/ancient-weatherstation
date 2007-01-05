@@ -51,7 +51,7 @@ static PGresult *pg_check_exec(PGconn *, char *);
 static char *get_type_table_by_id(PGconn *, int );
 
 
-/* Bibt die Liste mit den y-Labels zurueck */
+/* Gibt die Liste mit den y-Labels zurueck */
 label_list_ptr get_y_label_list(int c_hight, int padding){
   int max_val      = 0;				/* Maximaler Wert */
   int min_val	   = 0;				/* Minimaler Wert */
@@ -251,14 +251,21 @@ int scale_y_coords(pix_list_ptr ptr, int c_height){
 
 
 /* Maximaler wert */
-pix_list_ptr get_max_val(){
+pix_list_ptr get_max_elem(){
   return min;
+}
+double get_max_val(){
+  return real_max;
 }
 
 
+
 /* Minimaler Wert */
-pix_list_ptr get_min_val(){
+pix_list_ptr get_min_elem(){
   return max;
+}
+double get_min_val(){
+  return real_min;
 }
 
 

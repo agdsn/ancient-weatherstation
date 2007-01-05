@@ -61,7 +61,11 @@ static const config_keyword keywords[] = {
   {"sensor_id",			read_int,               &(img_cfg.sens_id),    			DEFAULT_SENS_ID},
   {"zero_min",			read_yn,                &(img_cfg.zero_min),    		DEFAULT_ZERO_MIN},
   {"as_bars",			read_yn,                &(img_cfg.bars),	    		DEFAULT_AS_BARS},
-  {"show_average",		read_yn,                &(img_cfg.show_average),	    		DEFAULT_SHOW_AVERAGE},
+  {"show_average",		read_yn,                &(img_cfg.show_average),	    	DEFAULT_SHOW_AVERAGE},
+  {"show_min",			read_yn,                &(img_cfg.show_min),	    		DEFAULT_SHOW_MIN},
+  {"show_max",			read_yn,                &(img_cfg.show_max),	    		DEFAULT_SHOW_MAX},
+  {"invert_min",		read_yn,                &(img_cfg.invert_min),	    		DEFAULT_INVERT_MIN},
+  {"invert_max",		read_yn,                &(img_cfg.invert_max),	    		DEFAULT_INVERT_MAX},
   {"x_axis_desc",		read_str,               &(img_cfg.x_desc),    			DEFAULT_X_AX_DESC},
   {"y_axis_desc",		read_str,               &(img_cfg.y_desc),    			DEFAULT_Y_AX_DESC},
   {"x_format",			read_fmt_str,           &(img_cfg.x_fmt),    			DEFAULT_X_FORMAT},
@@ -83,6 +87,8 @@ static const config_keyword keywords[] = {
   {"label_y_color",		read_color,             &(img_cfg.label_y_color),   		DEFAULT_LABEL_Y_COLOR},
   {"descr_y_color",		read_color,             &(img_cfg.desc_y_color),   		DEFAULT_DESCR_X_COLOR},
   {"descr_x_color",		read_color,             &(img_cfg.desc_x_color),   		DEFAULT_DESCR_Y_COLOR},
+  {"max_color",			read_color,             &(img_cfg.max_color),   		DEFAULT_MAX_COLOR},
+  {"min_color",			read_color,             &(img_cfg.min_color),   		DEFAULT_MIN_COLOR},
 
   {"",				NULL, 	  		NULL,					""}
 };
