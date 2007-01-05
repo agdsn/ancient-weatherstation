@@ -96,7 +96,7 @@ static gdImagePtr draw_image(gdImagePtr img){
   int max_val 		= 0;
   int min_val 		= 0;
   int offset_x_left 	= 0;
-  int offset_y_top 	= 5;
+  int offset_y_top 	= 6;
   int offset_x_right 	= 20;
   int offset_y_bottom 	= 0;
   int dia_width		= 0;
@@ -295,11 +295,11 @@ static gdImagePtr draw_image(gdImagePtr img){
     if(img_cfg.show_min){
       temp_c = min_c;
       if(img_cfg.invert_min){
-        gdImageFilledRectangle(img, (img_cfg.width - offset_x_right - min_max_width - arrow_d.width -8), (6 + min_val_d.height + 4), (img_cfg.width - offset_x_right), ( 6 + (2*min_val_d.height) + 4), min_c);
+        gdImageFilledRectangle(img, (img_cfg.width - offset_x_right - min_max_width - arrow_d.width -8), (5 + min_val_d.height + 4), (img_cfg.width - offset_x_right), ( 5 + (2*min_val_d.height) + 4), min_c);
         temp_c = back_c;
       }
-      gdImageStringFT(img, &brect[0], temp_c, IMG_FONT, MIN_MAX_SIZE-1, 1.570796327 , img_cfg.width - offset_x_right - min_max_width - arrow_d.width +1, 11 + min_val_d.height + arrow_d.height, "<");
-      gdImageStringFT(img, &brect[0], temp_c, IMG_FONT, MIN_MAX_SIZE, 0 , img_cfg.width - offset_x_right - min_val_d.width, 6 + (2*min_val_d.height)+3, min_buff);
+      gdImageStringFT(img, &brect[0], temp_c, IMG_FONT, MIN_MAX_SIZE-1, 1.570796327 , img_cfg.width - offset_x_right - min_max_width - arrow_d.width +1, 10 + min_val_d.height + arrow_d.height, "<");
+      gdImageStringFT(img, &brect[0], temp_c, IMG_FONT, MIN_MAX_SIZE, 0 , img_cfg.width - offset_x_right - min_val_d.width, 5 + (2*min_val_d.height)+3, min_buff);
       free(min_buff);
     }
 
@@ -307,11 +307,11 @@ static gdImagePtr draw_image(gdImagePtr img){
     if(img_cfg.show_max){
       temp_c = max_c;
       if(img_cfg.invert_max){
-        gdImageFilledRectangle(img, (img_cfg.width - offset_x_right - min_max_width - arrow_d.width -8), (6), (img_cfg.width - offset_x_right), ( 6 + (max_val_d.height) + 1), max_c);
+        gdImageFilledRectangle(img, (img_cfg.width - offset_x_right - min_max_width - arrow_d.width -8), (5), (img_cfg.width - offset_x_right), ( 5 + (max_val_d.height) + 1), max_c);
         temp_c = back_c;
       }
-      gdImageStringFT(img, &brect[0], temp_c, IMG_FONT, MIN_MAX_SIZE-1, 1.570796327 , img_cfg.width - offset_x_right - min_max_width -  arrow_d.width +1, 7 + arrow_d.height, ">");
-      gdImageStringFT(img, &brect[0], temp_c, IMG_FONT, MIN_MAX_SIZE, 0 , img_cfg.width - offset_x_right - max_val_d.width, 5 + max_val_d.height, max_buff);
+      gdImageStringFT(img, &brect[0], temp_c, IMG_FONT, MIN_MAX_SIZE-1, 1.570796327 , img_cfg.width - offset_x_right - min_max_width -  arrow_d.width +1, 6 + arrow_d.height, ">");
+      gdImageStringFT(img, &brect[0], temp_c, IMG_FONT, MIN_MAX_SIZE, 0 , img_cfg.width - offset_x_right - max_val_d.width, 4 + max_val_d.height, max_buff);
       free(max_buff);
     }
   }
