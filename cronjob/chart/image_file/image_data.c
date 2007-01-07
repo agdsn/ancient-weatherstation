@@ -37,6 +37,7 @@
 /* Variablen */
 static pix_list_ptr min = NULL;			/* Pointer auf min - Element */
 static pix_list_ptr max = NULL;			/* Pointer auf Max - Element */
+double padd_val  = 0;				/* Wert, der oben und unten auf das 'reale' Max u. min aufgerechnet wird, damit die Linie nicht 'anstoesst' */
 double real_min = 0;				/* Realer Max - Wert */
 double real_max = 0;				/* Realer Min - Wert */
 static long base_time;				/* Zeit an der 0-Koordinate (lt. Datenbank!) */
@@ -58,7 +59,6 @@ label_list_ptr get_y_label_list(int c_hight, int padding){
   double factor    = 0;				/* Pixel / Werte */
   int diff         = 0;				/* Wertebereich */
   double real_diff = 0;				/* Realer Wertebereich */
-  double padd_val  = 0;				
   int temp         = 0; 
   double koeff     = 1;
   double interval  = 0;
@@ -255,7 +255,7 @@ pix_list_ptr get_max_elem(){
   return min;
 }
 double get_max_val(){
-  return real_max;
+  return real_max - padd_val;
 }
 
 
@@ -265,7 +265,7 @@ pix_list_ptr get_min_elem(){
   return max;
 }
 double get_min_val(){
-  return real_min;
+  return real_min + padd_val;
 }
 
 
