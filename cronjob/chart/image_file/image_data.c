@@ -257,7 +257,7 @@ pix_list_ptr get_max_elem(){
   return min;
 }
 double get_max_val(){
-  return real_max * 0.1 ;
+  return real_max * img_cfg.val_koeff ;
 }
 
 
@@ -267,7 +267,7 @@ pix_list_ptr get_min_elem(){
   return max;
 }
 double get_min_val(){
-  return real_min * 0.1 ;
+  return real_min * img_cfg.val_koeff ;
 }
 
 
