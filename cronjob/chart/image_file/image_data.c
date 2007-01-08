@@ -37,11 +37,12 @@
 /* Variablen */
 static pix_list_ptr min = NULL;			/* Pointer auf min - Element */
 static pix_list_ptr max = NULL;			/* Pointer auf Max - Element */
-double padd_val  = 0;				/* Wert, der oben und unten auf das 'reale' Max u. min aufgerechnet wird, damit die Linie nicht 'anstoesst' */
-double real_min = 0;				/* Realer Max - Wert */
-double real_max = 0;				/* Realer Min - Wert */
+double graph_min = 0;				/* graphen-maximum */
+double graph_max = 0;				/* graphen-minimum */
 static long base_time;				/* Zeit an der 0-Koordinate (lt. Datenbank!) */
 int max_diff = 0;				/* Maximaler Abstand, den 2 Werte haben duerfen, ohne das die Linie unterbrochen wird */
+int real_min = 0;
+int real_max = 0;
 
 
 /* Funktionsdefinitionen */
@@ -67,6 +68,7 @@ label_list_ptr get_y_label_list(int c_hight, int padding){
   int i;
   int new_val      = 0;
   char * buff      = NULL;
+  double padd_val  = 0;				/* Wert, der oben und unten auf das 'reale' Max u. min aufgerechnet wird, damit die Linie nicht 'anstoesst' */
 
   label_list_ptr ptr      = NULL;
   label_list_ptr new_ptr  = NULL;
@@ -94,11 +96,11 @@ label_list_ptr get_y_label_list(int c_hight, int padding){
   factor   =  ( ((double)c_hight - (2 * padding)) / ((double)diff) );
   padd_val = (1 / factor) * ((double)padding); 
 
-  real_min  = min_val - padd_val;
-  real_max  = max_val + padd_val; 
-  real_diff = real_max - real_min;  
+  graph_min  = min_val - padd_val;
+  graph_max  = max_val + padd_val; 
+  real_diff = graph_max - graph_min;  
 
-  DEBUGOUT5(" Realer Max. Wert: %3.3f, Realer Min. Wert: %3.3f Differenz: %3.3f (inkl. Koeffizient: %3.3f)\n", real_max, real_min, real_diff, img_cfg.val_koeff);
+  DEBUGOUT5(" Realer Max. Wert: %3.3f, Realer Min. Wert: %3.3f Differenz: %3.3f (inkl. Koeffizient: %3.3f)\n", graph_max, graph_min, real_diff, img_cfg.val_koeff);
 
 
   /* Interval der Labels berechnen */
@@ -112,7 +114,7 @@ label_list_ptr get_y_label_list(int c_hight, int padding){
   DEBUGOUT2(" Interval: %f \n", interval);
 
   /* An Labels auf die 0 'eichen' */
-  temp = ceil(real_min);
+  temp = ceil(graph_min);
   while (fmod(((double)temp), ((double)interval)) != 0){
     temp++;
   }
@@ -121,7 +123,7 @@ label_list_ptr get_y_label_list(int c_hight, int padding){
    * daher den Zaehler um eins erhoehen und wenn dabei ueber 
    * den Bereich hinaus, dann wieder eins runter */
   num++;
-  if ((temp + ((num - 1) * interval)) > (real_max - 1))
+  if ((temp + ((num - 1) * interval)) > (graph_max - 0.5))
     num--;
 
   /* Puffer fuer die Labels */
@@ -142,7 +144,7 @@ label_list_ptr get_y_label_list(int c_hight, int padding){
 
     /* Neues Label - Element */
     new_ptr            = malloc(sizeof(label_list_t));
-    new_ptr->pos       = floor( (real_max -  ((double)new_val) ) * factor);
+    new_ptr->pos       = floor( (graph_max -  ((double)new_val) ) * factor);
     new_ptr->value     = new_val;
     new_ptr->text      = strdup(buff);
     new_ptr->next      = NULL;
@@ -219,9 +221,9 @@ label_list_ptr get_x_label_list(int c_width){
 /* Skaliert die X-Koordinaten der Punkte im angegebenem Bereich
  * ausfuehrliche Beschreibung im header-file */
 int scale_y_coords(pix_list_ptr ptr, int c_height){
-  double range         = (((real_max - real_min) / img_cfg.val_koeff ) + 1) ;				/* Anzahl von 0,1-Schritten */
+  double range         = (((graph_max - graph_min) / img_cfg.val_koeff ) + 1) ;				/* Anzahl von 0,1-Schritten */
   double pix_per_scale = ((double)c_height) / ((double)range); 						/* Pixel pro 0,1 */
-  int zero_line        = floor( ((double)((real_max  / img_cfg.val_koeff) + 1)) * pix_per_scale);	/* Nullinie */
+  int zero_line        = floor( ((double)((graph_max  / img_cfg.val_koeff) + 1)) * pix_per_scale);	/* Nullinie */
   pix_list_ptr temp    = ptr;										/* Temporaerer Pointer zum durchgehen der Liste */
   
   DEBUGOUT1("\nBerechne y-Koordinaten:\n");
@@ -242,7 +244,7 @@ int scale_y_coords(pix_list_ptr ptr, int c_height){
   DEBUGOUT2(" Nullinie bei: %d\n", zero_line);
   
   /* Wenn Nullinie zu sehen, dann die Position zurueckgeben */
-  if ((real_max - real_min + 1) >= real_max){
+  if ((graph_max - graph_min + 1) >= graph_max){
     return zero_line;
   } else {
     return -1;
@@ -255,7 +257,7 @@ pix_list_ptr get_max_elem(){
   return min;
 }
 double get_max_val(){
-  return real_max - padd_val;
+  return real_max * 0.1 ;
 }
 
 
@@ -265,7 +267,7 @@ pix_list_ptr get_min_elem(){
   return max;
 }
 double get_min_val(){
-  return real_min + padd_val;
+  return real_min * 0.1 ;
 }
 
 
@@ -305,6 +307,7 @@ pix_list_ptr get_pix_list(int c_width){
   int pix_coord;									/* x - Koordinate, an die der Wert gehoert */
   int i, s, t, u;									/* Laufvariable zum durchlaufen des Datenbank-resuls */
   long timestamp;
+  int temp_value;
   pix_list_ptr list_ptr = NULL;								/* Zeiger auf den Anfang der Wertliste */
   pix_list_ptr temp_ptr = NULL;								/* Zeiger zum durchlaufen der Wertliste */
 
@@ -341,6 +344,7 @@ pix_list_ptr get_pix_list(int c_width){
   for (i = 0; i < PQntuples(res); i++){
     timestamp = atol(PQgetvalue(res, i, time_field));
     time_temp = timestamp - base_time;
+    temp_value = atoi( PQgetvalue(res, i, val_field) );
 
     /* Wenn Balken gezeichnet werden sollen */
     if(img_cfg.bars){
@@ -348,6 +352,13 @@ pix_list_ptr get_pix_list(int c_width){
       if(time_temp < 1)
         time_temp++;
       time_temp = floor( ((double)time_temp) / ((double)img_cfg.label_interval) ) * img_cfg.label_interval;
+    } else {
+      if(temp_value > real_max){
+        real_max = temp_value;
+      } 
+      if (temp_value < real_min){
+        real_min = temp_value;
+      }
     }
 
     /* Koordinate berechnen */
@@ -426,7 +437,7 @@ pix_list_ptr get_pix_list(int c_width){
 }
 
 /* Speichert einen geholten Wert ab */
-static pix_list_ptr add_pix_value(pix_list_ptr ptr, int coord, int value, int max_diff){ 
+static inline pix_list_ptr add_pix_value(pix_list_ptr ptr, int coord, int value, int max_diff){ 
   int old_coord;
 
   /* Erstes Element */
