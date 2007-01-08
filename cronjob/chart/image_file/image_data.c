@@ -376,6 +376,8 @@ pix_list_ptr get_pix_list(int c_width){
        * koennen */
       min = temp_ptr;
       max = temp_ptr;
+      real_max = temp_value;
+      real_min = temp_value;
     }
 
   }
