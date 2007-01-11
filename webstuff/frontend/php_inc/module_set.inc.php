@@ -51,7 +51,7 @@ class ModuleSet{
   }
 
   function &_getConnInstance(){
-    if($connInstance == NULL){
+    if($this->connInstance == NULL){
       $this->connInstance = new Connection();
     }
     return $this->connInstance;
