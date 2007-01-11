@@ -20,7 +20,8 @@ class Parser{
   /* Fuegt Inhalt in das Inhalts-Array ein */
   function appendContent($newContent){
     if(is_array($newContent)){
-      for($i = 0; $i < count($newContent); $i++){
+      $newContentCount = count($newContent);
+      for($i = 0; $i < $newContentCount; $i++){
         array_push($this->contentArray, $newContent[$i]);
 	//echo $newContent[$i]."\n";
       }
@@ -33,7 +34,8 @@ class Parser{
   /* Zeigt den Geparsten Inhalt an */
   function printContent(){
     $array = $this->getContentArray();
-    for ($i = 0; $i < count($array); $i++){
+    $arrayCount = count($array);
+    for ($i = 0; $i < $arrayCount; $i++){
       echo $array[$i];
     }
   }
@@ -48,7 +50,8 @@ class Parser{
     for($i = 0; $i < count($fileArray); $i++){												/* Das Array durchlaufen ... */
       if(0 != preg_match_all("/\{content:([a-z]+):([a-z0-9_]+)\}/i", $fileArray[$i], $results)){
         //print_r($results);
-        for($j = 0; $j < count($results[1]); $j++){
+	$resultsCount = count($results[1]);
+        for($j = 0; $j < $resultsCount; $j++){
           $insert = $callingObject->$results[1][$j]($results[2][$j]);
 	  $fileArray[$i] = preg_replace("/\{content:".$results[1][$j].":".$results[2][$j]."\}/i", $insert, $fileArray[$i]);
         }
@@ -68,7 +71,8 @@ class Parser{
   function _fetchFilePart($fileArray, $filePart){
     $inPart = false;									/* Flag ob innerhalb des gesuchten Templates Initialisieren */
     $newArray = array();								/* Neues File-Array */
-    for($i = 0; $i < count($fileArray); $i++){						/* Altes Array dtrchlaufen */
+    $fileArrayCount = count($fileArray);
+    for($i = 0; $i < $fileArrayCount; $i++){						/* Altes Array dtrchlaufen */
       if($inPart){
         if(preg_match("/\{content:part:end\}/i", $fileArray[$i])){			/* Wenn im gesuchtem Template, dann nach {content:part:end\} suchen */
           $inPart = false;								/* ...wenn gefunden Flag wieder False setzen */
