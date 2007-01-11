@@ -21,8 +21,7 @@ class Connection{
   /* Verbindung herstellen (wenn noch net besteht)*/
   function _createConn(){
     //print $this->conn."<br>";
-    $status = pg_connection_status($this->conn);
-    if($status !== PGSQL_CONNECTION_OK){
+    if($this->conn == NULL){
       $this->conn = pg_connect(Config::getPgConnString())
         or die('Verbindungsaufbau fehlgeschlagen: ' . pg_last_error());
     }
