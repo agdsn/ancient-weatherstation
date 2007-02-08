@@ -28,9 +28,7 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <byteswap.h>
 #include <postgresql/libpq-fe.h>
-#include <postgresql/c.h>
 #include "image_data.h"
 #include "image_common.h"
 #include "../common.h"
