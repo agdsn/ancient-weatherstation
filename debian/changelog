@@ -1,3 +1,9 @@
+weatherstation (1.0.8-1) stable; urgency=low
+
+  * using postgres binary-querys in chart to save performance 
+
+ -- Jan Losinski <losinski@wh2.tu-dresden.de>  Thu,  8 Feb 2007 10:48:30 +0100
+
 weatherstation (1.0.7-2) stable; urgency=low
 
   * A little bugfix in chart min/max 
