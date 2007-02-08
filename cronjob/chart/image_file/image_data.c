@@ -25,7 +25,12 @@
 #include <time.h>
 #include <string.h>
 #include <math.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <byteswap.h>
 #include <postgresql/libpq-fe.h>
+#include <postgresql/c.h>
 #include "image_data.h"
 #include "image_common.h"
 #include "../common.h"
@@ -46,10 +51,10 @@ int real_max = 0;
 
 
 /* Funktionsdefinitionen */
-static pix_list_ptr add_pix_value(pix_list_ptr , int , int, int );
+static inline pix_list_ptr add_pix_value(pix_list_ptr , int , int, int );
 static char *get_conn_string();
 static PGconn *pg_check_connect(char *);
-static PGresult *pg_check_exec(PGconn *, char *);
+static PGresult *pg_check_exec(PGconn *, char *, int);
 static char *get_type_table_by_id(PGconn *, int );
 
 
@@ -322,10 +327,10 @@ pix_list_ptr get_pix_list(int c_width){
   }
 
   /* Anfrage zusammenbauen */
-  snprintf(query, BUFFSIZE, "SELECT round(date_part('epoch', current_timestamp)) AS now, round(date_part('epoch', timestamp)) AS times, %s AS val FROM %s WHERE sens_id=%d AND  timestamp > (current_timestamp - INTERVAL '%d seconds') ORDER BY times ASC", img_cfg.table_field, table, img_cfg.sens_id, img_cfg.show_interval );
+  snprintf(query, BUFFSIZE, "SELECT round(date_part('epoch', current_timestamp))::int4 AS now, round(date_part('epoch', timestamp))::int4 AS times, %s AS val FROM %s WHERE sens_id=%d AND  timestamp > (current_timestamp - INTERVAL '%d seconds') ORDER BY times ASC", img_cfg.table_field, table, img_cfg.sens_id, img_cfg.show_interval );
 
   /* Anfrage stellen */
-  res = pg_check_exec(conn, query);
+  res = pg_check_exec(conn, query, 1);
 
   /* ID's der Felder ermitteln */
   time_field = PQfnumber(res, "times");
@@ -333,7 +338,7 @@ pix_list_ptr get_pix_list(int c_width){
 
   /* Momentane Zeit */
   if(PQntuples(res) > 0){
-    base_time = atol(PQgetvalue(res, 0, PQfnumber(res, "now"))) - img_cfg.show_interval;
+    base_time = timestamp = (ntohl( *((uint32_t*)PQgetvalue(res, 0, PQfnumber(res, "now") ) )) ) - img_cfg.show_interval;
   } else {
     base_time = time(NULL);
   }
@@ -342,9 +347,9 @@ pix_list_ptr get_pix_list(int c_width){
 
   /* Ergebnisse durchlaufen */
   for (i = 0; i < PQntuples(res); i++){
-    timestamp = atol(PQgetvalue(res, i, time_field));
+    timestamp = ntohl( *((uint32_t*)PQgetvalue(res, i, time_field)));
     time_temp = timestamp - base_time;
-    temp_value = atoi( PQgetvalue(res, i, val_field) );
+    temp_value = ntohl( *((uint32_t*)PQgetvalue(res, i, val_field)) );
 
     /* Wenn Balken gezeichnet werden sollen */
     if(img_cfg.bars){
@@ -365,7 +370,7 @@ pix_list_ptr get_pix_list(int c_width){
     pix_coord = floor( ((double)time_temp) * seconds_per_pix) ;
     
     /* Listenelement generieren */
-    temp_ptr = add_pix_value(temp_ptr, pix_coord, atoi( PQgetvalue(res, i, val_field) ) , max_diff);
+    temp_ptr = add_pix_value(temp_ptr, pix_coord, ntohl(*((uint32_t*)PQgetvalue(res, i, val_field) )) , max_diff);
 
     /* Rueckgabe- und Max/Min-pointer zuweisen */
     if (list_ptr == NULL){
@@ -621,9 +626,10 @@ static PGconn *pg_check_connect(char *conn_string){
 }
 
 /* Fuehrt ein SQL-Statement aus. Bricht mit fehler ab wenn nicht moeglich */
-static PGresult *pg_check_exec(PGconn *conn, char *query){
+static PGresult *pg_check_exec(PGconn *conn, char *query, int in_binary){
   PGresult *res;
-  res = PQexec(conn, query);
+  //res = PQexec(conn, query);
+  res = PQexecParams(conn, query,0,NULL,NULL,NULL,NULL,in_binary);
   if(!res || PQresultStatus(res) != PGRES_TUPLES_OK){
     DEBUGOUT2("Fehler beim exec: %s\n", query);
     exit_error(ERROR_QUERY);
@@ -642,7 +648,7 @@ static char *get_type_table_by_id(PGconn *connection, int sens_id){
   char *query_buff 	= malloc(sizeof(char)*BUFFSIZE);
 
   snprintf(query_buff, BUFFSIZE, "select typen.tabelle as tbl FROM typen, sensoren WHERE sensoren.id=%d AND typen.typ=sensoren.typ", sens_id);
-  table_res = pg_check_exec(connection, query_buff);
+  table_res = pg_check_exec(connection, query_buff, 0);
   
   if(PQntuples(table_res) < 1)
     return NULL;
