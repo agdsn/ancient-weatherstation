@@ -1,3 +1,9 @@
+weatherstation (1.0.9-1) stable; urgency=low
+
+  * performance optimization at the frontend
+
+ -- Jan Losinski <losinski@wh2.tu-dresden.de>  Mon, 12 Feb 2007 01:07:44 +0100
+
 weatherstation (1.0.8-1) stable; urgency=low
 
   * using postgres binary-querys in chart to save performance 
