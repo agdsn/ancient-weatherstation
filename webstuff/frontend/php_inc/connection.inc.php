@@ -22,7 +22,7 @@ class Connection{
   function _createConn(){
     //print $this->conn."<br>";
     if($this->conn === NULL){
-      $this->conn = pg_connect(Config::getPgConnString())
+      $this->conn = pg_pconnect(Config::getPgConnString())
         or die('Verbindungsaufbau fehlgeschlagen: ' . pg_last_error());
     }
   }
@@ -39,7 +39,7 @@ class Connection{
   function fetchQueryResultLine($query){
      $this->_createConn();
      $result =  pg_query($this->conn, $query) 
-       or die('Abfrage fehlgeschlagen: ' . pg_last_error()); 
+       or die('Abfrage fehlgeschlagen: ' . pg_last_error(). "\n<br>\nquery: '".$query."'"); 
      $array = pg_fetch_assoc($result);
      //print_r($array);
      return $array;
@@ -50,7 +50,7 @@ class Connection{
     $returnArray = array();
     $this->_createConn();
     $result =  pg_query($this->conn, $query)
-      or die('Abfrage fehlgeschlagen: ' . pg_last_error());
+      or die('Abfrage fehlgeschlagen: ' . pg_last_error(). "\n<br>\nquery: '".$query."'");
     while($array = pg_fetch_assoc($result))
       array_push($returnArray, $array);
     return $returnArray;
@@ -60,7 +60,7 @@ class Connection{
   function &getRawResult($query){
     $this->_createConn();
     $result =  pg_query($this->conn, $query)
-      or die('Abfrage fehlgeschlagen: ' . pg_last_error());
+      or die('Abfrage fehlgeschlagen: ' . pg_last_error(). "\n<br>\nquery: '".$query."'");
     return $result;
   }
 

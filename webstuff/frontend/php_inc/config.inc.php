@@ -48,5 +48,10 @@ class Config{
     global $allTitle;
     return $allTitle;
   }
+
+  function getAvInterval(){
+    global $average_interval;
+    return $average_interval;
+  }
 }
 ?>

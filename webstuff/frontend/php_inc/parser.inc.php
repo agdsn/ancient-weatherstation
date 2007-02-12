@@ -20,14 +20,9 @@ class Parser{
   /* Fuegt Inhalt in das Inhalts-Array ein */
   function appendContent($newContent){
     if(is_array($newContent)){
-      $newContentCount = count($newContent);
-      for($i = 0; $i < $newContentCount; $i++){
-        array_push($this->contentArray, $newContent[$i]);
-	//echo $newContent[$i]."\n";
-      }
+      $this->contentArray = &array_merge($this->contentArray, $newContent);//[$i]);
     } else {
       array_push($this->contentArray, $newContent);
-      //echo $newContent."\n";
     }
   }
 
@@ -47,8 +42,9 @@ class Parser{
     if($filePart != null){
       $fileArray = $this->_fetchFilePart(&$fileArray, $filePart);									/* Wenn File aus mehreren Template-Teilen besteht, dann wird hir der relevante Zeil geholt */
     }
-    for($i = 0; $i < count($fileArray); $i++){												/* Das Array durchlaufen ... */
-      if(0 != preg_match_all("/\{content:([a-z]+):([a-z0-9_]+)\}/i", $fileArray[$i], $results)){
+    $fileArrayCount = count($fileArray);
+    for($i = 0; $i < $fileArrayCount; $i++){												/* Das Array durchlaufen ... */
+      if((strpos($fileArray[$i], "{content") !== FALSE) && 0 != preg_match_all("/\{content:([a-z]+):([a-z0-9_]+)\}/i", $fileArray[$i], $results)){
         //print_r($results);
 	$resultsCount = count($results[1]);
         for($j = 0; $j < $resultsCount; $j++){
@@ -72,16 +68,17 @@ class Parser{
     $inPart = false;									/* Flag ob innerhalb des gesuchten Templates Initialisieren */
     $newArray = array();								/* Neues File-Array */
     $fileArrayCount = count($fileArray);
+    $filePart = "{content:part:".$filePart."}";
     for($i = 0; $i < $fileArrayCount; $i++){						/* Altes Array dtrchlaufen */
       if($inPart){
-        if(preg_match("/\{content:part:end\}/i", $fileArray[$i])){			/* Wenn im gesuchtem Template, dann nach {content:part:end\} suchen */
+        if(strpos($fileArray[$i],"{content:part:end}") !== FALSE){			/* Wenn im gesuchtem Template, dann nach {content:part:end\} suchen */
           $inPart = false;								/* ...wenn gefunden Flag wieder False setzen */
           break;									/* ...und Schleife abbrechen */
         } else {
           array_push($newArray, $fileArray[$i]);					/* An sonsten Zeile zum neuem Array hinzufuegen */
 	}
       } else {										/* Wenn nich im gesuchtem Template */
-        if(preg_match("/\{content:part:".$filePart."\}/i", $fileArray[$i])){		/* Nach dem Anfang des Templates suchen */
+        if(strpos($fileArray[$i], $filePart) !== FALSE ){		/* Nach dem Anfang des Templates suchen */
           $inPart = true;								/* und wenn gefunden, dann Flaf true setzen */
 	}
       }

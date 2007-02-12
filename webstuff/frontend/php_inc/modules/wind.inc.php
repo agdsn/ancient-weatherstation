@@ -8,15 +8,18 @@
 
 class Wind{
 
-  var $nowWind;		/* Momentaner Wind */
-  var $nowDir;		/* Momentane Windrichtung */
-  var $nowDate;		/* datum des letzten Messvorgangs */
-  var $avVal;		/* Durchschnittswert */
-  var $avInter;		/* Interval des Durchschnittswertes */
-  var $maxWind;		/* Maximale Wind */
-  var $maxDir;		/* Windrichtung bei max. Windgeschw. */
-  var $maxDate;		/* Datum, wann der Max. Wind gemessen wurde */
-  var $changing;	/* Tendenz */
+  var $nowWind;			/* Momentaner Wind */
+  var $nowDir;			/* Momentane Windrichtung */
+  var $nowDate;			/* datum des letzten Messvorgangs */
+  var $avVal      = "nc";	/* Durchschnittswert */
+  var $avInter    = "nc";	/* Interval des Durchschnittswertes */
+  var $maxWind;			/* Maximale Wind */
+  var $maxDir;			/* Windrichtung bei max. Windgeschw. */
+  var $maxDate;			/* Datum, wann der Max. Wind gemessen wurde */
+  var $changing   = "nc";	/* Tendenz */
+  var $connection;
+  var $sensId;
+  var $table;
 
   /* Konstruktor */
   function Wind($sensId, & $connection){
@@ -25,32 +28,29 @@ class Wind{
 
   /* Funktion, die die Klasse mit den Weten initialisiert */
   function _fetchWindData($sensId, &$connection){
+    $this->connection = &$connection;
+    $this->sensId = $sensId;
 
     /* Tabelle des Sensors bestimmen */
     $tableQuery  = "SELECT tabelle FROM sensoren, typen WHERE sensoren.id=".$sensId." AND typen.typ = sensoren.typ";
     $table       = $connection->fetchQueryResultLine($tableQuery);
+    $this->table = $table['tabelle'];
     
     /* Aktuelle Wind bestimmen */
-    $nowQuery    = "SELECT geschw as wind, richt as dir, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as timestamp FROM ".$table['tabelle']." WHERE timestamp=(select max(timestamp) from ".$table['tabelle']." where sens_id=".$sensId.")";
+    $nowQuery    = "SELECT geschw as wind, richt as dir, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$table['tabelle']." WHERE sens_id=".$sensId." ORDER BY timestamp DESC LIMIT 1";
     $nowData     = $connection->fetchQueryResultLine($nowQuery);
     
     /* Max und Min-Werte bestimmen */
-    $maxQuery    = "SELECT geschw as wind, richt as dir, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as timestamp FROM ".$table['tabelle']." WHERE sens_id=".$sensId." AND geschw=(SELECT max(geschw) FROM ".$table['tabelle']." WHERE sens_id=".$sensId.")";
+    $maxQuery    = "SELECT geschw as wind, richt as dir, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$table['tabelle']." WHERE sens_id=".$sensId." AND geschw=(SELECT max(geschw) FROM ".$table['tabelle']." WHERE sens_id=".$sensId.") ORDER BY timestamp DESC LIMIT 1";
     $maxData     = $connection->fetchQueryResultLine($maxQuery);
     
     /* Bestimmte Werte den Klassenvariablen zuordnen */
     $this->nowWind = $nowData['wind'];
     $this->nowDir  = $this->_calcDirection($nowData['dir']);
-    $this->nowDate = $nowData['timestamp'];
+    $this->nowDate = $nowData['text_timestamp'];
     $this->maxWind = $maxData['wind'];
     $this->maxDir  = $this->_calcDirection($maxData['dir']);
-    $this->maxDate = $maxData['timestamp'];
-
-    /* Durchschnittswert bestimmen lassen */
-    $this->_fetchAverage($sensId, $table['tabelle'], &$connection);
-
-    /* Tendenz bestimmen lassen */
-    $this->_fetchMoving($sensId, $table['tabelle'], &$connection);
+    $this->maxDate = $maxData['text_timestamp'];
   }
 
   function _calcDirection($deg){
@@ -129,39 +129,39 @@ class Wind{
   }
 
   /* liefert den Durchschnittswert in einem bestimmtem Interval */
-  function _getAverage($sensId, $table, &$connection, $interval){
-    $avQuery     = "SELECT (sum(geschw)/count(geschw)) as average, count(geschw) as count  FROM ".$table." WHERE sens_id=".$sensId." AND timestamp>(current_timestamp - INTERVAL '".$interval."')";
-    $avData      = $connection->fetchQueryResultLine($avQuery);
+  function _getAverage($interval){
+    $avQuery     = "SELECT avg(geschw) as average, count(geschw) as count  FROM ".$this->table." WHERE sens_id=".$this->sensId." AND timestamp>(current_timestamp - INTERVAL '".$interval."')";
+    $avData      = $this->connection->fetchQueryResultLine($avQuery);
     return $avData;
   }
 
   /* momentanen Durchschnittswert bestimmen */
-  function _fetchAverage($sensId, $table, &$connection){
+  function _fetchAverage(){
     $avData = array('average'=>0, 'count'=>0);						/* Array initialisieren */
     $i = 1;										/* Laufvariable */
     while($avData['count']<5){								/* Schleife prueft, in welchem Interval 5 Werte zusammenkommen */ 
       $i++;										/* Laufvariable erhoehen */
-      $avData = $this->_getAverage($sensId, $table, &$connection, ($i*20)." minutes");	/* Holt Werte mit gegebenem Interval */
+      $avData = $this->_getAverage(($i*(Config::getAvInterval()))." minutes");	/* Holt Werte mit gegebenem Interval */
     }
 
     /* Werte den Klassenvariablen zuordnen */
     $this->avVal   = $avData['average'];
-    $this->avInter = $i*20;
+    $this->avInter = $i*(Config::getAvInterval());
   }
  
   /* Bestimmt die Tendenz */
-  function _fetchMoving($sensId, $table, &$connection){
-    $shortAvData = $this->_getAverage($sensId, $table, &$connection, "15 minutes");	/* Durchschnitt der letzten 15 minuten */
-    $longAvData = $this->_getAverage($sensId, $table, &$connection, "120 minutes");	/* Durchschnitt der letzten 120 Minuten */
+  function _fetchMoving(){
+    $shortAvData = $this->_getAverage("15 minutes");	  				/* Durchschnitt der letzten 15 minuten */
+    $longAvData = $this->_getAverage("120 minutes");					/* Durchschnitt der letzten 120 Minuten */
     if($shortAvData['count'] < 1 || $longAvData['count'] < 2){				/* Wenn in den letzten 5 minuten kein Wert kam oder in den letzten 120 min weniger als 3 Werte kamen */
       $this->changing = "Berechnung momentan nicht moeglich";				/* Dann ausgeben, dass momentan nichts berechnet werden kann */
       return;										/* und aus der Funktion huepfen */
     }
     $changing = $shortAvData['average'] - $longAvData['average'];			/* Aenderung berechnen */
     if($changing > 0){									/* Wenn Aenderung positiv */
-      $this->changing = "steigend (+ ".abs($changing * 0.1)." <sup>km</sup>/<sub>h</sub>)";			/* dann steigende Tendenz ausgeben */
+      $this->changing = "steigend (+ ".abs(round($changing * 0.1, 1))." <sup>km</sup>/<sub>h</sub>)";			/* dann steigende Tendenz ausgeben */
     } elseif($changing < 0) {								/* wenn Negativ */
-      $this->changing = "fallend (- ".abs($changing * 0.1)." <sup>km</sup>/<sub>h</sub>)";			/* Fallende Tendenz ausgeben */
+      $this->changing = "fallend (- ".abs(round($changing * 0.1, 1))." <sup>km</sup>/<sub>h</sub>)";			/* Fallende Tendenz ausgeben */
     } else {										/* an sonsten */
       $this->changing = "gleichbleibend (&plusmn; 0 <sup>km</sup>/<sub>h</sub>)";				/* sagen, das es gleich geblieben ist */
     }
@@ -186,14 +186,20 @@ class Wind{
   }
 
   function get_av_value(){
+    if($this->avVal == "nc")
+      $this->_fetchAverage();
     return round($this->avVal * 0.1, 1);
   }
 
   function get_av_interval(){
+    if($this->avInter == "nc")
+      $this->_fetchAverage();
     return $this->avInter;
   }
 
   function get_changing(){
+    if($this->changing == "nc")
+      $this->_fetchMoving();
     return $this->changing;
   }
 
