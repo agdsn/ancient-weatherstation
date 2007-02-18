@@ -26,16 +26,10 @@ class Rain{
   var $sensId;
 
   /* Konstruktor, Holt die Werte aus der Datenbank und fuellt die Variablen damit */
-  function Rain($sensId, & $connection){
+  function Rain($sensId, & $connection, $table){
     $this->connection = &$connection;
     $this->sensId     = $sensId;
-
-    /* Tabelle des Sensors bestimmen */
-    $tableQuery  = "SELECT tabelle FROM sensoren, typen WHERE sensoren.id=".$sensId." AND typen.typ = sensoren.typ";
-    $table       = $connection->fetchQueryResultLine($tableQuery);
-    $table 	 = trim($table['tabelle']);
     $this->table = $table;
-
   }
 
   /* Momentane Werte aus der Datenbank holen */

@@ -12,47 +12,50 @@ class Temp{
   var $nowDate;			/* datum des letzten Messvorgangs */
   var $avVal     = "nc";	/* Durchschnittswert */
   var $avInter   = "nc";	/* Interval des Durchschnittswertes */
-  var $minTemp;			/* Minimale Temparatur */
-  var $minDate;			/* Datum, wann die Minimale Temparatur gemessen wurde */
-  var $maxTemp;			/* Maximale Temparatur */
-  var $maxDate;			/* Datum, wann die Max. Temp. gemessen wurde */
-  var $changing = "nc";		/* Tendenz */
+  var $minTemp   = "nc";	/* Minimale Temparatur */
+  var $minDate   = "nc";	/* Datum, wann die Minimale Temparatur gemessen wurde */
+  var $maxTemp   = "nc";	/* Maximale Temparatur */
+  var $maxDate   = "nc";	/* Datum, wann die Max. Temp. gemessen wurde */
+  var $changing  = "nc";	/* Tendenz */
   var $connection;
   var $sensId;
   var $table;
 
   /* Konstruktor */
-  function Temp($sensId, & $connection){
-    $this->_fetchTempData($sensId, &$connection);
+  function Temp($sensId, & $connection, $table){
+    $this->connection = &$connection;
+    $this->sensId     = $sensId;
+    $this->table      = $table;
+    $this->_fetchTempData();
   }
 
   /* Funktion, die die Klasse mit den Weten initialisiert */
-  function _fetchTempData($sensId, &$connection){
-    $this->connection = &$connection;
-    $this->sensId = $sensId;
-
-    /* Tabelle des Sensors bestimmen */
-    $tableQuery  = "SELECT tabelle FROM sensoren, typen WHERE sensoren.id=".$sensId." AND typen.typ = sensoren.typ";
-    $table       = $connection->fetchQueryResultLine($tableQuery);
-    $this->table = $table['tabelle'];
+  function _fetchTempData(){
 
     /* Aktuelle Temperatur bestimmen */
-    $nowQuery    = "SELECT temp, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$table['tabelle']." WHERE sens_id=".$sensId." ORDER BY timestamp DESC LIMIT 1";
-    $nowData     = $connection->fetchQueryResultLine($nowQuery);
-    
-    /* Max und Min-Werte bestimmen */
-    $maxQuery    = "SELECT temp, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$table['tabelle']." WHERE sens_id=".$sensId." AND temp=(SELECT max(temp) FROM ".$table['tabelle']." WHERE sens_id=".$sensId.") ORDER BY timestamp DESC LIMIT 1";
-    $maxData     = $connection->fetchQueryResultLine($maxQuery);
-    $minQuery    = "SELECT temp, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$table['tabelle']." WHERE sens_id=".$sensId." AND temp=(SELECT min(temp) FROM ".$table['tabelle']." WHERE sens_id=".$sensId.") ORDER BY timestamp DESC LIMIT 1";
-    $minData     = $connection->fetchQueryResultLine($minQuery);
+    $nowQuery    = "SELECT temp, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$this->table." WHERE sens_id=".$this->sensId." ORDER BY timestamp DESC LIMIT 1";
+    $nowData     = $this->connection->fetchQueryResultLine($nowQuery);
     
     /* Bestimmte Werte den Klassenvariablen zuordnen */
     $this->nowTemp = $nowData['temp'];
     $this->nowDate = $nowData['text_timestamp'];
-    $this->maxTemp = $maxData['temp'];
-    $this->maxDate = $maxData['text_timestamp'];
-    $this->minTemp = $minData['temp'];
-    $this->minDate = $minData['text_timestamp'];
+  }
+
+  function _fetchMinMax(){
+    $Query    = "SELECT max(temp) as max, min(temp) as min FROM ".$this->table." WHERE sens_id=".$this->sensId."";
+    $Data     = $this->connection->fetchQueryResultLine($Query);
+    $this->minTemp = $Data['min'];
+    $this->maxTemp = $Data['max'];
+  }
+
+  function _fetchMinMaxDate(){
+    if($this->maxHum == "nc" || $this->minHum == "nc"){
+      $this->_fetchMinMax();
+    }
+    $Query    = "SELECT to_char(max(timestamp), 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$this->table." WHERE sens_id=".$this->sensId." AND temp=".$this->maxTemp." OR temp=".$this->minTemp." GROUP BY temp ORDER BY temp ASC LIMIT 2";
+    $Data     = $this->connection->fetchQueryResultSet($Query);
+    $this->minDate = $Data[0]['text_timestamp'];
+    $this->maxDate = $Data[1]['text_timestamp'];
   }
 
   /* liefert den Durchschnittswert in einem bestimmtem Interval */
@@ -123,18 +126,30 @@ class Temp{
   }
 
   function get_max_val(){
-    return $this->maxTemp * 0.1;
+    if($this->maxTemp == "nc"){
+      $this->_fetchMinMax();
+    }
+    return round($this->maxTemp*0.1, 1);
   }
 
   function get_max_date(){
+    if($this->minDate == "nc"){
+      $this->_fetchMinMaxDate();
+    }
     return $this->maxDate;
   }
 
   function get_min_val(){
-    return $this->minTemp * 0.1;
+    if($this->minTemp == "nc"){
+      $this->_fetchMinMax();
+    }
+    return round($this->minTemp*0.1, 1);
   }
 
   function get_min_date(){
+    if($this->maxDate == "nc"){
+      $this->_fetchMinMaxDate();
+    }
     return $this->minDate;
   }
 

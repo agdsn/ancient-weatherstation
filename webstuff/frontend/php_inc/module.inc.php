@@ -21,6 +21,7 @@ class Module{
 
   var $modName;				/* Modul-Id */
   var $sensId;				/* Sensor-Id */
+  var $table;				/* Tabellenname des Sensors */
   var $connection;			/* Connection - Instanz */
   var $parserInstance     = NULL;	/* Parser - Instanz */
   var $connectionInstance = NULL;	/* Connection - Instanz */
@@ -39,10 +40,18 @@ class Module{
     $this->modName 	  = $modName;
     $this->connection 	  = &$connection;
     $this->parserInstance = &$parser;
+    $this->table 	  = $this->_getTableName();
 
     $parser->parseContent($this->_getModuleFilename("frame"), & $this, "top");		/* Oberen Modulrahmen parsen */
     $parser->parseContent($this->_getModuleFilename($modName), & $this, NULL); 		/* Modul Parsen */
     $parser->parseContent($this->_getModuleFilename("frame"), & $this, "bottom"); 	/* unteren Modulrahmen Parsen */
+  }
+
+  function _getTableName(){
+    /* Tabelle des Sensors bestimmen */
+    $tableQuery  = "SELECT tabelle FROM sensoren, typen WHERE sensoren.id=".$this->sensId." AND typen.typ = sensoren.typ";
+    $table       = $this->connection->fetchQueryResultLine($tableQuery);
+    return $table['tabelle'];
   }
 
   /* Dateinamen des Modul-Files zusammenbauen */
@@ -61,42 +70,43 @@ class Module{
   /* Instanz der Temp-Klasse holen */
   function &_get_temp(){
     if($this->tempInstance == NULL)
-      $this->tempInstance = new Temp($this->sensId, $this->connection);
+      $this->tempInstance = new Temp($this->sensId, $this->connection, $this->table);
     return $this->tempInstance;
   }
 
   /* Instanz der Rain-Klasse holen */
   function &_get_rain(){
     if($this->rainInstance == NULL)
-      $this->rainInstance = new Rain($this->sensId, $this->connection);
+      $this->rainInstance = new Rain($this->sensId, $this->connection, $this->table);
     return $this->rainInstance;
   }
 
   /* Instanz der Hum-Klasse holen */
   function &_get_hum(){
     if($this->humInstance == NULL)
-      $this->humInstance = new Hum($this->sensId, $this->connection);
+      $this->humInstance = new Hum($this->sensId, $this->connection, $this->table);
     return $this->humInstance;
   }
 
   /* Instanz der Press-Klasse holen */
   function &_get_press(){
     if($this->pressInstance == NULL)
-      $this->pressInstance = new Press($this->sensId, $this->connection);
+      $this->pressInstance = new Press($this->sensId, $this->connection, $this->table);
     return $this->pressInstance;
   }
 
   /* Instanz der Wind-Klasse holen */
   function &_get_wind(){
     if($this->windInstance == NULL)
-      $this->windInstance = new Wind($this->sensId, $this->connection);
+      $this->windInstance = new Wind($this->sensId, $this->connection, $this->table);
     return $this->windInstance;
   }
 
   /* Callback-Funktion, wird ausgefuehrt wenn {content:fill:xyz} gefunden wird */
   function fill($contentId){
     $content_split = explode("_", $contentId);										/* Modultyp bekommen */
-    $callObject	   = & call_user_method("_get_".$content_split[0], $this);						/* Instanz der zum Modul gehoerenden Klasse */
+    $getMethod	   =  "_get_".$content_split[0];									/* Instanz der zum Modul gehoerenden Klasse */
+    $callObject	   =  & $this->$getMethod();;										/* Instanz der zum Modul gehoerenden Klasse */
     $funcName      = "get".substr($contentId, strlen($content_split[0]), strlen($contentId)-strlen($content_split[0])); /* Namen der In der Instanz aufzurufenden Methode zusammenbauen */
     
     return $callObject->$funcName($content_split[1]);									/* Methode ausfuehren (Wert holen) und zurueckgeben */

@@ -22,27 +22,23 @@ class Wind{
   var $table;
 
   /* Konstruktor */
-  function Wind($sensId, & $connection){
-    $this->_fetchWindData($sensId, &$connection);
+  function Wind($sensId, & $connection, $table){
+    $this->table = $table;
+    $this->connection = &$connection;
+    $this->sensId = $sensId;
+    $this->_fetchWindData();
   }
 
   /* Funktion, die die Klasse mit den Weten initialisiert */
-  function _fetchWindData($sensId, &$connection){
-    $this->connection = &$connection;
-    $this->sensId = $sensId;
+  function _fetchWindData(){
 
-    /* Tabelle des Sensors bestimmen */
-    $tableQuery  = "SELECT tabelle FROM sensoren, typen WHERE sensoren.id=".$sensId." AND typen.typ = sensoren.typ";
-    $table       = $connection->fetchQueryResultLine($tableQuery);
-    $this->table = $table['tabelle'];
-    
     /* Aktuelle Wind bestimmen */
-    $nowQuery    = "SELECT geschw as wind, richt as dir, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$table['tabelle']." WHERE sens_id=".$sensId." ORDER BY timestamp DESC LIMIT 1";
-    $nowData     = $connection->fetchQueryResultLine($nowQuery);
+    $nowQuery    = "SELECT geschw as wind, richt as dir, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$this->table." WHERE sens_id=".$this->sensId." ORDER BY timestamp DESC LIMIT 1";
+    $nowData     = $this->connection->fetchQueryResultLine($nowQuery);
     
     /* Max und Min-Werte bestimmen */
-    $maxQuery    = "SELECT geschw as wind, richt as dir, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$table['tabelle']." WHERE sens_id=".$sensId." AND geschw=(SELECT max(geschw) FROM ".$table['tabelle']." WHERE sens_id=".$sensId.") ORDER BY timestamp DESC LIMIT 1";
-    $maxData     = $connection->fetchQueryResultLine($maxQuery);
+    $maxQuery    = "SELECT geschw as wind, richt as dir, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$this->table." WHERE sens_id=".$this->sensId." AND geschw=(SELECT max(geschw) FROM ".$this->table." WHERE sens_id=".$this->sensId.") ORDER BY timestamp DESC LIMIT 1";
+    $maxData     = $this->connection->fetchQueryResultLine($maxQuery);
     
     /* Bestimmte Werte den Klassenvariablen zuordnen */
     $this->nowWind = $nowData['wind'];

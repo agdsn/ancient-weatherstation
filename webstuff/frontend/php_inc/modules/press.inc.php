@@ -12,49 +12,52 @@ class Press{
   var $nowDate;			/* datum des letzten Messvorgangs */
   var $avVal      = "nc";	/* Durchschnittswert */
   var $avInter    = "nc";	/* Interval des Durchschnittswertes */
-  var $minPress;		/* Minimaler Luftdruck */
-  var $minDate;			/* Datum, wann der Minimale Luftdruck gemessen wurde */
-  var $maxPress;		/* Maximale Luftdruck */
-  var $maxDate;			/* Datum, wann der Max. Luftdruck gemessen wurde */
-  var $changing  = "nc";	/* Tendenz */
+  var $minPress   = "nc";	/* Minimaler Luftdruck */
+  var $minDate    = "nc";	/* Datum, wann der Minimale Luftdruck gemessen wurde */
+  var $maxPress   = "nc";	/* Maximale Luftdruck */
+  var $maxDate    = "nc";	/* Datum, wann der Max. Luftdruck gemessen wurde */
+  var $changing   = "nc";	/* Tendenz */
   var $connection;
   var $sensId;
   var $table;
 
   /* Konstruktor */
-  function Press($sensId, & $connection){
-    $this->_fetchPressData($sensId, &$connection);
+  function Press($sensId, & $connection, $table){
+    $this->connection = &$connection;
+    $this->sensId     = $sensId;
+    $this->table      = $table;
+    $this->_fetchPressData();
   }
 
   /* Funktion, die die Klasse mit den Weten initialisiert */
-  function _fetchPressData($sensId, &$connection){
-    $this->connection = &$connection;
-    $this->sensId     = $sensId;
+  function _fetchPressData(){
 
-    /* Tabelle des Sensors bestimmen */
-    $tableQuery  = "SELECT tabelle FROM sensoren, typen WHERE sensoren.id=".$sensId." AND typen.typ = sensoren.typ";
-    $table       = $connection->fetchQueryResultLine($tableQuery);
-    $this->table = $table['tabelle'];
-    
     /* Aktuelle Luftdruck bestimmen */
-    $nowQuery    = "SELECT press, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$table['tabelle']." WHERE sens_id=".$sensId." ORDER BY timestamp DESC LIMIT 1";
-    $nowData     = $connection->fetchQueryResultLine($nowQuery);
-    
-    /* Max und Min-Werte bestimmen */
-    $maxQuery    = "SELECT press, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$table['tabelle']." WHERE sens_id=".$sensId." AND press=(SELECT max(press) FROM ".$table['tabelle']." WHERE sens_id=".$sensId.") ORDER BY timestamp DESC LIMIT 1";
-    $maxData     = $connection->fetchQueryResultLine($maxQuery);
-    $minQuery    = "SELECT press, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$table['tabelle']." WHERE sens_id=".$sensId." AND press=(SELECT min(press) FROM ".$table['tabelle']." WHERE sens_id=".$sensId.") ORDER BY timestamp DESC LIMIT 1";
-    $minData     = $connection->fetchQueryResultLine($minQuery);
+    $nowQuery    = "SELECT press, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$this->table." WHERE sens_id=".$this->sensId." ORDER BY timestamp DESC LIMIT 1";
+    $nowData     = $this->connection->fetchQueryResultLine($nowQuery);
     
     /* Bestimmte Werte den Klassenvariablen zuordnen */
     $this->nowPress = $nowData['press'];
     $this->nowDate = $nowData['text_timestamp'];
-    $this->maxPress = $maxData['press'];
-    $this->maxDate = $maxData['text_timestamp'];
-    $this->minPress = $minData['press'];
-    $this->minDate = $minData['text_timestamp'];
   }
 
+  function _fetchMinMax(){
+    $Query    = "SELECT max(press) as max, min(press) as min FROM ".$this->table." WHERE sens_id=".$this->sensId."";
+    $Data     = $this->connection->fetchQueryResultLine($Query);
+    $this->minPress = $Data['min'];
+    $this->maxPress = $Data['max'];
+  }
+
+  function _fetchMinMaxDate(){
+    if($this->maxHum == "nc" || $this->minHum == "nc"){
+      $this->_fetchMinMax();
+    }
+    $Query    = "SELECT to_char(max(timestamp), 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$this->table." WHERE sens_id=".$this->sensId." AND press=".$this->maxPress." OR press=".$this->minPress." GROUP BY press ORDER BY press ASC LIMIT 2";
+    $Data     = $this->connection->fetchQueryResultSet($Query);
+    $this->minDate = $Data[0]['text_timestamp'];
+    $this->maxDate = $Data[1]['text_timestamp'];
+  }
+ 
   /* liefert den Durchschnittswert in einem bestimmtem Interval */
   function _getAverage($interval){
     $avQuery     = "SELECT avg(press) as average, count(press) as count  FROM ".$this->table." WHERE sens_id=".$this->sensId." AND timestamp>(current_timestamp - INTERVAL '".$interval."')";
@@ -123,18 +126,30 @@ class Press{
   }
 
   function get_max_val(){
+    if($this->maxPress == "nc"){
+      $this->_fetchMinMax();
+    }
     return $this->maxPress;
   }
 
   function get_max_date(){
+    if($this->minDate == "nc"){
+      $this->_fetchMinMaxDate();
+    }
     return $this->maxDate;
   }
 
   function get_min_val(){
+    if($this->minPress == "nc"){
+      $this->_fetchMinMax();
+    }
     return $this->minPress;
   }
 
   function get_min_date(){
+    if($this->maxDate == "nc"){
+      $this->_fetchMinMaxDate();
+    }
     return $this->minDate;
   }
 

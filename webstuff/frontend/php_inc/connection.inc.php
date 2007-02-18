@@ -52,7 +52,7 @@ class Connection{
     $result =  pg_query($this->conn, $query)
       or die('Abfrage fehlgeschlagen: ' . pg_last_error(). "\n<br>\nquery: '".$query."'");
     while($array = pg_fetch_assoc($result))
-      array_push($returnArray, $array);
+      $returnArray[] = $array;
     return $returnArray;
   }
 

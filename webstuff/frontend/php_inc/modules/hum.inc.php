@@ -13,49 +13,52 @@ class Hum{
   var $nowDate;		/* datum des letzten Messvorgangs */
   var $avVal    = "nc";	/* Durchschnittswert */
   var $avInter  = "nc";	/* Interval des Durchschnittswertes */
-  var $minHum;		/* Minimale Luftfeuchtigkeit */
-  var $minDate;		/* Datum, wann die Minimale Luftfeuchtigkeit gemessen wurde */
-  var $maxHum;		/* Maximale Luftfeuchtigkeit */
-  var $maxDate;		/* Datum, wann die Max. Luftfeuchtigkeit. gemessen wurde */
+  var $minHum   = "nc";	/* Minimale Luftfeuchtigkeit */
+  var $minDate  = "nc";	/* Datum, wann die Minimale Luftfeuchtigkeit gemessen wurde */
+  var $maxHum   = "nc";	/* Maximale Luftfeuchtigkeit */
+  var $maxDate  = "nc";	/* Datum, wann die Max. Luftfeuchtigkeit. gemessen wurde */
   var $changing = "nc";	/* Tendenz */
   var $connection;
   var $sensId;
   var $table;
 
   /* Konstruktor */
-  function Hum($sensId, & $connection){
-    $this->_fetchHumData($sensId, &$connection);
+  function Hum($sensId, & $connection, $table){
+    $this->connection = &$connection;
+    $this->sensId     = $sensId;
+    $this->table      = $table;
+    $this->_fetchHumData();
   }
 
   /* Funktion, die die Klasse mit den Weten initialisiert */
-  function _fetchHumData($sensId, &$connection){
-    $this->connection = &$connection;
-    $this->sensId = $sensId;
-
-    /* Tabelle des Sensors bestimmen */
-    $tableQuery  = "SELECT tabelle FROM sensoren, typen WHERE sensoren.id=".$sensId." AND typen.typ = sensoren.typ";
-    $table       = $connection->fetchQueryResultLine($tableQuery);
-    $this->table = $table['tabelle'];
+  function _fetchHumData(){
     
     /* Aktuelle Luftfeuchtigkeit bestimmen */
-    $nowQuery    = "SELECT hum, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$table['tabelle']." WHERE sens_id=".$sensId." ORDER BY timestamp DESC LIMIT 1";
-    $nowData     = $connection->fetchQueryResultLine($nowQuery);
-    
-    /* Max und Min-Werte bestimmen */
-    $maxQuery    = "SELECT hum, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$table['tabelle']." WHERE sens_id=".$sensId." AND hum=(SELECT max(hum) FROM ".$table['tabelle']." WHERE sens_id=".$sensId.") ORDER BY timestamp DESC LIMIT 1";
-    $maxData     = $connection->fetchQueryResultLine($maxQuery);
-    $minQuery    = "SELECT hum, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$table['tabelle']." WHERE sens_id=".$sensId." AND hum=(SELECT min(hum) FROM ".$table['tabelle']." WHERE sens_id=".$sensId.") ORDER BY timestamp DESC LIMIT 1";
-    $minData     = $connection->fetchQueryResultLine($minQuery);
+    $nowQuery    = "SELECT hum, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$this->table." WHERE sens_id=".$this->sensId." ORDER BY timestamp DESC LIMIT 1";
+    $nowData     = $this->connection->fetchQueryResultLine($nowQuery);
     
     /* Bestimmte Werte den Klassenvariablen zuordnen */
     $this->nowHum = $nowData['hum'];
     $this->nowDate = $nowData['text_timestamp'];
-    $this->maxHum = $maxData['hum'];
-    $this->maxDate = $maxData['text_timestamp'];
-    $this->minHum = $minData['hum'];
-    $this->minDate = $minData['text_timestamp'];
   }
 
+  function _fetchMinMax(){
+    $Query    = "SELECT max(hum) as max, min(hum) as min FROM ".$this->table." WHERE sens_id=".$this->sensId."";
+    $Data     = $this->connection->fetchQueryResultLine($Query);
+    $this->minHum = $Data['min'];
+    $this->maxHum = $Data['max'];
+  }
+
+  function _fetchMinMaxDate(){
+    if($this->maxHum == "nc" || $this->minHum == "nc"){
+      $this->_fetchMinMax();
+    }
+    $Query    = "SELECT to_char(max(timestamp), 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$this->table." WHERE sens_id=".$this->sensId." AND hum=".$this->maxHum." OR hum=".$this->minHum." GROUP BY hum ORDER BY hum ASC LIMIT 2";
+    $Data     = $this->connection->fetchQueryResultSet($Query);
+    $this->minDate = $Data[0]['text_timestamp'];
+    $this->maxDate = $Data[1]['text_timestamp'];
+  }
+ 
   /* liefert den Durchschnittswert in einem bestimmtem Interval */
   function _getAverage($interval){
     $avQuery     = "SELECT avg(hum) as average, count(hum) as count  FROM ".$this->table." WHERE sens_id=".$this->sensId." AND timestamp>(current_timestamp - INTERVAL '".$interval."')";
@@ -124,18 +127,30 @@ class Hum{
   }
 
   function get_max_val(){
+    if($this->maxHum == "nc"){
+      $this->_fetchMinMax();
+    }
     return $this->maxHum;
   }
 
   function get_max_date(){
+    if($this->minDate == "nc"){
+      $this->_fetchMinMaxDate();
+    }
     return $this->maxDate;
   }
 
   function get_min_val(){
+    if($this->minHum == "nc"){
+      $this->_fetchMinMax();
+    }
     return $this->minHum;
   }
 
   function get_min_date(){
+    if($this->maxDate == "nc"){
+      $this->_fetchMinMaxDate();
+    }
     return $this->minDate;
   }
 
