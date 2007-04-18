@@ -30,31 +30,34 @@
 
 
 /* Image-Default-Werte ----------------------------------------------- */
-#define DEFAULT_HEADLINE 	"Wetter - Diagram"
-#define DEFAULT_MANUAL_TABLE	"no"
-#define DEFAULT_TABLE_FIELD	"temp"
-#define DEFAULT_GEN_INTERVAL	"15m"
-#define DEFAULT_SHOW_INTERVAL	"2d"
-#define DEFAULT_LABEL_INTERVAL	"2h"
-#define DEFAULT_FIX_TIMEPOINT	"no"
-#define DEFAULT_TIMEPOINT	"2006-01-01-12-00"
-#define DEFAULT_LABEL_SUM	"no"
-#define DEFAULT_ZERO_MIN	"no"
-#define DEFAULT_AS_BARS		"no"
-#define DEFAULT_SHOW_AVERAGE	"yes"
-#define DEFAULT_SHOW_MIN	"no"
-#define DEFAULT_SHOW_MAX	"no"
-#define DEFAULT_INVERT_MIN	"yes"
-#define DEFAULT_INVERT_MAX	"yes"
-#define DEFAULT_WIDTH		"800"
-#define DEFAULT_HEIGHT		"300"
-#define DEFAULT_SENS_ID		"1"
-#define DEFAULT_VAL_KOEFF	"0.1"
-#define DEFAULT_UNIT		"°C"
-#define DEFAULT_X_AX_DESC	"X-Axis"
-#define DEFAULT_Y_AX_DESC	"Y-Axis"
-#define DEFAULT_X_FORMAT	"%H:%M"
-#define DEFAULT_X_FORMAT_EXTRA	"%d.%m.%y|  %H:%M"
+#define DEFAULT_HEADLINE 		"Wetter - Diagram"
+#define DEFAULT_MANUAL_TABLE		"no"
+#define DEFAULT_TABLE_FIELD		"temp"
+#define DEFAULT_GEN_INTERVAL		"15m"
+#define DEFAULT_SHOW_INTERVAL		"2d"
+#define DEFAULT_LABEL_INTERVAL		"2h"
+#define DEFAULT_FIX_TIMEPOINT		"no"
+#define DEFAULT_TIMEPOINT		"2006-01-01-12-00"
+#define DEFAULT_LABEL_SUM		"no"
+#define DEFAULT_ZERO_MIN		"no"
+#define DEFAULT_AS_BARS			"no"
+#define DEFAULT_SHOW_AVERAGE		"yes"
+#define DEFAULT_SHOW_MIN		"no"
+#define DEFAULT_SHOW_MAX		"no"
+#define DEFAULT_INVERT_MIN		"yes"
+#define DEFAULT_INVERT_MAX		"yes"
+#define DEFAULT_WIDTH			"800"
+#define DEFAULT_HEIGHT			"300"
+#define DEFAULT_SENS_ID			"1"
+#define DEFAULT_VAL_KOEFF		"0.1"
+#define DEFAULT_UNIT			"°C"
+#define DEFAULT_X_AX_DESC		"X-Axis"
+#define DEFAULT_Y_AX_DESC		"Y-Axis"
+#define DEFAULT_X_FORMAT		"%H:%M"
+#define DEFAULT_X_FORMAT_EXTRA		"%d.%m.%y|  %H:%M"
+#define DEFAULT_USE_GAUSS_AVERAGE	"no"
+#define DEFAULT_AVERAGE_LOOK_WIDTH	"30"
+#define DEFAULT_GAUSS_WIDTH		"12"
 
 /* Image-Default-Farben ---------------------------------------------- */
 #define DEFAULT_BG_COLOR		"DF:DF:EF:00"
@@ -97,7 +100,7 @@
 #define TRUE 1
 #define IMG_FONT "/usr/share/fonts/truetype/freefont/FreeSans.ttf"
 #define CRON_INTERVAL 15  //Minuten
-
+#define PI 3.14159265358979323846264
 
 /* Debug --------------------------------------------------------------- */
 #ifdef DEBUG

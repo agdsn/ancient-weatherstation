@@ -55,10 +55,13 @@ typedef struct image_cfg {
   int    zero_min;		/* Nullinie auf jeden Fall anzeigen */
   int    bars;			/* Balken malen statt einer Linie */
   int 	 show_average;		/* Durchschnittslinie zeichnen */
-  int	 show_min;
-  int	 show_max;
-  int	 invert_min;
-  int	 invert_max;
+  int	 gauss_width;		/* 'Breite' der Gauss-Glocke */
+  int	 average_look_width;	/* wieviele Pixel sollen 'links und rechts' angeschaut werden */
+  int	 use_gauss_average;	/* Gaussche Glockenkurve statt einer linearen Wichtung fuer den Durchschnitt bebutzen */
+  int	 show_min;		/* Minimum in der oberen ecke einblenden */
+  int	 show_max;		/* maximum in der oberen ecke einblenden */
+  int	 invert_min;		/* minimum invertiert anzeigen */
+  int	 invert_max;		/* maximum invertiert anzeigen */
   int 	 dflt_dir;		/* Standart - Verzeichnis fuer die Bilder */
 
   /* Farben */

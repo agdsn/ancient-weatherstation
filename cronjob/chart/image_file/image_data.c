@@ -54,6 +54,7 @@ static char *get_conn_string();
 static PGconn *pg_check_connect(char *);
 static PGresult *pg_check_exec(PGconn *, char *, int);
 static char *get_type_table_by_id(PGconn *, int );
+static inline double * build_koeff_array(int, int , int);
 
 
 /* Gibt die Liste mit den y-Labels zurueck */
@@ -496,7 +497,7 @@ pix_list_ptr build_average_line(pix_list_ptr real_list, int c_width){
   int field_size  = c_width + 10;	/* Array-Groeße (sollte nicht groeßer sein als die Breite in Pixel) */
   int i,j,m;				/* Zaehlvariablen */
   double sum    = 0;			/* Summe der berechneten Werte */
-  double koeff  = 0;			/* Momentan zu bearbeitener Koeffizient */
+  double *koeff = 0;			/* Momentan zu bearbeitener Koeffizient */
   double count  = 0;			/* Summe der Koeffizienten */
 
   pix_list_ptr old_temp       = real_list;					/* Liste mit den 'echten' Werten */
@@ -534,6 +535,9 @@ pix_list_ptr build_average_line(pix_list_ptr real_list, int c_width){
     list_count++;
   }
 
+  /* Koeffizienten bauen */
+  koeff = build_koeff_array(img_cfg.use_gauss_average, img_cfg.average_look_width, img_cfg.gauss_width);
+
   /* Array durchgehen und neue Werte berechnen.
    * Es werden immer 30 Werte Link und 30 Werte rechts mit
    * sich jeweils um 0.03 veringernden koeffizienten 
@@ -543,18 +547,15 @@ pix_list_ptr build_average_line(pix_list_ptr real_list, int c_width){
     if(old_ptr_field[i] != NULL){
 
       /* Aktueller Wert aus der 'realen' Liste */
-      sum = ((double)old_ptr_field[i]->value_sum) / ((double)old_ptr_field[i]->value_count);
-      
+      sum = ((double)old_ptr_field[i]->value_sum) / ((double)old_ptr_field[i]->value_count) * koeff[0];
+
       /* Summe der Koeffizienten. 
        * Aktueller Wert hat die Wichtung 1, 
        * daher mit 1 initialisiert */
-      count = 1;
+      count = koeff[0];
 
       /* 30 (29) Links ind rechts durchgehen */
-      for(j = 1; j < 30; j++){
-
-        /* aktueller Koeffizient */
-        koeff = 0.9 - (0.01 * (3*j));
+      for(j = 1; j < img_cfg.average_look_width; j++){
 
 	/* Anzahl, wie viele Werte mit dem Aktuellem 
 	 * Koeffizienten zur Summe addiert wurden */
@@ -563,7 +564,7 @@ pix_list_ptr build_average_line(pix_list_ptr real_list, int c_width){
 	/* j Werte 'links' vom aktuellem Wert */
 	if( (i - j) >= 0){
 	  if(old_ptr_field[i-j] != NULL){
-	    sum += (((double)old_ptr_field[i-j]->value_sum) / ((double)old_ptr_field[i-j]->value_count)) * koeff;
+	    sum += (((double)old_ptr_field[i-j]->value_sum) / ((double)old_ptr_field[i-j]->value_count)) * koeff[j];
 	    m++;
 	  }
 	}
@@ -571,18 +572,19 @@ pix_list_ptr build_average_line(pix_list_ptr real_list, int c_width){
 	/* j Werte rechts vom aktuellem Wert */
 	if( (i + j) < list_count){
 	  if(old_ptr_field[i+j] != NULL){
-	    sum += (((double)old_ptr_field[i+j]->value_sum) / ((double)old_ptr_field[i+j]->value_count)) * koeff;
+	    sum += (((double)old_ptr_field[i+j]->value_sum) / ((double)old_ptr_field[i+j]->value_count)) * koeff[j];
 	    m++;
 	  }
 	}
 
-	/* Hier wir die anzahl der Werte, 
-	 * die zur Summe hinzuaddiert wurden 
-	 * multipliziert mit dem aktuellem 
-	 * koeffizienten und das ganze auf 
-	 * den gesammtkoeffizienten addiert */
-	count += m * koeff;
-	
+       /* Hier wir die anzahl der Werte, 
+        * die zur Summe hinzuaddiert wurden 
+        * multipliziert mit dem aktuellem 
+        * koeffizienten und das ganze auf 
+        * den gesammtkoeffizienten addiert */
+        count += m * koeff[j];
+
+
       }
 
       /* Neues Element an die Durchschnittsliste anfuegen */
@@ -596,11 +598,41 @@ pix_list_ptr build_average_line(pix_list_ptr real_list, int c_width){
     }
   }
 
+  /* Koeffizienten freigeben */
+  free(koeff);
+
   /* Array freigeben */
   free(old_ptr_field);
 
   /* Durchschnittsliste zurueckgeen */
   return new_list;
+}
+
+
+/* Array mit koeffizienten bauen 
+ * gibt als rueckgabewert die koeffizienten
+ * Typ: 0=linear, 1=gauss*/
+static inline double* build_koeff_array(int type, int look_width, int gauss_width){
+  int j;								/* Laufvariable */
+  double div;
+  int o                = gauss_width;
+  double * koeff_array = malloc((sizeof(double) * (look_width+1)));
+
+  for(j = 0; j < look_width; j++){
+    if(type){
+      /* GAUSS!!!*/
+      koeff_array[j] = (1/ (sqrt(2*PI) * o))*exp(-(j*j)/(o*o));
+    } else {
+      /* LINEAR*/
+      if (j == 0){
+        koeff_array[0] = 1;
+      } else {
+        div = 0.9 / ((double)look_width);      
+        koeff_array[j] = 0.9 - (div * j);
+      }
+    }
+  }
+  return koeff_array;
 }
 
 
