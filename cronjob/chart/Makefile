@@ -3,7 +3,7 @@ LD      = gcc
 RM	= rm
 CFLAGS  = $(PackageFlags) -c
 LDFLAS  = $(PackageFlags) -o
-LD_LIBS = -lm -lpq -lgd -lpng -lz -lfreetype -lefence
+LD_LIBS = -lm -lpq -lgd -lpng -lz -lfreetype
 #INCL	= -I$$(pg_config --includedir)
 
 BIN_NAME = weather_chart
