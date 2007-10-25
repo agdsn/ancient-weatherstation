@@ -382,6 +382,10 @@ div.small_set div.module#windsSmall_2 a.mod_small_link div.mod_footer span.mod_m
   color: #AA3333;
 }
 
+img.chart_img {
+  margin: 0 auto;
+}
+
 p#copyright {
   margin-bottom:10px;
   margin-right:10px;
