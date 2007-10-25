@@ -73,7 +73,7 @@ class ModuleSet{
   }
 
   function getBackLink(){
-    $buff  = '<center>';
+    $buff  = '';
     $buff .= '<div class="back_link_div">';
     $buff .= '<a class="back_link" href="';
     $buff .= $_SERVER['HTTP_REFERER'];
@@ -81,7 +81,7 @@ class ModuleSet{
     $buff .= 'zur&uuml;ck';
     $buff .= "</a>";
     $buff .= "</div>";
-    $buff .= '</center>';
+    $buff .= '';
 
     return $buff;
   }

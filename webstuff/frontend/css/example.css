@@ -2,7 +2,9 @@ body {
   background: #FFFAF5;
   padding-bottom: 150px;
   font-family: serif;
+  text-align:center
 }
+
 
 h2.set_head {
   margin-bottom: 20px;
@@ -28,11 +30,8 @@ div.module {
 
 div.report {
   width:443px;
-}
-
-div.report {
-  text-align:center;
   overflow:hidden;
+  margin: 0 auto;
 }
 
 div.module table tr td {
@@ -85,10 +84,6 @@ div.module h4.mod_subhead {
 }
 
 div.module div.mod_subsec, div.report div.rpt_subsec {
-  border-color: #D0B080;
-  border-style: dotted;
-  border-width: 1px;
-  background: #FFEBBB;
   margin: 2px;
   margin-left: 10px;
   margin-right: 10px;
@@ -98,11 +93,14 @@ div.module div.mod_subsec, div.report div.rpt_subsec {
   font-size: 10pt;
 }
 
-div.module p.mod_description {
+div.module p.mod_description, div.module div.mod_subsec, div.report div.rpt_subsec{
   border-color: #D0B080;
   border-style: dotted;
   border-width: 1px;
   background: #FFEBBB;
+}
+
+div.module p.mod_description {
   margin-left: 10px;
   margin-right: 10px;
   margin-bottom: 4px;
@@ -153,15 +151,15 @@ div.module div.mod_subsec div.chart_link_div a.chart_link img.chart_link_prev {
 }
 
 div.back_link_div {
+  margin-top: 15px;
+  margin-left: auto;
+  margin-right: auto;
   background: #fafafa;
   border: 1px solid #aa8888;
-  position: relative;
   display:block;
   padding: 3px;
-  margin:5px;
   height:20px;
   width:80px;
-  margin-top:20px;
 }
 
 div.back_link_div a.back_link {
@@ -212,6 +210,7 @@ div.report div.rpt_subsec table.report_table tr.report_line:hover {
 }
 
 div.small_set, div.set {
+  margin: 0 auto;
   border-color: #C0A070;
   border-style: dotted;
   border-width: 1px; 
@@ -384,7 +383,11 @@ div.small_set div.module#windsSmall_2 a.mod_small_link div.mod_footer span.mod_m
 }
 
 p#copyright {
+  margin-bottom:10px;
+  margin-right:10px;
+  padding-top: 20px;
   font-size:10px;
   color:#666666;
   font-weight:600;
+  text-align: right;
 }

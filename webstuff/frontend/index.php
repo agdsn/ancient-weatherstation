@@ -15,7 +15,7 @@
     <link rel="stylesheet" type="text/css" href="css/example.css">
   </head>
   <body>
-    <h1 align="center"><? echo Config::getAllTitle(); ?></h1>
+    <h1><? echo Config::getAllTitle(); ?></h1>
 	<? new ModuleSet($_REQUEST['setType']);?>
 
 	<p id="copyright">(c) 2006 by Jan Losinski</p>
