@@ -291,11 +291,8 @@ div.small_set div.module a.mod_small_link:hover {
   background: #FFeebb;
 }
 
-div.small_set div.module a.mod_small_link div.mod_header{
+div.small_set div.module a.mod_small_link H4.mod_subheadline{
   background: #F0D0AF;
-}
-
-div.small_set div.module a.mod_small_link div.mod_header h4{
   margin:0px;
   padding:2px;
   font-size:12px;
@@ -303,7 +300,7 @@ div.small_set div.module a.mod_small_link div.mod_header h4{
   color: #222255;
 }
 
-div.small_set div.module a.mod_small_link div.mod_body {
+div.small_set div.module a.mod_small_link span.mod_body {
   position:absolute;
   bottom:0px;
   top:0px;
@@ -312,7 +309,7 @@ div.small_set div.module a.mod_small_link div.mod_body {
   height:100%;
   width:100%;
 }
-div.small_set div.module a.mod_small_link div.mod_body span.mod_now {
+div.small_set div.module a.mod_small_link span.mod_body span.mod_now {
   font-size: 21px;
   font-weight: 600;
   color: #225522;
@@ -320,7 +317,7 @@ div.small_set div.module a.mod_small_link div.mod_body span.mod_now {
   padding-bottom:4px;
   padding-top:30px;
 }
-div.small_set div.module#windsSmall_2 a.mod_small_link div.mod_body span.mod_now, div.small_set div.module#regenSmall_3 a.mod_small_link div.mod_body span.mod_now {
+div.small_set div.module#windsSmall_2 a.mod_small_link span.mod_body span.mod_now, div.small_set div.module#regenSmall_3 a.mod_small_link span.mod_body span.mod_now {
   font-size: 20px;
   padding-top:27px;
   line-height:15px;
@@ -329,7 +326,7 @@ div.small_set div.module#windsSmall_2 a.mod_small_link div.mod_body span.mod_now
   _padding-top:17pt;
   padding-bottom:0pt;
 }
-div.small_set div.module a.mod_small_link div.mod_body span.mod_now_extra {
+div.small_set div.module a.mod_small_link span.mod_body span.mod_now_extra {
   font-size: 10px;
   padding-top:0pt;
   padding-bottom:4px;
@@ -337,7 +334,7 @@ div.small_set div.module a.mod_small_link div.mod_body span.mod_now_extra {
   display:block;
   margin:0px;
 }
-div.small_set div.module a.mod_small_link div.mod_body span.mod_av {
+div.small_set div.module a.mod_small_link span.mod_body span.mod_av {
   font-size: 14px;
   color: #446644;
   position:absolute;
@@ -349,36 +346,37 @@ div.small_set div.module a.mod_small_link div.mod_body span.mod_av {
   right:0px;
 }
 
-div.small_set div.module#windsSmall_2 a.mod_small_link div.mod_body span.mod_av, div.small_set div.module#regenSmall_3 a.mod_small_link div.mod_body span.mod_av {
+div.small_set div.module#windsSmall_2 a.mod_small_link span.mod_body span.mod_av, div.small_set div.module#regenSmall_3 a.mod_small_link span.mod_body span.mod_av {
   bottom:21px;
 }
 
-div.small_set div.module a.mod_small_link div.mod_body, div.small_set div.module a.mod_small_link div.mod_footer{
+/*div.small_set div.module a.mod_small_link div.mod_body, div.small_set div.module a.mod_small_link span.mod_footer{
   text-align: center;
-}
+}*/
 
-div.small_set div.module a.mod_small_link div.mod_footer {
+div.small_set div.module a.mod_small_link span.mod_footer {
   position:absolute;  
   bottom:0px;
   left:0px;
   right:0px;
   width: 100%;
   background:#F0D0AF;
+  white-space:nowrap;
 }
 
-div.small_set div.module a.mod_small_link div.mod_footer span{
+div.small_set div.module a.mod_small_link span.mod_footer span{
   font-size:11px;
 }
 
-div.small_set div.module a.mod_small_link div.mod_footer span.mod_max {
+div.small_set div.module a.mod_small_link span.mod_footer span.mod_max {
   color: #AA3333;
   margin-right:6px;
 }
-div.small_set div.module a.mod_small_link div.mod_footer span.mod_min {
+div.small_set div.module a.mod_small_link span.mod_footer span.mod_min {
   color: #33AA33;
   margin-left:6px;
 }
-div.small_set div.module#windsSmall_2 a.mod_small_link div.mod_footer span.mod_min, div.small_set div.module#regenSmall_3 a.mod_small_link div.mod_footer span.mod_min {
+div.small_set div.module#windsSmall_2 a.mod_small_link span.mod_footer span.mod_min, div.small_set div.module#regenSmall_3 a.mod_small_link span.mod_footer span.mod_min {
   color: #AA3333;
 }
 
