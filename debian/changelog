@@ -1,3 +1,9 @@
+weatherstation (1.0.11-1) stable; urgency=low
+
+  * Frontend: Full XML Output added
+
+ -- Jan Losinski <losinski@wh2.tu-dresden.de>  Tue, 27 Nov 2007 20:07:40 +0100
+
 weatherstation (1.0.10-1) stable; urgency=low
 
   * Chart: linear average improved (performance)
