@@ -1,0 +1,42 @@
+<Wind>
+  <SensorId>{content:fill:sens_id}</SensorId>
+  <Location>{content:fill:sens_location}</Location>
+  <Description>{content:fill:sens_description}</Description>
+  <Now>
+    <Value>{content:fill:wind_now_val}</Value>
+    <Date>{content:fill:wind_now_date}</Date>
+  </Now>
+  <Average>
+    <Value>{content:fill:wind_av_value}</Value>
+    <Interval>{content:fill:wind_av_interval}</Interval>
+  </Average>
+  <Changing>
+    <Value>{content:fill:wind_changing}</Value>
+  </Changing>
+  <BoundMax>
+    <Value>{content:fill:wind_max_val}</Value>
+    <Date>{content:fill:wind_max_date}</Date>
+  </BoundMax>
+  <Charts>
+    <Chart>
+      <Type>wind</Type>
+      <Description>Winddiagramm Sensor {content:fill:sens_id} - 30 Tage</Description>
+      <Interval>10</Interval>
+      <Link>{content:addChartImgLink:wind_10}</Link>
+    </Chart>
+    <Chart>
+      <Type>wind</Type>
+      <Description>Winddiagramm Sensor {content:fill:sens_id} - 30 Tage</Description>
+      <Interval>30</Interval>
+      <Link>{content:addChartImgLink:wind_30}</Link>
+    </Chart>
+    <Chart>
+      <Type>wind</Type>
+      <Description>Winddiagramm Sensor {content:fill:sens_id} - 365 Tage</Description>
+      <Interval>365</Interval>
+      <Link>{content:addChartImgLink:wind_365}</Link>
+    </Chart>
+  </Charts>
+</Wind> 
+
+

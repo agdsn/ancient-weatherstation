@@ -1,0 +1,45 @@
+<Humidity>
+  <SensorId>{content:fill:sens_id}</SensorId>
+  <Location>{content:fill:sens_location}</Location>
+  <Description>{content:fill:sens_description}</Description>
+  <Now>
+    <Value>{content:fill:hum_now_val}</Value>
+    <Date>{content:fill:hum_now_date}</Date>
+  </Now>
+  <Average>
+    <Value>{content:fill:hum_av_value}</Value>
+    <Interval>{content:fill:hum_av_interval}</Interval>
+  </Average>
+  <Changing>
+    <Value>{content:fill:hum_changing}</Value>
+  </Changing>
+  <BoundMin>
+    <Value>{content:fill:hum_max_val}</Value>
+    <Date>{content:fill:hum_max_date}</Date>
+  </BoundMin>
+  <BoundMax>
+    <Value>{content:fill:hum_min_val}</Value>
+    <Date>{content:fill:hum_min_date}</Date>
+  </BoundMax>
+  <Charts>
+    <Chart>
+      <Type>hum</Type>
+      <Description>Luftfeuchtediagramm Sensor {content:fill:sens_id} - 30 Tage</Description>
+      <Interval>10</Interval>
+      <Link>{content:addChartImgLink:hum_10}</Link>
+    </Chart>
+    <Chart>
+      <Type>hum</Type>
+      <Description>Luftfeuchtediagramm Sensor {content:fill:sens_id} - 30 Tage</Description>
+      <Interval>30</Interval>
+      <Link>{content:addChartImgLink:hum_30}</Link>
+    </Chart>
+    <Chart>
+      <Type>hum</Type>
+      <Description>Luftfeuchtediagramm Sensor {content:fill:sens_id} - 365 Tage</Description>
+      <Interval>365</Interval>
+      <Link>{content:addChartImgLink:hum_365}</Link>
+    </Chart>
+  </Charts>
+</Humidity> 
+

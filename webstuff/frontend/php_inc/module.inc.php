@@ -42,9 +42,11 @@ class Module{
     $this->parserInstance = &$parser;
     $this->table 	  = $this->_getTableName();
 
-    $parser->parseContent($this->_getModuleFilename("frame"), & $this, "top");		/* Oberen Modulrahmen parsen */
+    if (ModuleSet::isStandardPage($_REQUEST['setType'])) 
+      $parser->parseContent($this->_getModuleFilename("frame"), & $this, "top");		/* Oberen Modulrahmen parsen */
     $parser->parseContent($this->_getModuleFilename($modName), & $this, NULL); 		/* Modul Parsen */
-    $parser->parseContent($this->_getModuleFilename("frame"), & $this, "bottom"); 	/* unteren Modulrahmen Parsen */
+    if (ModuleSet::isStandardPage($_REQUEST['setType']))
+      $parser->parseContent($this->_getModuleFilename("frame"), & $this, "bottom"); 	/* unteren Modulrahmen Parsen */
   }
 
   function _getTableName(){
@@ -126,7 +128,11 @@ class Module{
   }
 
   function addChart($chartName){
-    Chart::insertChart($chartName);
+    return Chart::insertChart($chartName);
+  }
+
+  function addChartImgLink($chartName){
+    return Chart::insertChartLink($chartName.'_'.$this->sensId);
   }
 
   function addSetLink($setName){

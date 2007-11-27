@@ -7,6 +7,8 @@
 
   $path = "./";
   include_once($path."php_inc/module_set.inc.php");
+
+  if (ModuleSet::isStandardPage($_REQUEST['setType'])) {
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -17,8 +19,14 @@
   </head>
   <body>
     <h1><? echo Config::getAllTitle(); ?></h1>
-	<? new ModuleSet($_REQUEST['setType']);?>
-
+	<? 
+  }  
+  new ModuleSet($_REQUEST['setType']);
+  if (ModuleSet::isStandardPage($_REQUEST['setType'])) {
+        ?>
 	<p id="copyright">(c) 2006 by Jan Losinski</p>
   </body>
 </html>
+<?
+  }
+?>

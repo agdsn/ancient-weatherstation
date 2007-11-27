@@ -53,5 +53,10 @@ class Config{
     global $average_interval;
     return $average_interval;
   }
+
+  function getNotStandardPages(){
+    global $notStandard;
+    return $notStandard;
+  }
 }
 ?>

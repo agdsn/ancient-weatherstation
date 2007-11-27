@@ -1,0 +1,43 @@
+<Rain>
+  <SensorId>{content:fill:sens_id}</SensorId>
+  <Location>{content:fill:sens_location}</Location>
+  <Description>{content:fill:sens_description}</Description>
+  <Value interval="hour">{content:fill:rain_now_hour}</Value>
+  <Value interval="day">{content:fill:rain_now_day}</Value>
+  <Value interval="month">{content:fill:rain_now_month}</Value>
+
+  <Max interval="hour">
+    <Date>{content:fill:rain_max_hour_date}</Date>
+    <Value>{content:fill:rain_max_hour_val}</Value>
+  </Max>
+  <Max interval="day">
+    <Date>{content:fill:rain_max_day_date}</Date>
+    <Value>{content:fill:rain_max_day_val}</Value>
+  </Max>
+  <Max interval="month">
+    <Date>{content:fill:rain_max_month_date}</Date>
+    <Value>{content:fill:rain_max_month_val}</Value>
+  </Max>
+
+  <Charts>
+    <Chart>
+      <Type>rain</Type>
+      <Description>Regendiagramm Sensor {content:fill:sens_id} - 30 Tage</Description>
+      <Interval>10</Interval>
+      <Link>{content:addChartImgLink:rain_10}</Link>
+    </Chart>
+    <Chart>
+      <Type>rain</Type>
+      <Description>Regendiagramm Sensor {content:fill:sens_id} - 30 Tage</Description>
+      <Interval>30</Interval>
+      <Link>{content:addChartImgLink:rain_30}</Link>
+    </Chart>
+    <Chart>
+      <Type>rain</Type>
+      <Description>Regendiagramm Sensor {content:fill:sens_id} - 365 Tage</Description>
+      <Interval>365</Interval>
+      <Link>{content:addChartImgLink:rain_365}</Link>
+    </Chart>
+  </Charts>
+</Rain>
+

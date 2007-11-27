@@ -1,0 +1,45 @@
+<Temperature>
+  <SensorId>{content:fill:sens_id}</SensorId>
+  <Location>{content:fill:sens_location}</Location>
+  <Description>{content:fill:sens_description}</Description>
+  <Now>
+    <Value>{content:fill:temp_now_val}</Value>
+    <Date>{content:fill:temp_now_date}</Date>
+  </Now>
+  <Average>
+    <Value>{content:fill:temp_av_value}</Value>
+    <Interval>{content:fill:temp_av_interval}</Interval>
+  </Average>
+  <Changing>
+    <Value>{content:fill:temp_changing}</Value>
+  </Changing>
+  <BoundMin>
+    <Value>{content:fill:temp_max_val}</Value>
+    <Date>{content:fill:temp_max_date}</Date>
+  </BoundMin>
+  <BoundMax>
+    <Value>{content:fill:temp_min_val}</Value>
+    <Date>{content:fill:temp_min_date}</Date>
+  </BoundMax>
+  <Charts>
+    <Chart>
+      <Type>temp</Type>
+      <Description>Temparaturdiagramm Sensor {content:fill:sens_id} - 30 Tage</Description>
+      <Interval>10</Interval>
+      <Link>{content:addChartImgLink:temp_10}</Link>
+    </Chart>
+    <Chart>
+      <Type>temp</Type>
+      <Description>Temparaturdiagramm Sensor {content:fill:sens_id} - 30 Tage</Description>
+      <Interval>30</Interval>
+      <Link>{content:addChartImgLink:temp_30}</Link>
+    </Chart>
+    <Chart>
+      <Type>temp</Type>
+      <Description>Temparaturdiagramm Sensor {content:fill:sens_id} - 365 Tage</Description>
+      <Interval>365</Interval>
+      <Link>{content:addChartImgLink:temp_365}</Link>
+    </Chart>
+  </Charts>
+</Temperature>
+

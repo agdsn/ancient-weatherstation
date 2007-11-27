@@ -109,5 +109,9 @@ class ModuleSet{
 
     return $buff;
   }
+
+  function isStandardPage($set_type){
+    return !in_array($set_type, Config::getNotStandardPages());
+  }
 }
 ?>

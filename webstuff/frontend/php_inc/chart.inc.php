@@ -72,6 +72,15 @@ class Chart{
     return Chart::_getChartImgTag($chartName);
   }
 
+  function insertChartLink($chartName){
+    if($chartName == "auto"){
+      $chartName = $_REQUEST['chartName'];
+    }
+    $chartArray = Config::getChartArray($chartName);
+
+    return Chart::_getChartImgLink($chartArray[0]);
+  }
+
 }
 
 ?>
