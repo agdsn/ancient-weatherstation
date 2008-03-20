@@ -34,13 +34,13 @@ class Rain{
 
   /* Momentane Werte aus der Datenbank holen */
   function _getNowValues($interval){
-    $result = $this->connection->fetchQueryResultLine("SELECT sum(count) as rain FROM ".$this->table." WHERE sens_id=".$this->sensId." AND timestamp>(current_timestamp - INTERVAL '".$interval."')");
+    $result = $this->connection->fetchQueryResultLine("SELECT sum(count) as rain FROM ".$this->table." WHERE sens_id=".$this->sensId." AND timestamp>(select (current_timestamp - INTERVAL '".$interval."'))");
     return $result['rain'];
   }
 
   /* Maximal gemessene Werte aus der Datenbank holen */
   function _getMaxValues($unit, $dateFormat){ // unit = hour, minute, ...
-    return $this->connection->fetchQueryResultLine("SELECT to_char(ts, '".$dateFormat."') as date, val FROM ".$this->table."_".$unit." WHERE sens_id=".$this->sensId." AND val=(SELECT max(val) FROM ".$this->table."_".$unit." WHERE sens_id=".$this->sensId.") ORDER BY ts DESC LIMIT 1");
+    return $this->connection->fetchQueryResultLine("SELECT to_char(ts, '".$dateFormat."') as date, val FROM ".$this->table."_".$unit." WHERE sens_id=".$this->sensId." ORDER BY val DESC, ts DESC LIMIT 1");
   }
 
 

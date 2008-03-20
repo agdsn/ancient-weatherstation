@@ -40,20 +40,14 @@ class Module{
     $this->modName 	  = $modName;
     $this->connection 	  = &$connection;
     $this->parserInstance = &$parser;
-    $this->table 	  = $this->_getTableName();
+    $this->sensInstance   = new Sensor($sensId, $connection);
+    $this->table 	  = $this->sensInstance->get_table();
 
     if (ModuleSet::isStandardPage($_REQUEST['setType'])) 
       $parser->parseContent($this->_getModuleFilename("frame"), & $this, "top");		/* Oberen Modulrahmen parsen */
     $parser->parseContent($this->_getModuleFilename($modName), & $this, NULL); 		/* Modul Parsen */
     if (ModuleSet::isStandardPage($_REQUEST['setType']))
       $parser->parseContent($this->_getModuleFilename("frame"), & $this, "bottom"); 	/* unteren Modulrahmen Parsen */
-  }
-
-  function _getTableName(){
-    /* Tabelle des Sensors bestimmen */
-    $tableQuery  = "SELECT tabelle FROM sensoren, typen WHERE sensoren.id=".$this->sensId." AND typen.typ = sensoren.typ";
-    $table       = $this->connection->fetchQueryResultLine($tableQuery);
-    return $table['tabelle'];
   }
 
   /* Dateinamen des Modul-Files zusammenbauen */

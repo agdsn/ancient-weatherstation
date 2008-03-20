@@ -126,7 +126,7 @@ class Wind{
 
   /* liefert den Durchschnittswert in einem bestimmtem Interval */
   function _getAverage($interval){
-    $avQuery     = "SELECT avg(geschw) as average, count(geschw) as count  FROM ".$this->table." WHERE sens_id=".$this->sensId." AND timestamp>(current_timestamp - INTERVAL '".$interval."')";
+    $avQuery     = "SELECT avg(geschw) as average, count(geschw) as count  FROM ".$this->table." WHERE sens_id=".$this->sensId." AND timestamp>(select (current_timestamp - INTERVAL '".$interval."'))";
     $avData      = $this->connection->fetchQueryResultLine($avQuery);
     return $avData;
   }

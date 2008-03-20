@@ -43,8 +43,7 @@ class Hum{
   }
 
   function _fetchMinMax(){
-    $Query    = "SELECT max(hum) as max, min(hum) as min FROM ".$this->table." WHERE sens_id=".$this->sensId."";
-    $Data     = $this->connection->fetchQueryResultLine($Query);
+    $Data = Sensor::get_sensor_extrema($this->sensId, &$this->connection, "hum");
     $this->minHum = $Data['min'];
     $this->maxHum = $Data['max'];
   }
@@ -59,31 +58,19 @@ class Hum{
     $this->maxDate = $Data[1]['text_timestamp'];
   }
  
-  /* liefert den Durchschnittswert in einem bestimmtem Interval */
-  function _getAverage($interval){
-    $avQuery     = "SELECT avg(hum) as average, count(hum) as count  FROM ".$this->table." WHERE sens_id=".$this->sensId." AND timestamp>(current_timestamp - INTERVAL '".$interval."')";
-    $avData      = $this->connection->fetchQueryResultLine($avQuery);
-    return $avData;
-  }
 
   /* momentanen Durchschnittswert bestimmen */
   function _fetchAverage(){
-    $avData = array('average'=>0, 'count'=>0);						/* Array initialisieren */
-    $i = 1;										/* Laufvariable */
-    while($avData['count']<5){								/* Schleife prueft, in welchem Interval 5 Werte zusammenkommen */ 
-      $i++;										/* Laufvariable erhoehen */
-      $avData = $this->_getAverage(($i*(Config::getAvInterval()))." minutes");		/* Holt Werte mit gegebenem Interval */
-    }
-
+    $Data = Sensor::get_sensor_average($this->sensId, &$this->connection, "hum");
     /* Werte den Klassenvariablen zuordnen */
-    $this->avVal   = $avData['average'];
-    $this->avInter = $i*(Config::getAvInterval());
+    $this->avVal   = $Data['average'];
+    $this->avInter = $Data['interval'];
   }
  
   /* Bestimmt die Tendenz */
   function _fetchMoving(){
-    $shortAvData = $this->_getAverage("15 minutes");					/* Durchschnitt der letzten 15 minuten */
-    $longAvData = $this->_getAverage("120 minutes");					/* Durchschnitt der letzten 120 Minuten */
+    $shortAvData = Sensor::get_sensor_extrema($this->sensId, &$this->connection, "hum", 15); /* Durchschnitt der letzten 15 minuten */
+    $longAvData = Sensor::get_sensor_extrema($this->sensId, &$this->connection, "hum", 120); /* Durchschnitt der letzten 120 Minuten */
     if($shortAvData['count'] < 1 || $longAvData['count'] < 2){				/* Wenn in den letzten 5 minuten kein Wert kam oder in den letzten 120 min weniger als 3 Werte kamen */
       $this->changing = "Berechnung momentan nicht moeglich";				/* Dann ausgeben, dass momentan nichts berechnet werden kann */
       return;										/* und aus der Funktion huepfen */

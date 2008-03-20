@@ -20,7 +20,7 @@ class Connection{
   
   /* Verbindung herstellen (wenn noch net besteht)*/
   function _createConn(){
-    //print $this->conn."<br>";
+    #print $this->conn."<br>";
     if($this->conn === NULL){
       $this->conn = pg_pconnect(Config::getPgConnString())
         or die('Verbindungsaufbau fehlgeschlagen: ' . pg_last_error());
@@ -37,12 +37,12 @@ class Connection{
 
   /* Eine Zeile holen */
   function fetchQueryResultLine($query){
-     $this->_createConn();
-     $result =  pg_query($this->conn, $query) 
-       or die('Abfrage fehlgeschlagen: ' . pg_last_error(). "\n<br>\nquery: '".$query."'"); 
-     $array = pg_fetch_assoc($result);
-     //print_r($array);
-     return $array;
+    $this->_createConn();
+    $result =  pg_query($this->conn, $query) 
+      or die('Abfrage fehlgeschlagen: ' . pg_last_error(). "\n<br>\nquery: '".$query."'"); 
+    $array = pg_fetch_assoc($result);
+    //print_r($array);
+    return $array;
   }
 
   /* mehrere Zeilen holen */
