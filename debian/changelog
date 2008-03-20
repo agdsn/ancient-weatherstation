@@ -1,3 +1,9 @@
+weatherstation (1.0.13) stable; urgency=low
+
+  * Frontend: Heavy database optimizions
+
+ -- Jan Losinski <losinski@wh2.tu-dresden.de>  Thu, 20 Mar 2008 18:10:00 +0100
+
 weatherstation (1.0.12) stable; urgency=low
 
   * Frontend: Small XML Output added 
