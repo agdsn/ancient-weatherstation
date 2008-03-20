@@ -164,7 +164,7 @@ static int count_data_by_sensor_id(PGconn *connection, int sens_id){
 
   table = get_type_table_by_id(connection, sens_id);
 
-  snprintf(query_buff, BUFFSIZE, "SELECT count(sens_id) as num FROM %s WHERE sens_id=%d AND timestamp>(current_timestamp - INTERVAL '%d hours')",table, sens_id, global_opts.interval);
+  snprintf(query_buff, BUFFSIZE, "SELECT count(sens_id) as num FROM %s WHERE sens_id=%d AND timestamp>(select (current_timestamp - INTERVAL '%d hours'))",table, sens_id, global_opts.interval);
   count_res = pg_check_exec(connection, query_buff);
   
   if(PQntuples(count_res) < 1)

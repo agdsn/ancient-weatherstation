@@ -326,7 +326,7 @@ pix_list_ptr get_pix_list(int c_width){
   }
 
   /* Anfrage zusammenbauen */
-  snprintf(query, BUFFSIZE, "SELECT round(date_part('epoch', current_timestamp))::int4 AS now, round(date_part('epoch', timestamp))::int4 AS times, %s AS val FROM %s WHERE sens_id=%d AND  timestamp > (current_timestamp - INTERVAL '%d seconds') ORDER BY times ASC", img_cfg.table_field, table, img_cfg.sens_id, img_cfg.show_interval );
+  snprintf(query, BUFFSIZE, "SELECT round(date_part('epoch', current_timestamp))::int4 AS now, round(date_part('epoch', timestamp))::int4 AS times, %s AS val FROM %s WHERE sens_id=%d AND  timestamp > (select (current_timestamp - INTERVAL '%d seconds')) ORDER BY times ASC", img_cfg.table_field, table, img_cfg.sens_id, img_cfg.show_interval );
 
   /* Anfrage stellen */
   res = pg_check_exec(conn, query, 1);
