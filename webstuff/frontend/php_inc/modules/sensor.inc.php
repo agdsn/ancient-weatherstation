@@ -8,6 +8,7 @@
 
 
 include_once($path."php_inc/connection.inc.php");
+include_once($path."php_inc/cacher.inc.php");
 
 $sensor_data = NULL;
 $extrema_fields = array(
@@ -47,10 +48,13 @@ class Sensor{
   function _fetchSensorData($sensId, &$connection){
     global $sensor_data;
     if ($sensor_data == NULL){
-      $query  = "SELECT sensoren.*, typen.tabelle FROM sensoren, typen where typen.typ = sensoren.typ";
-      $result = $connection->getRawResult($query);
-      while ($array = pg_fetch_assoc($result)){
-        $sensor_data[$array['id']] = $array;
+      if (($sensor_data = Cacher::getCache("SensorData", 20)) == false){
+	$query  = "SELECT sensoren.*, typen.tabelle FROM sensoren, typen where typen.typ = sensoren.typ";
+	$result = $connection->getRawResult($query);
+	while ($array = pg_fetch_assoc($result)){
+	  $sensor_data[$array['id']] = $array;
+	}
+	Cacher::setCache("SensorData", $sensor_data);
       }
     }
     return $sensor_data[$sensId];
@@ -87,17 +91,20 @@ class Sensor{
   function get_sensor_extrema($sensId, &$connection, $field){
     global $extrema_fields, $sensor_extrema;
     if (! array_key_exists($sensId, $sensor_extrema)){
-      $data = Sensor::_fetchSensorData($sensId, &$connection);
-      $query = "SELECT ";
-      for ($i = 0; $i < count($extrema_fields[$data['typ']]); $i++){
-	if ($i != 0)
-	  $query .= ", ";
-	$query .= "min(".$extrema_fields[$data['typ']][$i].") AS min_".$extrema_fields[$data['typ']][$i].", ";
-	$query .= "max(".$extrema_fields[$data['typ']][$i].") AS max_".$extrema_fields[$data['typ']][$i]." ";
+      if (($sensor_extrema[$sensId] = Cacher::getCache("SensorExtrema_ID_".$sensId, 10)) == false){
+	$data = Sensor::_fetchSensorData($sensId, &$connection);
+	$query = "SELECT ";
+	for ($i = 0; $i < count($extrema_fields[$data['typ']]); $i++){
+	  if ($i != 0)
+	    $query .= ", ";
+	  $query .= "min(".$extrema_fields[$data['typ']][$i].") AS min_".$extrema_fields[$data['typ']][$i].", ";
+	  $query .= "max(".$extrema_fields[$data['typ']][$i].") AS max_".$extrema_fields[$data['typ']][$i]." ";
+	}
+	$query .= "FROM ".$data['tabelle']." WHERE sens_id = ".$sensId;
+	$res = $connection->fetchQueryResultLine($query);
+	$sensor_extrema[$sensId] = $res;
+	Cacher::setCache("SensorExtrema_ID_".$sensId, $sensor_extrema[$sensId]);
       }
-      $query .= "FROM ".$data['tabelle']." WHERE sens_id = ".$sensId;
-      $res = $connection->fetchQueryResultLine($query);
-      $sensor_extrema[$sensId] = $res;
     } 
     return array('min' => $sensor_extrema[$sensId]['min_'.$field], 'max' => $sensor_extrema[$sensId]['max_'.$field]);
   }
@@ -110,28 +117,31 @@ class Sensor{
   function get_sensor_average($sensId, &$connection, $field, $init_interval = 0){
     global $extrema_fields, $sensor_average;
     if ((!  array_key_exists($init_interval, $sensor_average)) || (! array_key_exists($sensId, $sensor_average[$init_interval]))){
-      $interval = $init_interval;
-      $data = Sensor::_fetchSensorData($sensId, &$connection);
-      $query = "SELECT count(".$extrema_fields[$data['typ']][0].") AS count, ";
-      for ($i = 0; $i < count($extrema_fields[$data['typ']]); $i++){
-	if ($i != 0)
-	  $query .= ", ";
-	$query .= "avg(".$extrema_fields[$data['typ']][$i].") AS ".$extrema_fields[$data['typ']][$i]." ";
-      }
-      $query .= "FROM ".$data['tabelle']." WHERE sens_id = ".$sensId." AND timestamp>(select(current_timestamp - INTERVAL '";
-      $res = array('count' => 0, 'average' => 0);
-      $m = 0;
-      if ($interval == 0){
-	while ($res['count'] < 4) {
-	  $m++;
-	  $interval = $m*(Config::getAvInterval());
+      if (($sensor_average[$init_interval][$sensId] = Cacher::getCache("SensorAverage_ID_".$sensId."_Interval_".$init_interval, 10)) == false){
+	$interval = $init_interval;
+	$data = Sensor::_fetchSensorData($sensId, &$connection);
+	$query = "SELECT count(".$extrema_fields[$data['typ']][0].") AS count, ";
+	for ($i = 0; $i < count($extrema_fields[$data['typ']]); $i++){
+	  if ($i != 0)
+	    $query .= ", ";
+	  $query .= "avg(".$extrema_fields[$data['typ']][$i].") AS ".$extrema_fields[$data['typ']][$i]." ";
+	}
+	$query .= "FROM ".$data['tabelle']." WHERE sens_id = ".$sensId." AND timestamp>(select(current_timestamp - INTERVAL '";
+	$res = array('count' => 0, 'average' => 0);
+	$m = 0;
+	if ($interval == 0){
+	  while ($res['count'] < 4) {
+	    $m++;
+	    $interval = $m*(Config::getAvInterval());
+	    $res = $connection->fetchQueryResultLine($query.$interval." minutes'))");
+	  } 
+	} else {
 	  $res = $connection->fetchQueryResultLine($query.$interval." minutes'))");
-	} 
-      } else {
-        $res = $connection->fetchQueryResultLine($query.$interval." minutes'))");
+	}
+	$res['interval'] = $interval;
+	$sensor_average[$init_interval][$sensId] = $res;
+	Cacher::setCache("SensorAverage_ID_".$sensId."_Interval_".$init_interval, $sensor_average[$init_interval][$sensId]);
       }
-      $res['interval'] = $interval;
-      $sensor_average[$init_interval][$sensId] = $res;
     } 
     return array('average' => $sensor_average[$init_interval][$sensId][$field], 'count' => $sensor_average[$init_interval][$sensId]['count'], 'interval' =>  $sensor_average[$init_interval][$sensId]['interval']);
   }

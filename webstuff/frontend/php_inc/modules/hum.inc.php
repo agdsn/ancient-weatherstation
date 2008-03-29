@@ -33,9 +33,13 @@ class Hum{
   /* Funktion, die die Klasse mit den Weten initialisiert */
   function _fetchHumData(){
     
-    /* Aktuelle Luftfeuchtigkeit bestimmen */
-    $nowQuery    = "SELECT hum, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$this->table." WHERE sens_id=".$this->sensId." ORDER BY timestamp DESC LIMIT 1";
-    $nowData     = $this->connection->fetchQueryResultLine($nowQuery);
+    $nowData = null;
+    if (($nowData = Cacher::getCache("HumNow_ID_".$this->sensId, 3)) == false){
+      /* Aktuelle Luftfeuchtigkeit bestimmen */
+      $nowQuery    = "SELECT hum, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$this->table." WHERE sens_id=".$this->sensId." ORDER BY timestamp DESC LIMIT 1";
+      $nowData     = $this->connection->fetchQueryResultLine($nowQuery);
+      Cacher::setCache("HumNow_ID_".$this->sensId, $nowData);
+    }
     
     /* Bestimmte Werte den Klassenvariablen zuordnen */
     $this->nowHum = $nowData['hum'];
@@ -52,8 +56,12 @@ class Hum{
     if($this->maxHum == "nc" || $this->minHum == "nc"){
       $this->_fetchMinMax();
     }
-    $Query    = "SELECT to_char(max(timestamp), 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$this->table." WHERE sens_id=".$this->sensId." AND hum=".$this->maxHum." OR hum=".$this->minHum." GROUP BY hum ORDER BY hum ASC LIMIT 2";
-    $Data     = $this->connection->fetchQueryResultSet($Query);
+    $Data = null;
+    if (($Data = Cacher::getCache("HumExtremDate_ID_".$this->sensId."_MINMAX_".$this->maxTemp."_".$this->minTemp, 30)) == false){
+      $Query    = "SELECT to_char(max(timestamp), 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$this->table." WHERE sens_id=".$this->sensId." AND hum=".$this->maxHum." OR hum=".$this->minHum." GROUP BY hum ORDER BY hum ASC LIMIT 2";
+      $Data     = $this->connection->fetchQueryResultSet($Query);
+      Cacher::setCache("HumExtremDate_ID_".$this->sensId."_MINMAX_".$this->maxTemp."_".$this->minTemp, $Data);
+    }
     $this->minDate = $Data[0]['text_timestamp'];
     $this->maxDate = $Data[1]['text_timestamp'];
   }

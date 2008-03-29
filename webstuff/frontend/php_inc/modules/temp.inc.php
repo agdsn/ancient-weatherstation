@@ -32,10 +32,14 @@ class Temp{
   /* Funktion, die die Klasse mit den Weten initialisiert */
   function _fetchTempData(){
 
-    /* Aktuelle Temperatur bestimmen */
-    $nowQuery    = "SELECT temp, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$this->table." WHERE sens_id=".$this->sensId." ORDER BY timestamp DESC LIMIT 1";
-    $nowData     = $this->connection->fetchQueryResultLine($nowQuery);
-    
+    $nowData = null;
+    if (($nowData = Cacher::getCache("TempNow_ID_".$this->sensId, 3)) == false){
+      /* Aktuelle Temperatur bestimmen */
+      $nowQuery    = "SELECT temp, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$this->table." WHERE sens_id=".$this->sensId." ORDER BY timestamp DESC LIMIT 1";
+      $nowData     = $this->connection->fetchQueryResultLine($nowQuery);
+      Cacher::setCache("TempNow_ID_".$this->sensId, $nowData);
+    }
+
     /* Bestimmte Werte den Klassenvariablen zuordnen */
     $this->nowTemp = $nowData['temp'];
     $this->nowDate = $nowData['text_timestamp'];
@@ -48,11 +52,15 @@ class Temp{
   }
 
   function _fetchMinMaxDate(){
-    if($this->maxHum == "nc" || $this->minHum == "nc"){
+    if($this->maxTemp == "nc" || $this->minTemp == "nc"){
       $this->_fetchMinMax();
     }
-    $Query    = "SELECT to_char(max(timestamp), 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$this->table." WHERE sens_id=".$this->sensId." AND temp=".$this->maxTemp." OR temp=".$this->minTemp." GROUP BY temp ORDER BY temp ASC LIMIT 2";
-    $Data     = $this->connection->fetchQueryResultSet($Query);
+    $Data = null;
+    if (($Data = Cacher::getCache("TempExtremDate_ID_".$this->sensId."_MINMAX_".$this->maxTemp."_".$this->minTemp, 30)) == false){
+      $Query    = "SELECT to_char(max(timestamp), 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$this->table." WHERE sens_id=".$this->sensId." AND temp=".$this->maxTemp." OR temp=".$this->minTemp." GROUP BY temp ORDER BY temp ASC LIMIT 2";
+      $Data     = $this->connection->fetchQueryResultSet($Query);
+      Cacher::setCache("TempExtremDate_ID_".$this->sensId."_MINMAX_".$this->maxTemp."_".$this->minTemp, $Data);
+    }
     $this->minDate = $Data[0]['text_timestamp'];
     $this->maxDate = $Data[1]['text_timestamp'];
   }

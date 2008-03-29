@@ -32,13 +32,21 @@ class Wind{
   /* Funktion, die die Klasse mit den Weten initialisiert */
   function _fetchWindData(){
 
-    /* Aktuelle Wind bestimmen */
-    $nowQuery    = "SELECT geschw as wind, richt as dir, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$this->table." WHERE sens_id=".$this->sensId." ORDER BY timestamp DESC LIMIT 1";
-    $nowData     = $this->connection->fetchQueryResultLine($nowQuery);
+    $nowData = null;
+    if (($nowData = Cacher::getCache("WindNow_ID_".$this->sensId, 3)) == false){
+      /* Aktuelle Wind bestimmen */
+      $nowQuery    = "SELECT geschw as wind, richt as dir, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$this->table." WHERE sens_id=".$this->sensId." ORDER BY timestamp DESC LIMIT 1";
+      $nowData     = $this->connection->fetchQueryResultLine($nowQuery);
+      Cacher::setCache("WindNow_ID_".$this->sensId, $nowData);
+    }
     
-    /* Max und Min-Werte bestimmen */
-    $maxQuery    = "SELECT geschw as wind, richt as dir, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$this->table." WHERE sens_id=".$this->sensId." AND geschw=(SELECT max(geschw) FROM ".$this->table." WHERE sens_id=".$this->sensId.") ORDER BY timestamp DESC LIMIT 1";
-    $maxData     = $this->connection->fetchQueryResultLine($maxQuery);
+    $maxData = null;
+    if (($nowData = Cacher::getCache("WindMax_ID_".$this->sensId, 3)) == false){
+      /* Max und Min-Werte bestimmen */
+      $maxQuery    = "SELECT geschw as wind, richt as dir, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$this->table." WHERE sens_id=".$this->sensId." AND geschw=(SELECT max(geschw) FROM ".$this->table." WHERE sens_id=".$this->sensId.") ORDER BY timestamp DESC LIMIT 1";
+      $maxData     = $this->connection->fetchQueryResultLine($maxQuery);
+      Cacher::setCache("WindMax_ID_".$this->sensId, $maxData);
+    }
     
     /* Bestimmte Werte den Klassenvariablen zuordnen */
     $this->nowWind = $nowData['wind'];
@@ -126,8 +134,12 @@ class Wind{
 
   /* liefert den Durchschnittswert in einem bestimmtem Interval */
   function _getAverage($interval){
-    $avQuery     = "SELECT avg(geschw) as average, count(geschw) as count  FROM ".$this->table." WHERE sens_id=".$this->sensId." AND timestamp>(select (current_timestamp - INTERVAL '".$interval."'))";
-    $avData      = $this->connection->fetchQueryResultLine($avQuery);
+    $avData = null;
+    if(($avData = Cacher::getCache("WindAv_ID_".$this->sensId."_INTERVAL_".$interval, 10)) == false){
+      $avQuery     = "SELECT avg(geschw) as average, count(geschw) as count  FROM ".$this->table." WHERE sens_id=".$this->sensId." AND timestamp>(select (current_timestamp - INTERVAL '".$interval."'))";
+      $avData      = $this->connection->fetchQueryResultLine($avQuery);
+      Cacher::setCache("WindAv_ID_".$this->sensId."_INTERVAL_".$interval, $avData);
+    }
     return $avData;
   }
 

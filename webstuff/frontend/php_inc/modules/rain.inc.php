@@ -34,13 +34,21 @@ class Rain{
 
   /* Momentane Werte aus der Datenbank holen */
   function _getNowValues($interval){
-    $result = $this->connection->fetchQueryResultLine("SELECT sum(count) as rain FROM ".$this->table." WHERE sens_id=".$this->sensId." AND timestamp>(select (current_timestamp - INTERVAL '".$interval."'))");
+    if (($result = Cacher::getCache("NowRain_ID_".$this->sensId."_Interval_".$interval, 7)) == false){
+      $result = $this->connection->fetchQueryResultLine("SELECT sum(count) as rain FROM ".$this->table." WHERE sens_id=".$this->sensId." AND timestamp>(select (current_timestamp - INTERVAL '".$interval."'))");
+      Cacher::setCache("NowRain_ID_".$this->sensId."_Interval_".$interval, $result);
+    }
     return $result['rain'];
   }
 
   /* Maximal gemessene Werte aus der Datenbank holen */
   function _getMaxValues($unit, $dateFormat){ // unit = hour, minute, ...
-    return $this->connection->fetchQueryResultLine("SELECT to_char(ts, '".$dateFormat."') as date, val FROM ".$this->table."_".$unit." WHERE sens_id=".$this->sensId." ORDER BY val DESC, ts DESC LIMIT 1");
+    $res = null;
+    if (($res = Cacher::getCache("MaxRain_ID_".$this->sensId."_Unit_".$unit."_Format_".$dateFormat, 30)) == false ){
+    $res =  $this->connection->fetchQueryResultLine("SELECT to_char(ts, '".$dateFormat."') as date, val FROM ".$this->table."_".$unit." WHERE sens_id=".$this->sensId." ORDER BY val DESC, ts DESC LIMIT 1");
+    Cacher::setCache("MaxRain_ID_".$this->sensId."_Unit_".$unit."_Format_".$dateFormat, $res);
+    }
+    return $res;
   }
 
 
@@ -71,7 +79,10 @@ class Rain{
 
   function get_now_all(){
     if($this->nowAll == "nc");
-      $this->nowAll   = $this->connection->fetchQueryResultLine("SELECT sum(count) as rain FROM ".$this->table." WHERE sens_id=".$this->sensId);
+      if (( $this->nowAll = Cacher::getCache("AllRainNow_ID_".$this->sensId, 20)) == false){
+	$this->nowAll   = $this->connection->fetchQueryResultLine("SELECT sum(count) as rain FROM ".$this->table." WHERE sens_id=".$this->sensId);
+	Cacher::setCache("AllRainNow_ID_".$this->sensId, $this->nowAll);
+      }
     return round($this->nowAll['rain'] * 0.001,3);
   }
 

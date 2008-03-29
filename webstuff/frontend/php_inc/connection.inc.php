@@ -37,6 +37,7 @@ class Connection{
 
   /* Eine Zeile holen */
   function fetchQueryResultLine($query){
+    if (Config::isDebug()) echo $query."\n";
     $this->_createConn();
     $result =  pg_query($this->conn, $query) 
       or die('Abfrage fehlgeschlagen: ' . pg_last_error(). "\n<br>\nquery: '".$query."'"); 
@@ -47,6 +48,7 @@ class Connection{
 
   /* mehrere Zeilen holen */
   function fetchQueryResultSet($query){
+    if (Config::isDebug()) echo $query."\n";
     $returnArray = array();
     $this->_createConn();
     $result =  pg_query($this->conn, $query)
@@ -58,6 +60,7 @@ class Connection{
 
   /* Result roh zurueckgeben */
   function &getRawResult($query){
+    if (Config::isDebug()) echo $query."\n";
     $this->_createConn();
     $result =  pg_query($this->conn, $query)
       or die('Abfrage fehlgeschlagen: ' . pg_last_error(). "\n<br>\nquery: '".$query."'");

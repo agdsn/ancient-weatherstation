@@ -58,5 +58,20 @@ class Config{
     global $notStandard;
     return $notStandard;
   }
+
+  function getCachePath(){
+    global $cachePath;
+    return $cachePath;
+  }
+
+  function performCaching(){
+    global $performCaching;
+    return $performCaching;
+  }
+
+  function isDebug(){
+    global $isDebug;
+    return $isDebug;
+  }
 }
 ?>
