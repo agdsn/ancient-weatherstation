@@ -1,3 +1,9 @@
+weatherstation (1.0.15) stable; urgency=low
+
+  * Frontend: Adding caching
+
+ -- Jan Losinski <losinski@wh2.tu-dresden.de>  Thu, 29 Mar 2008 12:15:00 +0100
+
 weatherstation (1.0.14) stable; urgency=low
 
   * Chart + Checksensor: database optimizions
