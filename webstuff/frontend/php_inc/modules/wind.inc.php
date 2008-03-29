@@ -41,7 +41,7 @@ class Wind{
     }
     
     $maxData = null;
-    if (($nowData = Cacher::getCache("WindMax_ID_".$this->sensId, 3)) == false){
+    if (($maxData = Cacher::getCache("WindMax_ID_".$this->sensId, 3)) == false){
       /* Max und Min-Werte bestimmen */
       $maxQuery    = "SELECT geschw as wind, richt as dir, to_char(timestamp, 'DD.MM.YYYY  HH24:MI') as text_timestamp FROM ".$this->table." WHERE sens_id=".$this->sensId." AND geschw=(SELECT max(geschw) FROM ".$this->table." WHERE sens_id=".$this->sensId.") ORDER BY timestamp DESC LIMIT 1";
       $maxData     = $this->connection->fetchQueryResultLine($maxQuery);
