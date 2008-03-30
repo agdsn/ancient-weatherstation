@@ -96,7 +96,7 @@ int read_port(){
   int len=0; 				   		/* Anzahl gelesener Daten */
   int i, readlen =1;					/* Laufvariable, Lesezaehler */ 
   u_char  buffer[INPUT_BUFFERSIZE], *temp = NULL;       /* Lesepuffer, Temp-Zeiger */
-  struct pollfd pfd = {fd, POLLIN, NULL};					/* polling-Optionen */
+  struct pollfd pfd = {fd, POLLIN, (short)NULL};					/* polling-Optionen */
 
   temp = buffer;					/* Temporaerer Zeiger bekommt die Anfangsaddresse vom Puffer */
 
