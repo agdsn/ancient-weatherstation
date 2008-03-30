@@ -31,6 +31,7 @@
 #include <fcntl.h>		/* O_WRONLY O_APPEND O_CREAT ... */
 #include <string.h>
 #include <signal.h>
+#include <time.h>
 #include "definitions.h"
 #include "config.h"
 #include "main.h"
