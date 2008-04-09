@@ -103,7 +103,7 @@ class ModuleSet{
         $i--;
         $buff .= '?'.$key.'='.$value;
       } else {
-        $buff .= '&'.$key.'='.$value;
+        $buff .= '&amp;'.$key.'='.$value;
       }
     }
 

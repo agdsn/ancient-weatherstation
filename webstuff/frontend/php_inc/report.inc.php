@@ -133,9 +133,9 @@ class Report{
     $buff .=  '" class="report_link">';
 
     $buff .=  $rptArray[0];
-    $buff .=  '<p class="report_link_desc">';
+    $buff .=  '<span class="report_link_desc">';
     $buff .=  $rptArray[1];
-    $buff .=  '</p>';
+    $buff .=  '</span>';
 
     $buff .=  '</a>';
     $buff .=  '</div>';

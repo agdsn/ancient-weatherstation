@@ -32,19 +32,19 @@ class Chart{
     $buff .=  '" class="chart_link">';
     
     $buff .=  $chartArray[1];
-    $buff .=  '<p class="chart_link_desc">';
+    $buff .=  '<span class="chart_link_desc">';
     $buff .=  $chartArray[2];
 
     if ($chartArray[3] == null){
       $buff .=  '<img class="chart_link_prev" width="250" height="100" src="';
       $buff .=  Chart::_getChartImgLink($chartArray[0]);
-      $buff .=  '">';
+      $buff .=  '" alt="&nbsp;">';
     } else {
       $buff .=  '<img class="chart_link_prev" width="250" height="100" src="';
       $buff .=  Chart::_getChartImgLink($chartArray[3]);
-      $buff .=  '">';
+      $buff .=  '" alt="&nbsp;">';
     }
-    $buff .=  '</p>';
+    $buff .=  '</span>';
 
     $buff .=  '</a>';
     $buff .=  '</div>';
@@ -60,7 +60,7 @@ class Chart{
 
     $buff  = '<img class="chart_img" src="';
     $buff .= Chart::_getChartImgLink($chartArray[0]);
-    $buff .= '">';
+    $buff .= '" alt="&nbsp;">';
    
     return $buff;
   }

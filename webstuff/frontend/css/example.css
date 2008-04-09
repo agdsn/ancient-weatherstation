@@ -54,33 +54,37 @@ div.module table tr td.mod_line_val {
   color: #776666;
 }
 
-div.module h3.mod_headline, div.report h3.report_head, div.chart h3.chart_headline {
+div.module span.mod_headline, div.report span.report_head, div.chart span.chart_headline {
   margin-top:2px;
   margin-left:2px;
   margin-bottom: 5px;
   font-weight: 600;
   font-size: 14pt;
   color: #222222;
+  display:block;
 }
 
-div.report h3.report_head {
+div.report span.report_head {
   width:100%;
   text-align:left;
+  display:block;
 }
 
-div.chart h3.chart_headline {
+div.chart span.chart_headline {
   width:100%;
   text-align:left;
+  display:block;
 
 }
 
-div.module h4.mod_subhead {
+div.module span.mod_subhead {
   margin-top:2px;
   margin-left:2px;
   margin-bottom: 4px;
   font-weight: 600;
   font-size: 12pt;
   color: #444444;
+  display:block;
 }
 
 div.module div.mod_subsec, div.report div.rpt_subsec {
@@ -122,13 +126,13 @@ div.module div.mod_subsec div.chart_link_div a.chart_link, div.module div.mod_su
   display: inline;
 } 
 
-div.module div.mod_subsec div.chart_link_div a.chart_link p.chart_link_desc, div.module div.mod_subsec div.report_link_div a.report_link p.report_link_desc {
+div.module div.mod_subsec div.chart_link_div a.chart_link span.chart_link_desc, div.module div.mod_subsec div.report_link_div a.report_link span.report_link_desc {
   visibility: hidden; 
   position: absolute;
   top: -100px;
 }
 
-div.module div.mod_subsec div.chart_link_div a.chart_link:hover p.chart_link_desc, div.module div.mod_subsec div.report_link_div a.report_link:hover p.report_link_desc {
+div.module div.mod_subsec div.chart_link_div a.chart_link:hover span.chart_link_desc, div.module div.mod_subsec div.report_link_div a.report_link:hover span.report_link_desc {
   top: 5px;
   left: 5px;
   visibility: visible; 
@@ -144,6 +148,7 @@ div.module div.mod_subsec div.chart_link_div a.chart_link:hover p.chart_link_des
   font-style: normal;
   text-decoration: none;
   z-index: 300;
+  display:block;
 }
 
 div.module div.mod_subsec div.chart_link_div a.chart_link img.chart_link_prev {
@@ -249,7 +254,7 @@ div.small_set div.module {
   height:155px;
 }
 
-div.small_set div.module h3.mod_headline{
+div.small_set div.module span.mod_headline{
   font-size: 11pt;
 }
 
@@ -291,13 +296,14 @@ div.small_set div.module a.mod_small_link:hover {
   background: #FFeebb;
 }
 
-div.small_set div.module a.mod_small_link H4.mod_subheadline{
+div.small_set div.module a.mod_small_link span.mod_subheadline{
   background: #F0D0AF;
   margin:0px;
   padding:2px;
   font-size:12px;
   font-weight:900;
   color: #222255;
+  display:block;
 }
 
 div.small_set div.module a.mod_small_link span.mod_body {
