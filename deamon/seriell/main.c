@@ -77,7 +77,10 @@ int main(int argc, char *argv[]){
   #endif
 
   DEBUGOUT1("Programm gestartet\n");
-
+  
+  if(signal(SIGPIPE, SIG_IGN) == SIG_ERR)
+    exit_error(ERROR_SEIINST);
+  DEBUGOUT1("SIGPIPE ignoriert\n");
   if(signal(SIGABRT, exit_sig_handler) == SIG_ERR)
     exit_error(ERROR_SEIINST);
   DEBUGOUT1("Signalhandler zum beenden per SIGABRT installiert\n");

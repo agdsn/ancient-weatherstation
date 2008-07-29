@@ -1,3 +1,9 @@
+weatherstation (1.0.16-1) stable; urgency=low
+
+  * Daemon: Fix handling of broken Database Connections
+
+ -- Jan Losinski <losinski@wh2.tu-dresden.de>  Wed, 29 Jul 2008 16:53:00 +0100
+
 weatherstation (1.0.16) stable; urgency=low
 
   * Frontend: Adding caching

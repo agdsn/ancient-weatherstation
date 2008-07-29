@@ -113,6 +113,9 @@ static void check_create_query_buffer(){
 /* Guckt ob Verbindung da und versucht aufzubauen. 
  * gibt 1 zurueck, wenn erfolgreich, sonst 0 */
 static int pg_connect(){
+  if (PQstatus(connection) == CONNECTION_OK){
+    PQexec(connection,"SELECT 1");				/* Status neusetzen erzwingen */
+  }
   if(PQstatus(connection) != CONNECTION_OK){
     if (connection == NULL){
       if(conn_string == NULL){
