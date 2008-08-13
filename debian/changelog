@@ -1,3 +1,9 @@
+weatherstation (1.0.16-2) stable; urgency=low
+
+  * Daemon: Fix counting of rain values
+
+ -- Jan Losinski <losinski@wh2.tu-dresden.de>  Wed, 14 Aug 2008 01:17:00 +0100
+
 weatherstation (1.0.16-1) stable; urgency=low
 
   * Daemon: Fix handling of broken Database Connections

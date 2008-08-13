@@ -55,7 +55,7 @@ static char* prepend_type_address(u_char, u_char);
 
 /* globale Variablen */
 char *log_buffer = NULL;   	/* Puffer fuer die Log-Ausgabe */
-int last_rain_count = -1;	/* Letzter gemessener Wasserstand */
+int last_rain_count[16] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};	/* Letzter gemessener Wasserstand */
 
 
 /* Bestimmung der Sensoren und Weiterreichung an die Funktionen zum auswerten der Werte
@@ -156,19 +156,19 @@ static regen_data process_regen(time_t timestamp, u_char address, u_char *buffer
   data.address   = address;						/* Addresse */
   new_rain_count = ((buffer[2] & 0x1F) << 7) | remove_msb(buffer[3]);	/* Niederschlagszaehler */
   
-  if(last_rain_count == -1)						/* Nach Programmstart Zaehler initialisieren */
-    last_rain_count = new_rain_count;
+  if(last_rain_count[address%16] == -1)						/* Nach Programmstart Zaehler initialisieren */
+    last_rain_count[address%16] = new_rain_count;
 
-  now_rain_count = new_rain_count - last_rain_count;			/* neuen Niederschlag berechnen */
+  now_rain_count = new_rain_count - last_rain_count[address%16];			/* neuen Niederschlag berechnen */
   
   if(now_rain_count < 0){						/* Wenn Integerueberlauf im Sensor */
-    now_rain_count = (0x3FFF - last_rain_count) + new_rain_count;	/* Dann letzten gemessenen Wert vom Max-Integer-Wert abziehen und neuen Zaehlwert dazurechnen */
+    now_rain_count = (0x3FFF - last_rain_count[address%16]) + new_rain_count;	/* Dann letzten gemessenen Wert vom Max-Integer-Wert abziehen und neuen Zaehlwert dazurechnen */
     DEBUGOUT1("Integer-Ueberlauf\n");
   }
 
   data.counter = (now_rain_count * 370);				/* Ein Zaehlschritt entspricht 370ml/m^2, also aenderung mit 370 multiplizieren und zuweisen */
 
-  last_rain_count = new_rain_count;					/* Zaehler neu setzen */
+  last_rain_count[address%16] = new_rain_count;					/* Zaehler neu setzen */
 
   DEBUGOUT2("Regensensor an Addresse %i\n", address);
   DEBUGOUT3("Zaehler: %d  Differenz: %d\n", new_rain_count,now_rain_count);
