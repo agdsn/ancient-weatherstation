@@ -68,6 +68,7 @@
   #define LOG_ERROR_FLAG 	0x04
   #define LOG_DATA_FLAG  	0x08
 #endif
+#define NOT_USE_ADDR_FLAG	0x10
 
 
 /* Puffergroeﬂen -------------------------------------------------------- */

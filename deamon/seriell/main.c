@@ -97,7 +97,7 @@ int main(int argc, char *argv[]){
   read_config(DEFAULT_CONFIG_FILE,1);
 
   /* Optionen auswerten */  
-  while ((c = getopt (argc, argv, "vfc:e:d:i:h")) != -1)
+  while ((c = getopt (argc, argv, "vfac:e:d:i:h")) != -1)
     switch (c) {
       #ifndef NO_LOGING
       case 'e':
@@ -112,6 +112,9 @@ int main(int argc, char *argv[]){
       case 'c':
         extra_conf_file = optarg;
 	break;
+      case 'a':
+        opts.flags |= NOT_USE_ADDR_FLAG;
+        break;
       case 'v':
         opts.flags |= VERBOSE_FLAG;
         break;
@@ -142,6 +145,7 @@ int main(int argc, char *argv[]){
   DEBUGOUT2("  Device     = %s\n", global_opts.device);
   DEBUGOUT2("  Foreground:  %i\n", get_flag(FOREGROUND_FLAG));
   DEBUGOUT2("  Verbose:     %i\n", get_flag(VERBOSE_FLAG));
+  DEBUGOUT2("  Use address: %i\n", ! get_flag(NOT_USE_ADDR_FLAG));
   DEBUGOUT2("  LogData:     %i\n", get_flag(LOG_DATA_FLAG));
   DEBUGOUT2("   DataFile  = %s\n", global_opts.data_log);
   DEBUGOUT2("  LogError:    %i\n", get_flag(LOG_ERROR_FLAG));
@@ -201,6 +205,7 @@ static void write_help(){
   #endif  
   printf("\t-i <interface>\n\t\tThe interface where the reciver is connected \n\t\t(default:/dev/ttyS0)\n");
   printf("\t-f\n\t\tDon't Fork to background\n");
+  printf("\t-a\n\t\tDont use Address, Dont use the address of the sensor to get the id. The first available is choosen.\n");
   printf("\t-v\n\t\tVerbose, log errors to stdout, even it's forked to background\n");
   printf("\t-c <Conf-File>\n\t\t tells the Program to use an aditional config-file\n");
   #ifndef NO_LOGING

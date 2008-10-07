@@ -109,7 +109,7 @@ int read_port(){
     if((len = poll(&pfd, 1, INPUT_TIMEOUT)) > 0){ 	/* warten auf Eingabepuffer */
       len = read(fd, temp, 1);				/* Zeichenweise lesen */
       if(readlen == 1){					/* Solange noch nix verwertbares gelesen wurde auf das Startbyte pruefen */
-        if(*temp == STX){
+	if(*temp == STX){
 	  temp++;					/* Wenn startbyte gefunden Zeiger auf das 2. Puffer-Element setzen */
 	  readlen++;					/* Und Lese-Zaehler erhoehen */
 	}

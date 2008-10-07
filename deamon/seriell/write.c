@@ -57,49 +57,77 @@ static void clean_write(void *);
 /* 'einfacher' Auﬂensensor */
 void write_auss1(auss1_data data){
   check_create_query_buffer();
-  snprintf(query_buffer, QUERY_BUFFERSIZE,  "INSERT INTO auss1_data (sens_id, \"temp\") VALUES (get_sensor_id(%d,%d),%d)",AUSS1, data.address, data.temp);
+  if( get_flag(NOT_USE_ADDR_FLAG) ) {
+    snprintf(query_buffer, QUERY_BUFFERSIZE,  "INSERT INTO auss1_data (sens_id, \"temp\") VALUES (get_first_id(%d),%d)",AUSS1, data.temp);
+  } else {
+    snprintf(query_buffer, QUERY_BUFFERSIZE,  "INSERT INTO auss1_data (sens_id, \"temp\") VALUES (get_sensor_id(%d,%d),%d)",AUSS1, data.address, data.temp);
+  }
   pg_insert(query_buffer);
 }
 
 /* 'besserer' Auﬂensensor */
 void write_auss2(auss2_data data){
   check_create_query_buffer();
-  snprintf(query_buffer, QUERY_BUFFERSIZE,  "INSERT INTO auss2_data (sens_id, \"temp\", hum) VALUES (get_sensor_id(%d,%d),%d,%d)",AUSS2, data.address, data.temp, data.hum);
+  if( get_flag(NOT_USE_ADDR_FLAG) ) {
+    snprintf(query_buffer, QUERY_BUFFERSIZE,  "INSERT INTO auss2_data (sens_id, \"temp\", hum) VALUES (get_first_id(%d),%d,%d)",AUSS2, data.temp, data.hum);
+  } else {
+    snprintf(query_buffer, QUERY_BUFFERSIZE,  "INSERT INTO auss2_data (sens_id, \"temp\", hum) VALUES (get_sensor_id(%d,%d),%d,%d)",AUSS2, data.address, data.temp, data.hum);
+  }
   pg_insert(query_buffer);
 }
 
 /* Regensensor */
 void write_regen(regen_data data){
   check_create_query_buffer();
-  snprintf(query_buffer, QUERY_BUFFERSIZE,  "INSERT INTO regen_data (sens_id, count) VALUES (get_sensor_id(%d,%d),%d)",REGEN, data.address, data.counter);
+  if( get_flag(NOT_USE_ADDR_FLAG) ) {
+    snprintf(query_buffer, QUERY_BUFFERSIZE,  "INSERT INTO regen_data (sens_id, count) VALUES (get_first_id(%d),%d)",REGEN,  data.counter);
+  } else {
+    snprintf(query_buffer, QUERY_BUFFERSIZE,  "INSERT INTO regen_data (sens_id, count) VALUES (get_sensor_id(%d,%d),%d)",REGEN, data.address, data.counter);
+  }
   pg_insert(query_buffer);
 }
 
 /* Windsensor */
 void write_winds(winds_data data){
   check_create_query_buffer();
-  snprintf(query_buffer, QUERY_BUFFERSIZE,  "INSERT INTO winds_data (sens_id, geschw, schwank, richt) VALUES (get_sensor_id(%d,%d),%d,%d,%d)",WINDS, data.address, data.geschw, data.schwank, data.richt);
+  if( get_flag(NOT_USE_ADDR_FLAG) ) {
+    snprintf(query_buffer, QUERY_BUFFERSIZE,  "INSERT INTO winds_data (sens_id, geschw, schwank, richt) VALUES (get_first_id(%d),%d,%d,%d)",WINDS, data.geschw, data.schwank, data.richt);
+  } else {
+    snprintf(query_buffer, QUERY_BUFFERSIZE,  "INSERT INTO winds_data (sens_id, geschw, schwank, richt) VALUES (get_sensor_id(%d,%d),%d,%d,%d)",WINDS, data.address, data.geschw, data.schwank, data.richt);
+  }
   pg_insert(query_buffer);
 }
 
 /* Innensensor */
 void write_innen(innen_data data){
   check_create_query_buffer();
-  snprintf(query_buffer, QUERY_BUFFERSIZE,  "INSERT INTO innen_data (sens_id, \"temp\", hum, press) VALUES (get_sensor_id(%d,%d),%d,%d,%d)",INNEN, data.address, data.temp, data.hum, data.press);
+  if( get_flag(NOT_USE_ADDR_FLAG) ) {
+    snprintf(query_buffer, QUERY_BUFFERSIZE,  "INSERT INTO innen_data (sens_id, \"temp\", hum, press) VALUES (get_first_id(%d),%d,%d,%d)",INNEN, data.temp, data.hum, data.press);
+  } else {
+    snprintf(query_buffer, QUERY_BUFFERSIZE,  "INSERT INTO innen_data (sens_id, \"temp\", hum, press) VALUES (get_sensor_id(%d,%d),%d,%d,%d)",INNEN, data.address, data.temp, data.hum, data.press);
+  }
   pg_insert(query_buffer);
 }
 
 /* Helligkeitssensor */
 void write_helli(helli_data data){
   check_create_query_buffer();
-  snprintf(query_buffer, QUERY_BUFFERSIZE,  "INSERT INTO helli_data (sens_id, bight) VALUES (get_sensor_id(%d,%d),%d)",HELLI, data.address, data.abslum);
+  if( get_flag(NOT_USE_ADDR_FLAG) ) {
+    snprintf(query_buffer, QUERY_BUFFERSIZE,  "INSERT INTO helli_data (sens_id, bight) VALUES (get_first_id(%d),%d)",HELLI, data.abslum);
+  } else {
+    snprintf(query_buffer, QUERY_BUFFERSIZE,  "INSERT INTO helli_data (sens_id, bight) VALUES (get_sensor_id(%d,%d),%d)",HELLI, data.address, data.abslum);
+  }
   pg_insert(query_buffer);
 }
 
 /* Pyarnometer */
 void write_pyano(pyano_data data){
   check_create_query_buffer();
-  snprintf(query_buffer, QUERY_BUFFERSIZE,  "INSERT INTO pyano_data (sens_id, intens) VALUES (get_sensor_id(%d,%d),%d)",PYANO, data.address, data.absrad);
+  if( get_flag(NOT_USE_ADDR_FLAG) ) {
+    snprintf(query_buffer, QUERY_BUFFERSIZE,  "INSERT INTO pyano_data (sens_id, intens) VALUES (get_first_id(%d),%d)",PYANO, data.absrad);
+  } else {
+    snprintf(query_buffer, QUERY_BUFFERSIZE,  "INSERT INTO pyano_data (sens_id, intens) VALUES (get_sensor_id(%d,%d),%d)",PYANO, data.address, data.absrad);
+  }
   pg_insert(query_buffer);
 }
 

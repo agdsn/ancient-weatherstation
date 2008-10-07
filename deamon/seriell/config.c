@@ -37,6 +37,7 @@
 static int read_str(const char *, void *);
 static read_log_data_flag(const char *, void *);
 static read_log_error_flag(const char *, void *);
+static read_not_use_addr_flag(const char *, void *);
 static read_foreground_flag(const char *, void *);
 static read_verbose_flag(const char *, void *);
 static int flag_handler(int *, int , const char *);
@@ -54,6 +55,7 @@ static const struct config_keyword keywords[] = {
   {"error_file",	read_str, 		&(global_opts.error_log), 	DEFAULT_ERROR_FILE},
   #endif
   {"foreground",	read_foreground_flag, 	&(global_opts.flags), 		"no"},
+  {"not_use_address",	read_not_use_addr_flag, &(global_opts.flags), 		"no"},
   {"verbose",		read_verbose_flag, 	&(global_opts.flags), 		"no"},
   {"pg_host",		read_str,	 	&(global_opts.pg_host), 	DEFAULT_PG_HOST},
   {"pg_user",		read_str,  		&(global_opts.pg_user), 	DEFAULT_PG_USER},
@@ -87,6 +89,10 @@ static read_log_error_flag(const char *line, void *arg){
   return flag_handler(arg, LOG_ERROR_FLAG, line);
 }
 #endif
+
+static read_not_use_addr_flag(const char *line, void *arg){
+  return flag_handler(arg, NOT_USE_ADDR_FLAG, line);
+}
 
 static read_foreground_flag(const char *line, void *arg){
   return flag_handler(arg, FOREGROUND_FLAG, line);

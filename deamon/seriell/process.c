@@ -156,6 +156,9 @@ static regen_data process_regen(time_t timestamp, u_char address, u_char *buffer
   data.address   = address;						/* Addresse */
   new_rain_count = ((buffer[2] & 0x1F) << 7) | remove_msb(buffer[3]);	/* Niederschlagszaehler */
   
+  if (get_flag(NOT_USE_ADDR_FLAG))
+    address = 0;
+
   if(last_rain_count[address%16] == -1)						/* Nach Programmstart Zaehler initialisieren */
     last_rain_count[address%16] = new_rain_count;
 
@@ -170,7 +173,7 @@ static regen_data process_regen(time_t timestamp, u_char address, u_char *buffer
 
   last_rain_count[address%16] = new_rain_count;					/* Zaehler neu setzen */
 
-  DEBUGOUT2("Regensensor an Addresse %i\n", address);
+  DEBUGOUT2("Regensensor an Addresse %i\n", data.address);
   DEBUGOUT3("Zaehler: %d  Differenz: %d\n", new_rain_count,now_rain_count);
   DEBUGOUT2("Niederschlag: %dml/m^2\n", data.counter);
 
